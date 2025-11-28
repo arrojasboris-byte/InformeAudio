@@ -359,7 +359,7 @@
       // Centros exclusivos (config fijo)
       // =====================
 
-      const EXCLUSIVE_CENTER_NAMES = [
+      const EXCLUSIVE_CENTER_PATTERNS = [
         "FUENLABRADA PASEO DE LA ESTACION",
         "FUENLABRADA PASEO DE LA ESTACIÓN",
         "REINA MERCEDES",
@@ -370,13 +370,13 @@
         "LOS VALLES",
         "SANTIAGO DE COMPOSTELA",
         "PAMPLONA CENTRO EXCLUSIVO",
-      ];
-
-      const EXCLUSIVE_CENTERS = EXCLUSIVE_CENTER_NAMES.map(normalizeBasic);
+      ].map(normalizeBasic);
 
       function isExclusiveStore(store) {
         const centroNorm = normalizeBasic(store.centro);
-        return EXCLUSIVE_CENTERS.includes(centroNorm);
+        return EXCLUSIVE_CENTER_PATTERNS.some((pat) =>
+          centroNorm.includes(pat)
+        );
       }
 
       const ACCION_TIPOS = [
@@ -1865,10 +1865,10 @@
                       Centros exclusivos – acciones y ventas
                     </h3>
                     <p className="text-[10px] text-gray-500">
-                      Los centros se marcan como EXCLUSIVO según el listado
-                      fijo: Fuenlabrada Paseo de la Estación, Reina Mercedes,
-                      Delicias Zaragoza, Peñacastillo, Torrelavega, Los Valles,
-                      Santiago de Compostela, Pamplona Centro Exclusivo.
+                      Centros exclusivos definidos: Fuenlabrada Paseo de la
+                      Estación, Reina Mercedes, Delicias Zaragoza,
+                      Peñacastillo, Torrelavega, Los Valles, Santiago de
+                      Compostela, Pamplona Centro Exclusivo.
                     </p>
                   </div>
 
@@ -1935,7 +1935,7 @@
                                 % resultado
                               </th>
                               <th className="text-center px-2 py-2">
-                                Acciones / derivaciones (+)
+                                Acciones, fechas y derivaciones (+)
                               </th>
                             </tr>
                           </thead>
@@ -2011,7 +2011,7 @@
                                               <thead>
                                                 <tr className="bg-white border-b">
                                                   <th className="text-left px-2 py-1">
-                                                    Acción
+                                                    Acciones
                                                   </th>
                                                   <th className="text-left px-2 py-1">
                                                     Fecha acción
