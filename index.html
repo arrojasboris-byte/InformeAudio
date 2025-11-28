@@ -21,9 +21,9 @@
     <script type="text/babel">
       const { useState, useEffect } = React;
 
-      // =====================
-      // CHECKLIST: etapas + criterios
-      // =====================
+      // =========================================================
+      // CHECKLIST: etapas y criterios numerados
+      // =========================================================
 
       const CHECKLIST = [
         {
@@ -135,7 +135,7 @@
         },
       ];
 
-      // Aplanar checklist a puntos 1..N
+      // Aplanado a puntos 1..N
       const CHECKLIST_POINTS = [];
       const STAGE_OFFSETS = [];
       let globalCounter = 0;
@@ -152,9 +152,9 @@
       });
       const TOTAL_POINTS = CHECKLIST_POINTS.length;
 
-      // =====================
+      // =========================================================
       // Utilidades
-      // =====================
+      // =========================================================
 
       function createEmptyVisits() {
         return [1, 2, 3, 4].map((id) => ({
@@ -163,14 +163,10 @@
           responsable: "",
           excelName: "",
           hit: "",
-          checklist: null, // % global (F90)
+          checklist: null, // % global F90
           centroAAR: "",
           pointValues: new Array(TOTAL_POINTS).fill(null), // 0/1 por criterio
         }));
-      }
-
-      function normalizarCentro(nombre) {
-        return (nombre || "").trim().toUpperCase();
       }
 
       function normalizarDelegado(nombre) {
@@ -185,48 +181,42 @@
 
       function parseFecha(fecha) {
         const regex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
-        const match = fecha.match(regex);
-        if (!match) return null;
-        const day = Number(match[1]);
-        const month = Number(match[2]);
-        const year = Number(match[3]);
-        const d = new Date(year, month - 1, day);
+        const m = fecha.match(regex);
+        if (!m) return null;
+        const d = new Date(+m[3], +m[2] - 1, +m[1]);
         if (
-          d.getFullYear() !== year ||
-          d.getMonth() !== month - 1 ||
-          d.getDate() !== day
-        ) {
+          d.getFullYear() !== +m[3] ||
+          d.getMonth() !== +m[2] - 1 ||
+          d.getDate() !== +m[1]
+        )
           return null;
-        }
         return d;
       }
 
-      function isValidFecha(fecha) {
-        if (!fecha) return true;
-        return parseFecha(fecha) !== null;
+      function isValidFecha(f) {
+        if (!f) return true;
+        return parseFecha(f) !== null;
       }
 
-      function media(valores) {
-        const nums = valores.filter(
-          (v) => typeof v === "number" && !isNaN(v)
-        );
-        if (nums.length === 0) return null;
+      function media(arr) {
+        const nums = arr.filter((v) => typeof v === "number" && !isNaN(v));
+        if (!nums.length) return null;
         return nums.reduce((a, b) => a + b, 0) / nums.length;
       }
 
-      function porcentajeSi(valores) {
-        const valid = valores.filter((v) => v === "Sí" || v === "No");
-        if (valid.length === 0) return null;
-        const countSi = valid.filter((v) => v === "Sí").length;
-        return (countSi / valid.length) * 100;
+      function porcentajeSi(arr) {
+        const valid = arr.filter((v) => v === "Sí" || v === "No");
+        if (!valid.length) return null;
+        const si = valid.filter((v) => v === "Sí").length;
+        return (si / valid.length) * 100;
       }
 
       function donutStyle(percent) {
-        const val = percent && percent > 0 ? Math.min(percent, 100) : 0;
+        const value = percent && percent > 0 ? Math.min(percent, 100) : 0;
         const color =
           percent !== null && percent >= 85 ? "#16a34a" : "#dc2626";
         return {
-          background: `conic-gradient(${color} ${val * 3.6}deg, #e5e7eb 0deg)`,
+          background: `conic-gradient(${color} ${value * 3.6}deg, #e5e7eb 0deg)`,
         };
       }
 
@@ -246,7 +236,7 @@
 
       function getUniqueSorted(values) {
         const set = new Set(
-          values.map((v) => (v || "").trim()).filter((v) => v.length > 0)
+          values.map((v) => (v || "").trim()).filter((v) => v.length)
         );
         return Array.from(set).sort((a, b) =>
           a.localeCompare(b, "es", { sensitivity: "base" })
@@ -254,10 +244,8 @@
       }
 
       function aplicaHitTexto(visitas) {
-        const hits = visitas.filter(
-          (v) => v.hit === "Sí" || v.hit === "No"
-        );
-        if (hits.length === 0) return null;
+        const hits = visitas.filter((v) => v.hit === "Sí" || v.hit === "No");
+        if (!hits.length) return null;
         return hits.some((v) => v.hit === "Sí") ? "Sí" : "No";
       }
 
@@ -269,33 +257,30 @@
       }
 
       function deriveRespAudio(store) {
-        if (store.responsableAudio && store.responsableAudio.trim()) {
+        if (store.responsableAudio && store.responsableAudio.trim())
           return store.responsableAudio;
-        }
         const visitas = store.visitas || [];
-        const copia = [...visitas].reverse();
-        const visitaConResp = copia.find((v) => v.responsable);
-        return visitaConResp ? visitaConResp.responsable : "";
+        const rev = [...visitas].reverse();
+        const v = rev.find((x) => x.responsable);
+        return v ? v.responsable : "";
       }
 
       function deriveCentroAAR(store) {
-        const visitas = store.visitas || [];
-        const valores = visitas
+        const valores = (store.visitas || [])
           .map((v) => v.centroAAR)
           .filter((v) => v === "Sí" || v === "No");
-        if (valores.length === 0) return "";
+        if (!valores.length) return "";
         return valores.includes("Sí") ? "Sí" : "No";
       }
 
-      // Punto a punto: calcula % de aplicación de cada criterio (0..100 o null)
       function computePointPercents(stores) {
         const sums = new Array(TOTAL_POINTS).fill(0);
         const counts = new Array(TOTAL_POINTS).fill(0);
 
-        stores.forEach((store) => {
-          (store.visitas || []).forEach((visit) => {
-            if (!Array.isArray(visit.pointValues)) return;
-            visit.pointValues.forEach((val, idx) => {
+        stores.forEach((s) => {
+          (s.visitas || []).forEach((v) => {
+            if (!Array.isArray(v.pointValues)) return;
+            v.pointValues.forEach((val, idx) => {
               if (val === 0 || val === 1) {
                 sums[idx] += val;
                 counts[idx] += 1;
@@ -309,9 +294,9 @@
         );
       }
 
-      // =====================
-      // App
-      // =====================
+      // =========================================================
+      // App principal
+      // =========================================================
 
       function App() {
         const [pin, setPin] = useState("");
@@ -338,14 +323,14 @@
 
         const [hoverPointIdx, setHoverPointIdx] = useState(null);
 
-        // Cargar desde "nube" (localStorage)
+        // ---------- Carga inicial desde "nube" (localStorage)
         useEffect(() => {
           try {
             const raw = localStorage.getItem("seguimientoAudioV1");
             if (!raw) return;
             const parsed = JSON.parse(raw);
             if (parsed.stores) {
-              const normalizedStores = parsed.stores.map((s, idx) => ({
+              const norm = parsed.stores.map((s, idx) => ({
                 ...s,
                 id: idx + 1,
                 centroRegional: normalizarDelegado(s.centroRegional || ""),
@@ -356,11 +341,11 @@
                     : new Array(TOTAL_POINTS).fill(null),
                 })),
               }));
-              setStores(normalizedStores);
+              setStores(norm);
             }
             if (parsed.lastSavedAt) setLastSavedAt(parsed.lastSavedAt);
           } catch (e) {
-            console.error("Error al cargar de la nube/localStorage", e);
+            console.error("Error cargando localStorage", e);
           }
         }, []);
 
@@ -368,6 +353,7 @@
           if (pin.trim().toUpperCase() === "AR4321") setAuthorized(true);
         }
 
+        // ---------- Listado de centros desde Excel pegado
         function handleApplyStores() {
           if (!storesInput.trim()) return;
           let lines = storesInput
@@ -376,14 +362,14 @@
             .filter(Boolean);
 
           if (
-            lines.length > 0 &&
+            lines[0] &&
             lines[0].toUpperCase().includes("CODIGO") &&
             lines[0].toUpperCase().includes("PROPIETARIO")
           ) {
             lines = lines.slice(1);
           }
 
-          const newStores = lines.map((raw, index) => {
+          const newStores = lines.map((raw, idx) => {
             const parts = raw.split("\t");
             const [
               codigo = "",
@@ -393,9 +379,8 @@
               correo = "",
               centroRegional = "",
             ] = parts;
-
             return {
-              id: index + 1,
+              id: idx + 1,
               raw,
               codigo,
               propietario,
@@ -415,29 +400,22 @@
           setDashboardStoreId(null);
         }
 
-        function updateStoreField(id, field, value) {
+        function updateVisitField(storeId, visitId, field, value) {
           setStores((prev) =>
-            prev.map((store) =>
-              store.id === id ? { ...store, [field]: value } : store
+            prev.map((s) =>
+              s.id !== storeId
+                ? s
+                : {
+                    ...s,
+                    visitas: s.visitas.map((v) =>
+                      v.id === visitId ? { ...v, [field]: value } : v
+                    ),
+                  }
             )
           );
         }
 
-        function updateVisitField(storeId, visitId, field, value) {
-          setStores((prev) =>
-            prev.map((store) => {
-              if (store.id !== storeId) return store;
-              return {
-                ...store,
-                visitas: store.visitas.map((visit) =>
-                  visit.id === visitId ? { ...visit, [field]: value } : visit
-                ),
-              };
-            })
-          );
-        }
-
-        // LECTURA CHECKLIST EXCEL: F90 + punto a punto (columna F de hoja PROCESOS...)
+        // ---------- LECTURA DE EXCEL DE CHECKLIST ----------
         function handleChecklistFileChange(storeId, visitId, event) {
           const file = event.target.files?.[0];
           if (!file) return;
@@ -455,15 +433,15 @@
               if (isExcel && window.XLSX) {
                 const wb = XLSX.read(data, { type: "array" });
 
-                // >>> CORRECCIÓN: buscar hoja de procesos con nombres posibles
-                const candidateNames = [
+                // Buscar hoja de PROCESOS
+                const candidate = [
                   "PROCESOS BASICOS",
                   "PROCESOS BÁSICOS",
                   "PROCESOS Y BASICOS",
                   "PROCESOS Y BÁSICOS",
                 ];
                 let sheetName = wb.SheetNames[0];
-                for (const name of candidateNames) {
+                for (const name of candidate) {
                   if (wb.Sheets[name]) {
                     sheetName = name;
                     break;
@@ -471,11 +449,11 @@
                 }
                 const sheet = wb.Sheets[sheetName];
 
-                // 1) F90 -> % checklist global
+                // F90 -> % checklist global
                 let checklistF90 = null;
-                const cellF90 = sheet["F90"];
-                if (cellF90 && cellF90.v != null) {
-                  let rawVal = cellF90.v;
+                const cell = sheet["F90"];
+                if (cell && cell.v != null) {
+                  let rawVal = cell.v;
                   if (typeof rawVal === "number") {
                     let v = rawVal;
                     if (v <= 1) v = v * 100;
@@ -492,24 +470,17 @@
                   }
                 }
                 if (checklistF90 !== null && !isNaN(checklistF90)) {
-                  updateVisitField(
-                    storeId,
-                    visitId,
-                    "checklist",
-                    checklistF90
-                  );
+                  updateVisitField(storeId, visitId, "checklist", checklistF90);
                 }
 
-                // 2) Punto a punto: columna B (criterio) y F (0/1)
+                // Punto a punto: columna B texto, F 0/1
                 const pointValues = new Array(TOTAL_POINTS).fill(null);
                 let idx = 0;
                 for (let row = 1; row < 1000 && idx < TOTAL_POINTS; row++) {
-                  const cellB = sheet["B" + row];
-                  const cellF = sheet["F" + row];
-                  if (!cellB || String(cellB.v).toString().trim() === "") {
-                    continue;
-                  }
-                  const rawF = cellF ? cellF.v : null;
+                  const cB = sheet["B" + row];
+                  const cF = sheet["F" + row];
+                  if (!cB || String(cB.v).trim() === "") continue;
+                  const rawF = cF ? cF.v : null;
                   if (
                     rawF === 0 ||
                     rawF === 1 ||
@@ -522,25 +493,25 @@
                 }
                 updateVisitField(storeId, visitId, "pointValues", pointValues);
 
-                // 3) Texto para detectar HIT
+                // Texto para HIT
                 const csv = XLSX.utils.sheet_to_csv(sheet);
-                parseTextExtras(csv);
+                parseFromText(csv);
               } else {
                 const text =
                   typeof data === "string"
                     ? data
                     : new TextDecoder("utf-8").decode(data);
-                parseTextExtras(text);
+                parseFromText(text);
               }
             } catch (e) {
-              console.error("Error leyendo Excel de checklist", e);
+              console.error("Error leyendo Excel", e);
             }
           };
 
           if (isExcel) reader.readAsArrayBuffer(file);
           else reader.readAsText(file);
 
-          function parseTextExtras(text) {
+          function parseFromText(text) {
             if (!text) return;
             const reHit = /hit[^a-zA-Z0-9]{0,15}(s[ií]|no)/i;
             const mHit = text.match(reHit);
@@ -553,6 +524,7 @@
           }
         }
 
+        // ---------- Guardar / cargar en "nube" ----------
         function saveToCloud() {
           try {
             const payload = {
@@ -565,7 +537,7 @@
             );
             setLastSavedAt(payload.lastSavedAt);
           } catch (e) {
-            console.error("Error al guardar en nube/localStorage", e);
+            console.error("Error guardando", e);
           }
         }
 
@@ -575,7 +547,7 @@
             if (!raw) return;
             const parsed = JSON.parse(raw);
             if (parsed.stores) {
-              const normalizedStores = parsed.stores.map((s, idx) => ({
+              const norm = parsed.stores.map((s, idx) => ({
                 ...s,
                 id: idx + 1,
                 centroRegional: normalizarDelegado(s.centroRegional || ""),
@@ -586,59 +558,47 @@
                     : new Array(TOTAL_POINTS).fill(null),
                 })),
               }));
-              setStores(normalizedStores);
+              setStores(norm);
               setExpandedStoreId(null);
               setDashboardStoreId(null);
             }
             if (parsed.lastSavedAt) setLastSavedAt(parsed.lastSavedAt);
           } catch (e) {
-            console.error("Error al leer de nube/localStorage", e);
+            console.error("Error cargando", e);
           }
         }
 
-        // ========== FILTROS Y MÉTRICAS ==========
+        // ---------- Filtros y métricas ----------
+        const filteredStores = stores.filter((s) => {
+          const respAudio = deriveRespAudio(s);
+          const centroAARValor = deriveCentroAAR(s);
+          const texto = `${s.codigo} ${s.propietario} ${s.centro} ${
+            s.provincia
+          } ${s.centroRegional} ${s.correo} ${respAudio} ${centroAARValor}`.toLowerCase();
 
-        const filteredStores = stores.filter((store) => {
-          const respAudio = deriveRespAudio(store);
-          const centroAARValor = deriveCentroAAR(store);
-          const textoGlobal = `${store.codigo} ${store.propietario} ${
-            store.centro
-          } ${store.provincia} ${store.centroRegional} ${
-            store.correo
-          } ${respAudio} ${centroAARValor}`.toLowerCase();
-
-          if (search && !textoGlobal.includes(search.toLowerCase()))
-            return false;
-          if (
-            filterCodigo &&
-            store.codigo.toLowerCase() !== filterCodigo.toLowerCase()
-          )
+          if (search && !texto.includes(search.toLowerCase())) return false;
+          if (filterCodigo && s.codigo.toLowerCase() !== filterCodigo.toLowerCase())
             return false;
           if (
             filterPropietario &&
-            store.propietario.toLowerCase() !==
-              filterPropietario.toLowerCase()
+            s.propietario.toLowerCase() !== filterPropietario.toLowerCase()
           )
             return false;
-          if (
-            filterCentro &&
-            store.centro.toLowerCase() !== filterCentro.toLowerCase()
-          )
+          if (filterCentro && s.centro.toLowerCase() !== filterCentro.toLowerCase())
             return false;
           if (
             filterProvincia &&
-            store.provincia.toLowerCase() !== filterProvincia.toLowerCase()
+            s.provincia.toLowerCase() !== filterProvincia.toLowerCase()
           )
             return false;
           if (
             filterDelegado &&
-            store.centroRegional.toLowerCase() !==
-              filterDelegado.toLowerCase()
+            s.centroRegional.toLowerCase() !== filterDelegado.toLowerCase()
           )
             return false;
           if (
             filterResponsableAudio &&
-            deriveRespAudio(store).toLowerCase() !==
+            deriveRespAudio(s).toLowerCase() !==
               filterResponsableAudio.toLowerCase()
           )
             return false;
@@ -649,7 +609,7 @@
             return false;
           if (
             filterCorreo &&
-            (store.correo || "").toLowerCase() !== filterCorreo.toLowerCase()
+            (s.correo || "").toLowerCase() !== filterCorreo.toLowerCase()
           )
             return false;
           return true;
@@ -658,8 +618,8 @@
         const sortedFilteredStores = [...filteredStores].sort((a, b) => {
           const da = (a.centroRegional || "").toLowerCase();
           const db = (b.centroRegional || "").toLowerCase();
-          const cmpD = da.localeCompare(db, "es", { sensitivity: "base" });
-          if (cmpD !== 0) return cmpD;
+          const cmp = da.localeCompare(db, "es", { sensitivity: "base" });
+          if (cmp !== 0) return cmp;
           const ca = (a.centro || "").toLowerCase();
           const cb = (b.centro || "").toLowerCase();
           return ca.localeCompare(cb, "es", { sensitivity: "base" });
@@ -682,10 +642,10 @@
         );
 
         const allVisits = stores.flatMap((s) => s.visitas);
-        const visitasValidasGlobal = allVisits.filter(
+        const visitasValidas = allVisits.filter(
           (v) => v.excelName && v.excelName !== ""
         );
-        const totalVisitas = visitasValidasGlobal.length;
+        const totalVisitas = visitasValidas.length;
         const totalTiendas = stores.length;
         const tiendasConVisita = stores.filter((s) =>
           s.visitas.some((v) => v.excelName && v.excelName !== "")
@@ -696,12 +656,10 @@
             : 0;
 
         const checklistMediaGlobal = media(
-          visitasValidasGlobal.map((v) => v.checklist)
+          visitasValidas.map((v) => v.checklist)
         );
-        const hitMediaGlobal = porcentajeSi(
-          visitasValidasGlobal.map((v) => v.hit)
-        );
-        const aplicaHitGlobal = aplicaHitTexto(visitasValidasGlobal);
+        const hitMediaGlobal = porcentajeSi(visitasValidas.map((v) => v.hit));
+        const aplicaHitGlobal = aplicaHitTexto(visitasValidas);
 
         const algunFechaInvalida = allVisits.some(
           (v) => v.fecha && !isValidFecha(v.fecha)
@@ -710,17 +668,15 @@
         const dashboardStore =
           stores.find((s) => s.id === dashboardStoreId) || stores[0] || null;
 
-        let dashVisitasConExcel = [];
-        let dashChecklistMedio = null;
+        let dashVisitas = [];
+        let dashChecklist = null;
         let dashAplicaHit = null;
         if (dashboardStore) {
-          dashVisitasConExcel = dashboardStore.visitas.filter(
+          dashVisitas = dashboardStore.visitas.filter(
             (v) => v.excelName && v.excelName !== ""
           );
-          dashChecklistMedio = media(
-            dashVisitasConExcel.map((v) => v.checklist)
-          );
-          dashAplicaHit = aplicaHitTexto(dashVisitasConExcel);
+          dashChecklist = media(dashVisitas.map((v) => v.checklist));
+          dashAplicaHit = aplicaHitTexto(dashVisitas);
         }
 
         // Dashboard punto a punto
@@ -729,22 +685,20 @@
           (p) => p !== null && !isNaN(p)
         );
         const chartPoints = pointPercents
-          .map((pct, i) =>
+          .map((pct, idx) =>
             pct === null
               ? null
               : {
-                  idx: i,
-                  num: CHECKLIST_POINTS[i].index,
-                  etapa: CHECKLIST_POINTS[i].etapa,
-                  text: CHECKLIST_POINTS[i].text,
+                  idx,
+                  num: CHECKLIST_POINTS[idx].index,
+                  etapa: CHECKLIST_POINTS[idx].etapa,
+                  text: CHECKLIST_POINTS[idx].text,
                   pct,
                 }
           )
           .filter(Boolean);
 
-        // =====================
-        // RENDER
-        // =====================
+        // ========= RENDER =========
 
         if (!authorized) {
           return (
@@ -779,7 +733,7 @@
         }
 
         return (
-          <div className="min-h-screen bg-gray-100 font-sans">
+          <div className="min-h-screen bg-gray-100">
             {/* HEADER */}
             <header className="bg-red-600 text-white p-5 rounded-b-3xl shadow flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -789,8 +743,7 @@
                     Seguimiento de procesos de Audio
                   </h1>
                   <p className="text-xs text-red-100">
-                    Checklist, visitas, centros exclusivos y audiología
-                    avanzada.
+                    Checklist de visita, visitas por centro y KPIs.
                   </p>
                 </div>
               </div>
@@ -826,8 +779,8 @@
                 </h2>
                 <p className="text-gray-500 mb-4 text-sm">
                   Etapas del proceso de audio según el checklist oficial. Cada
-                  criterio está numerado y se usa para el mapa de aplicación
-                  detallado punto a punto.
+                  criterio está numerado y se usa para el mapa de aplicación por
+                  punto.
                 </p>
                 <div className="flex gap-4 overflow-x-auto pb-2">
                   {CHECKLIST.map((stage, stageIdx) => (
@@ -845,8 +798,7 @@
                       </div>
                       <ul className="space-y-1">
                         {stage.items.map((item, itemIdx) => {
-                          const globalIdx =
-                            STAGE_OFFSETS[stageIdx] + itemIdx + 1;
+                          const num = STAGE_OFFSETS[stageIdx] + itemIdx + 1;
                           return (
                             <li
                               key={itemIdx}
@@ -855,7 +807,7 @@
                               <span className="mt-1 h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
                               <span className="leading-tight">
                                 <span className="font-semibold mr-1">
-                                  {globalIdx}.
+                                  {num}.
                                 </span>
                                 {item}
                               </span>
@@ -868,14 +820,14 @@
                 </div>
               </section>
 
-              {/* DASHBOARD GENERAL + POR CENTRO */}
+              {/* DASHBOARD GENERAL Y POR CENTRO */}
               <section className="bg-white p-4 rounded-2xl shadow space-y-4">
                 <h3 className="font-bold text-sm mb-1">
                   Dashboard horizontal (general y por centro)
                 </h3>
                 {stores.length === 0 ? (
                   <p className="text-xs text-gray-500">
-                    Aún no hay tiendas cargadas. Pega el listado en la sección
+                    Aún no hay centros cargados. Pega el listado en la sección
                     de LISTADO DE CENTROS.
                   </p>
                 ) : (
@@ -888,8 +840,7 @@
                             General red Afflelou Audio
                           </p>
                           <p className="text-[10px] text-gray-500">
-                            Visitas contabilizadas por Excel adjunto
-                            (checklist).
+                            Visitas con Excel adjunto (checklist).
                           </p>
                         </div>
                         <div
@@ -907,7 +858,7 @@
                       </div>
                       <div className="text-[10px] space-y-1">
                         <p>
-                          Total tiendas: <strong>{totalTiendas}</strong> · con
+                          Total centros: <strong>{totalTiendas}</strong> · con
                           al menos 1 visita:{" "}
                           <strong>
                             {tiendasConVisita} (
@@ -915,7 +866,7 @@
                           </strong>
                         </p>
                         <p>
-                          Total visitas (Excels adjuntos):{" "}
+                          Total visitas con checklist:{" "}
                           <strong>{totalVisitas}</strong>
                         </p>
                         <p>
@@ -957,9 +908,7 @@
                             }
                           >
                             {stores.length === 0 && (
-                              <option value="">
-                                No hay centros cargados
-                              </option>
+                              <option>No hay centros</option>
                             )}
                             {stores.length > 0 && (
                               <>
@@ -977,12 +926,12 @@
                         </div>
                         <div
                           className="w-12 h-12 rounded-full flex items-center justify-center text-[10px] font-bold text-red-700"
-                          style={donutStyle(dashChecklistMedio)}
+                          style={donutStyle(dashChecklist)}
                         >
                           <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
                             <span>
-                              {dashChecklistMedio !== null
-                                ? `${dashChecklistMedio.toFixed(0)}%`
+                              {dashChecklist !== null
+                                ? `${dashChecklist.toFixed(0)}%`
                                 : "--"}
                             </span>
                           </div>
@@ -1001,18 +950,17 @@
                                 dashboardStore.centroRegional
                               )}
                             >
-                              {dashboardStore.provincia ||
-                                "Provincia sin definir"}
+                              {dashboardStore.provincia || "Sin definir"}
                             </span>
                           </p>
                           <p>
-                            Nº visitas (Excels adjuntos):{" "}
-                            <strong>{dashVisitasConExcel.length}</strong>
+                            Nº visitas con checklist:{" "}
+                            <strong>{dashVisitas.length}</strong>
                           </p>
                           <p>
-                            % checklist medio:{" "}
-                            {dashChecklistMedio !== null
-                              ? `${dashChecklistMedio.toFixed(0)}%`
+                            Checklist medio:{" "}
+                            {dashChecklist !== null
+                              ? `${dashChecklist.toFixed(0)}%`
                               : "-"}
                           </p>
                           <p>
@@ -1022,8 +970,7 @@
                         </div>
                       ) : (
                         <p className="text-[10px] text-gray-500">
-                          Selecciona un centro en el desplegable para ver su
-                          detalle.
+                          Selecciona un centro en el desplegable superior.
                         </p>
                       )}
                     </div>
@@ -1046,24 +993,23 @@
                 <p className="text-[11px] text-gray-600 mb-3">
                   Basado en los Excels adjuntos (hoja{" "}
                   <strong>PROCESOS BASICOS / PROCESOS Y BASICOS</strong>,
-                  columna F: 0 = no aplica, 1 = aplica). Cada punto es un
-                  criterio numerado.
+                  columna F: 0 = no aplica, 1 = aplica). Cada punto corresponde
+                  a un criterio numerado.
                 </p>
-
                 {!hasPointData ? (
                   <p className="text-xs text-gray-500">
-                    Aún no hay datos punto a punto. Adjunta al menos un Excel de
-                    checklist para ver la aplicación por criterio.
+                    Aún no hay datos punto a punto. Adjunta al menos un Excel
+                    checklist en alguna visita.
                   </p>
                 ) : (
                   <div className="space-y-4">
-                    <div className="w-full bg-gray-50 border rounded-2xl px-4 py-3">
+                    <div className="bg-gray-50 border rounded-2xl px-4 py-3">
                       <svg
                         viewBox="0 0 100 100"
                         preserveAspectRatio="none"
                         className="w-full h-40"
                       >
-                        {/* Eje base */}
+                        {/* eje base */}
                         <line
                           x1="0"
                           y1="90"
@@ -1072,8 +1018,7 @@
                           stroke="#9ca3af"
                           strokeWidth="0.4"
                         />
-
-                        {/* Líneas de referencia 25/50/75 */}
+                        {/* líneas 25/50/75 */}
                         {[25, 50, 75].map((p) => (
                           <line
                             key={p}
@@ -1086,8 +1031,7 @@
                             strokeDasharray="1 2"
                           />
                         ))}
-
-                        {/* Path principal */}
+                        {/* path */}
                         {chartPoints.length > 1 && (
                           <path
                             d={
@@ -1110,8 +1054,7 @@
                             strokeLinecap="round"
                           />
                         )}
-
-                        {/* Puntos */}
+                        {/* puntos */}
                         {chartPoints.map((p, i) => {
                           const x =
                             (i / (chartPoints.length - 1 || 1)) * 100;
@@ -1145,12 +1088,11 @@
                       </div>
                     </div>
 
-                    {/* Tooltip / detalle punto seleccionado */}
                     <div className="bg-gray-50 border rounded-2xl px-4 py-3 text-[11px]">
                       {hoverPointIdx === null ? (
                         <p className="text-gray-500">
                           Pasa el ratón por encima de cualquier punto para ver
-                          el detalle del criterio y su % medio de aplicación.
+                          el criterio y su % medio de aplicación.
                         </p>
                       ) : (
                         (() => {
@@ -1185,9 +1127,562 @@
               </section>
 
               {/* LISTADO DE CENTROS */}
-              <!-- (resto del bloque de listado de centros se mantiene igual que antes) -->
-              <!-- Para no alargar aún más, lo he dejado exactamente igual que en la versión anterior, -->
-              <!-- solo hemos tocado la lógica de lectura de Excel y el dashboard punto a punto. -->
+              <section className="bg-white p-6 rounded-2xl shadow">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h3 className="font-bold text-lg bg-red-600 text-white inline-flex items-center px-4 py-2 rounded-2xl">
+                      LISTADO DE CENTROS
+                    </h3>
+                    <button
+                      className="text-xs px-3 py-1 rounded-full border border-red-300 text-red-700 bg-white/80 hover:bg-white"
+                      onClick={() => setShowCarga((p) => !p)}
+                    >
+                      {showCarga
+                        ? "Ocultar edición de listado"
+                        : "Cargar / editar listado desde Excel"}
+                    </button>
+                  </div>
+
+                  {showCarga && (
+                    <div className="bg-gray-50 border rounded-2xl p-3">
+                      <p className="text-xs text-gray-600 mb-2">
+                        Pega aquí el listado de centros desde Excel (una fila
+                        por línea, campos separados por tabulador):
+                        <br />
+                        <span className="font-semibold">
+                          CODIGO · PROPIETARIO · CENTRO · PROVINCIA · CORREO ·
+                          REGIONAL
+                        </span>
+                      </p>
+                      <textarea
+                        className="w-full p-2 border rounded mb-2 text-xs h-20"
+                        placeholder="Ejemplo:&#10;4ABB&#9;MAZA Oriol&#9;PAMPLONA C. Exclusivo&#9;NAVARRA&#9;navarra.pamplona.carrefour@afflelou.es&#9;Sonia Godino"
+                        value={storesInput}
+                        onChange={(e) => setStoresInput(e.target.value)}
+                      ></textarea>
+                      <button
+                        onClick={handleApplyStores}
+                        className="text-xs px-3 py-1 rounded-full bg-red-600 text-white font-semibold shadow"
+                      >
+                        Aplicar/actualizar listado
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Faldón rojo buscador + filtros */}
+                  <div className="bg-red-600 text-white rounded-2xl p-3">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className="text-xl">🔍</span>
+                        <input
+                          type="text"
+                          placeholder="Buscar en todos los campos..."
+                          className="flex-1 px-3 py-1 rounded text-xs text-gray-800"
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                        />
+                      </div>
+                      <div className="text-[10px] opacity-90 lg:text-right">
+                        Filtros por columna: selecciona un valor para filtrar el
+                        listado (como en Excel).
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-nowrap gap-2 text-[11px] overflow-x-auto">
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[110px]"
+                        value={filterCodigo}
+                        onChange={(e) => setFilterCodigo(e.target.value)}
+                      >
+                        <option value="">Código (todos)</option>
+                        {opcionesCodigo.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[130px]"
+                        value={filterPropietario}
+                        onChange={(e) =>
+                          setFilterPropietario(e.target.value)
+                        }
+                      >
+                        <option value="">Propietario (todos)</option>
+                        {opcionesPropietario.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[160px]"
+                        value={filterCentro}
+                        onChange={(e) => setFilterCentro(e.target.value)}
+                      >
+                        <option value="">Centro (todos)</option>
+                        {opcionesCentro.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[140px]"
+                        value={filterProvincia}
+                        onChange={(e) =>
+                          setFilterProvincia(e.target.value)
+                        }
+                      >
+                        <option value="">Provincia (todas)</option>
+                        {opcionesProvincia.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[140px]"
+                        value={filterCorreo}
+                        onChange={(e) => setFilterCorreo(e.target.value)}
+                      >
+                        <option value="">Correo (todos)</option>
+                        {opcionesCorreo.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[150px]"
+                        value={filterDelegado}
+                        onChange={(e) => setFilterDelegado(e.target.value)}
+                      >
+                        <option value="">Delegado (todos)</option>
+                        {opcionesDelegado.map((op) => (
+                          <option key={op} value={op}>
+                            {op || "Sin delegado"}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[150px]"
+                        value={filterResponsableAudio}
+                        onChange={(e) =>
+                          setFilterResponsableAudio(e.target.value)
+                        }
+                      >
+                        <option value="">Resp. audio (todos)</option>
+                        {opcionesRespAudio.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[120px]"
+                        value={filterCentroAAR}
+                        onChange={(e) => setFilterCentroAAR(e.target.value)}
+                      >
+                        <option value="">Centro AAR (todos)</option>
+                        <option value="Sí">Sí</option>
+                        <option value="No">No</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Tabla centros */}
+                  {stores.length === 0 ? (
+                    <p className="text-xs text-gray-500">
+                      Aún no hay centros cargados. Pega el listado arriba y
+                      pulsa "Aplicar/actualizar listado".
+                    </p>
+                  ) : (
+                    <div className="overflow-y-auto">
+                      <table className="w-full text-[11px] border-collapse">
+                        <thead>
+                          <tr className="bg-gray-50 border-b">
+                            <th className="text-left px-2 py-2">Nº</th>
+                            <th className="text-left px-2 py-2">Código</th>
+                            <th className="text-left px-2 py-2">
+                              Propietario
+                            </th>
+                            <th className="text-left px-2 py-2">Centro</th>
+                            <th className="text-left px-2 py-2">
+                              Provincia
+                            </th>
+                            <th className="text-left px-2 py-2">Correo</th>
+                            <th className="text-left px-2 py-2">
+                              Delegado regional
+                            </th>
+                            <th className="text-left px-2 py-2">
+                              Resp. audio
+                            </th>
+                            <th className="text-left px-2 py-2">
+                              Centro AAR
+                            </th>
+                            <th className="text-right px-2 py-2">
+                              Nº visitas
+                            </th>
+                            <th className="text-right px-2 py-2">
+                              Checklist medio %
+                            </th>
+                            <th className="text-right px-2 py-2">
+                              Aplica HIT
+                            </th>
+                            <th className="text-center px-2 py-2">
+                              Visitas / checklist (4)
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {sortedFilteredStores.map((s, index) => {
+                            const visitasConExcel = s.visitas.filter(
+                              (v) => v.excelName && v.excelName !== ""
+                            );
+                            const checklistMedio = media(
+                              visitasConExcel.map((v) => v.checklist)
+                            );
+                            const aplicaHitTienda =
+                              aplicaHitTexto(visitasConExcel);
+                            const respAudioCentro = deriveRespAudio(s);
+                            const centroAARValor = deriveCentroAAR(s);
+                            const isExpanded = expandedStoreId === s.id;
+
+                            const checklistBadge =
+                              checklistMedio !== null ? (
+                                <span
+                                  className={`inline-block min-w-[40px] px-2 py-0.5 rounded-full ${
+                                    checklistMedio >= 85
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-red-100 text-red-700"
+                                  }`}
+                                >
+                                  {checklistMedio.toFixed(0)}%
+                                </span>
+                              ) : (
+                                "-"
+                              );
+
+                            return (
+                              <React.Fragment key={s.id}>
+                                <tr className="border-b hover:bg-gray-50 align-top">
+                                  <td className="px-2 py-1">{index + 1}</td>
+                                  <td className="px-2 py-1">
+                                    <span className="font-semibold">
+                                      {s.codigo || "-"}
+                                    </span>
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    {s.propietario || "-"}
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    {s.centro || "-"}
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    <span
+                                      className="inline-block px-2 py-0.5 rounded-full"
+                                      style={delegadoColor(s.centroRegional)}
+                                    >
+                                      {s.provincia || "-"}
+                                    </span>
+                                  </td>
+                                  <td className="px-2 py-1 break-all">
+                                    {s.correo || "-"}
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    <span
+                                      className="inline-block px-2 py-0.5 rounded-full"
+                                      style={delegadoColor(s.centroRegional)}
+                                    >
+                                      {s.centroRegional || "Sin delegado"}
+                                    </span>
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    {respAudioCentro || "-"}
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    {centroAARValor || "-"}
+                                  </td>
+                                  <td className="px-2 py-1 text-right">
+                                    {visitasConExcel.length}
+                                  </td>
+                                  <td className="px-2 py-1 text-right">
+                                    {checklistBadge}
+                                  </td>
+                                  <td className="px-2 py-1 text-right">
+                                    {aplicaHitTienda || "-"}
+                                  </td>
+                                  <td className="px-2 py-1 text-center">
+                                    <button
+                                      className={`text-[10px] px-2 py-1 rounded-full border  ${
+                                        isExpanded
+                                          ? "border-red-600 bg-red-600 text-white"
+                                          : "border-red-400 text-red-600 hover:bg-red-50"
+                                      }`}
+                                      style={{ cursor: "pointer" }}
+                                      onClick={() =>
+                                        setExpandedStoreId(
+                                          isExpanded ? null : s.id
+                                        )
+                                      }
+                                    >
+                                      {isExpanded
+                                        ? "Ocultar"
+                                        : "Ver / añadir visitas"}
+                                    </button>
+                                  </td>
+                                </tr>
+
+                                {isExpanded && (
+                                  <tr className="bg-gray-50 border-b">
+                                    <td colSpan={13} className="px-3 py-3">
+                                      <div className="text-[11px]">
+                                        <p className="font-semibold mb-2">
+                                          Visitas y checklist adjunto (hasta 4)
+                                          – {s.centro || s.codigo}
+                                        </p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+                                          {s.visitas.map((visit) => (
+                                            <div
+                                              key={visit.id}
+                                              className="border rounded-xl p-2 bg-white"
+                                            >
+                                              <p className="font-semibold mb-1">
+                                                Visita {visit.id}
+                                              </p>
+                                              <input
+                                                type="text"
+                                                placeholder="dd/mm/aaaa"
+                                                className={`w-full border rounded px-2 py-1 mb-1 ${
+                                                  visit.fecha &&
+                                                  !isValidFecha(visit.fecha)
+                                                    ? "border-red-500 bg-red-50"
+                                                    : ""
+                                                }`}
+                                                value={visit.fecha}
+                                                onChange={(e) =>
+                                                  updateVisitField(
+                                                    s.id,
+                                                    visit.id,
+                                                    "fecha",
+                                                    e.target.value
+                                                  )
+                                                }
+                                              />
+                                              <select
+                                                className="w-full border rounded px-2 py-1 mb-1"
+                                                value={visit.responsable || ""}
+                                                onChange={(e) =>
+                                                  updateVisitField(
+                                                    s.id,
+                                                    visit.id,
+                                                    "responsable",
+                                                    e.target.value
+                                                  )
+                                                }
+                                              >
+                                                <option value="">
+                                                  Resp. audio
+                                                </option>
+                                                <option value="Sonia">
+                                                  Sonia
+                                                </option>
+                                                <option value="Ary Rojas">
+                                                  Ary Rojas
+                                                </option>
+                                              </select>
+
+                                              <label className="inline-flex items-center px-3 py-1 rounded-xl border cursor-pointer hover:bg-gray-50 mb-1">
+                                                <span className="text-[11px] font-semibold">
+                                                  Adjuntar Excel checklist
+                                                </span>
+                                                <input
+                                                  type="file"
+                                                  accept=".xlsx,.xls,.csv"
+                                                  className="hidden"
+                                                  onChange={(e) =>
+                                                    handleChecklistFileChange(
+                                                      s.id,
+                                                      visit.id,
+                                                      e
+                                                    )
+                                                  }
+                                                />
+                                              </label>
+                                              <p className="text-[10px] text-gray-500 mb-1 truncate">
+                                                {visit.excelName ||
+                                                  "Sin archivo"}
+                                              </p>
+
+                                              <div className="grid grid-cols-3 gap-1 mt-1">
+                                                <div>
+                                                  <p className="text-[10px] mb-0.5">
+                                                    Checklist % (F90)
+                                                  </p>
+                                                  <input
+                                                    type="number"
+                                                    min={0}
+                                                    max={100}
+                                                    className="w-full border rounded px-1 py-0.5"
+                                                    value={
+                                                      visit.checklist ?? ""
+                                                    }
+                                                    onChange={(e) => {
+                                                      const val =
+                                                        e.target.value;
+                                                      const num =
+                                                        val === ""
+                                                          ? null
+                                                          : Number(val);
+                                                      updateVisitField(
+                                                        s.id,
+                                                        visit.id,
+                                                        "checklist",
+                                                        isNaN(num)
+                                                          ? null
+                                                          : num
+                                                      );
+                                                    }}
+                                                  />
+                                                </div>
+                                                <div>
+                                                  <p className="text-[10px] mb-0.5">
+                                                    HIT
+                                                  </p>
+                                                  <select
+                                                    className="w-full border rounded px-1 py-0.5"
+                                                    value={visit.hit || ""}
+                                                    onChange={(e) =>
+                                                      updateVisitField(
+                                                        s.id,
+                                                        visit.id,
+                                                        "hit",
+                                                        e.target.value
+                                                      )
+                                                    }
+                                                  >
+                                                    <option value="">
+                                                      -
+                                                    </option>
+                                                    <option value="Sí">
+                                                      Sí
+                                                    </option>
+                                                    <option value="No">
+                                                      No
+                                                    </option>
+                                                  </select>
+                                                </div>
+                                                <div>
+                                                  <p className="text-[10px] mb-0.5">
+                                                    Centro AAR
+                                                  </p>
+                                                  <select
+                                                    className="w-full border rounded px-1 py-0.5"
+                                                    value={
+                                                      visit.centroAAR || ""
+                                                    }
+                                                    onChange={(e) =>
+                                                      updateVisitField(
+                                                        s.id,
+                                                        visit.id,
+                                                        "centroAAR",
+                                                        e.target.value
+                                                      )
+                                                    }
+                                                  >
+                                                    <option value="">
+                                                      -
+                                                    </option>
+                                                    <option value="Sí">
+                                                      Sí
+                                                    </option>
+                                                    <option value="No">
+                                                      No
+                                                    </option>
+                                                  </select>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                        <p className="text-[10px] text-gray-500">
+                                          Adjunta el Excel del checklist: la
+                                          plataforma lee automáticamente el %
+                                          global desde la celda{" "}
+                                          <strong>F90</strong> y los criterios
+                                          0/1 de la hoja PROCESOS BASICOS /
+                                          PROCESOS Y BASICOS (columna F).
+                                        </p>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </React.Fragment>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+
+                      {/* KPIs globales */}
+                      <div className="mt-4 text-[11px] text-gray-600 flex flex-wrap gap-3">
+                        <span>
+                          Total centros: <strong>{totalTiendas}</strong>
+                        </span>
+                        <span>
+                          Centros con al menos 1 visita (Excel):{" "}
+                          <strong>
+                            {tiendasConVisita} (
+                            {porcentajeTiendasVisitadas.toFixed(0)}%)
+                          </strong>
+                        </span>
+                        <span>
+                          Total visitas (Excels adjuntos):{" "}
+                          <strong>{totalVisitas}</strong>
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${
+                            checklistMediaGlobal !== null &&
+                            checklistMediaGlobal >= 85
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          <span className="w-2 h-2 rounded-full bg-current/70" />
+                          <span>
+                            Checklist medio global:{" "}
+                            {checklistMediaGlobal !== null
+                              ? `${checklistMediaGlobal.toFixed(0)}%`
+                              : "-"}
+                          </span>
+                        </span>
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${
+                            hitMediaGlobal !== null && hitMediaGlobal >= 85
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          <span className="w-2 h-2 rounded-full bg-current/70" />
+                          <span>
+                            % aplicación HIT global:{" "}
+                            {hitMediaGlobal !== null
+                              ? `${hitMediaGlobal.toFixed(0)}%`
+                              : "-"}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </section>
             </main>
           </div>
         );
