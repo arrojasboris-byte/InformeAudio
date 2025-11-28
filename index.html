@@ -450,10 +450,6 @@
         const [checklistViewValue, setChecklistViewValue] =
           useState("global"); // "global" o id de centro como string
 
-        const [exclusiveMonth, setExclusiveMonth] = useState(
-          MONTH_OPTIONS[0].value
-        );
-
         useEffect(() => {
           try {
             const raw = localStorage.getItem("seguimientoAudioV1");
@@ -484,11 +480,12 @@
                   (a, aidx) => ({
                     id: a.id ?? aidx + 1,
                     tipo: a.tipo || "",
-                    mes: a.mes || "",
+                    ventasMes: a.ventasMes || a.mes || "",
+                    ventas: a.ventas || "",
+                    objetivoMes: a.objetivoMes || a.mes || "",
+                    objetivo: a.objetivo || "",
                     fecha: a.fecha || "",
                     derivaciones: a.derivaciones || "",
-                    ventas: a.ventas || "",
-                    objetivo: a.objetivo || "",
                   })
                 ),
               }));
@@ -588,11 +585,12 @@
               const newAction = {
                 id: nextId,
                 tipo: "",
-                mes: exclusiveMonth || "",
+                ventasMes: "",
+                ventas: "",
+                objetivoMes: "",
+                objetivo: "",
                 fecha: "",
                 derivaciones: "",
-                ventas: "",
-                objetivo: "",
               };
               return {
                 ...store,
@@ -768,11 +766,12 @@
                   (a, aidx) => ({
                     id: a.id ?? aidx + 1,
                     tipo: a.tipo || "",
-                    mes: a.mes || "",
+                    ventasMes: a.ventasMes || a.mes || "",
+                    ventas: a.ventas || "",
+                    objetivoMes: a.objetivoMes || a.mes || "",
+                    objetivo: a.objetivo || "",
                     fecha: a.fecha || "",
                     derivaciones: a.derivaciones || "",
-                    ventas: a.ventas || "",
-                    objetivo: a.objetivo || "",
                   })
                 ),
               }));
@@ -946,10 +945,7 @@
         const exclusiveStores = stores.filter(isExclusiveStore);
 
         const exclusiveSummaries = exclusiveStores.map((store) => {
-          const actions = (store.exclusiveActions || []).filter(
-            (a) =>
-              !exclusiveMonth || !a.mes || a.mes === exclusiveMonth
-          );
+          const actions = store.exclusiveActions || [];
           const ventas = actions.reduce(
             (sum, a) => sum + (Number(a.ventas) || 0),
             0
@@ -1920,495 +1916,4 @@
                 <section className="mt-10 bg-white p-6 rounded-2xl shadow">
                   <div className="flex items-center justify-between mb-3 gap-3">
                     <div>
-                      <h3 className="font-bold text-lg">
-                        Centros exclusivos – acciones y ventas
-                      </h3>
-                      <p className="text-[10px] text-gray-500">
-                        Centros exclusivos configurados (variantes de nombre):
-                        Fuenlabrada Paseo de la Estación, Reina Mercedes,
-                        Zaragoza Calle Delicias / CC Plaza de la Estación,
-                        Peñacastillo, Torrelavega, Los Valles, Santiago de
-                        Compostela, Pamplona C. Exclusivo.
-                      </p>
-                    </div>
-                    <div className="text-[11px]">
-                      <span className="mr-1">Mes:</span>
-                      <select
-                        className="border rounded px-2 py-1"
-                        value={exclusiveMonth}
-                        onChange={(e) => setExclusiveMonth(e.target.value)}
-                      >
-                        {MONTH_OPTIONS.map((m) => (
-                          <option key={m.value} value={m.value}>
-                            {m.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {exclusiveStores.length === 0 ? (
-                    <p className="text-xs text-gray-500">
-                      Ningún centro del listado coincide con los centros
-                      exclusivos configurados.
-                    </p>
-                  ) : (
-                    <>
-                      {/* Resumen exclusivo */}
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 text-[11px]">
-                        <div className="bg-amber-50 border border-amber-200 rounded-2xl px-3 py-2">
-                          <p className="font-semibold mb-1">
-                            Nº centros exclusivos
-                          </p>
-                          <p className="text-2xl font-bold">
-                            {exclusiveStores.length}
-                          </p>
-                        </div>
-                        <div className="bg-amber-50 border border-amber-200 rounded-2xl px-3 py-2">
-                          <p className="font-semibold mb-1">
-                            Ventas del mes seleccionado €
-                          </p>
-                          <p className="text-2xl font-bold">
-                            {totalVentasEx.toLocaleString("es-ES", {
-                              minimumFractionDigits: 0,
-                            })}
-                          </p>
-                        </div>
-                        <div className="bg-amber-50 border border-amber-200 rounded-2xl px-3 py-2">
-                          <p className="font-semibold mb-1">
-                            % cumplimiento objetivo global
-                          </p>
-                          <p
-                            className={
-                              "text-2xl font-bold inline-flex px-2 py-1 rounded-full " +
-                              resultBadgeClass(pctGlobalEx)
-                            }
-                          >
-                            {pctGlobalEx !== null
-                              ? `${pctGlobalEx.toFixed(0)}%`
-                              : "-"}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="overflow-x-auto text-[11px]">
-                        <table className="min-w-full border-collapse">
-                          <thead>
-                            <tr className="bg-amber-50 border-b">
-                              <th className="text-left px-2 py-2">Centro</th>
-                              <th className="text-left px-2 py-2">
-                                Provincia
-                              </th>
-                              <th className="text-left px-2 py-2">
-                                Delegado
-                              </th>
-                              <th className="text-right px-2 py-2">
-                                Ventas mensuales €
-                              </th>
-                              <th className="text-right px-2 py-2">
-                                Objetivo mensual €
-                              </th>
-                              <th className="text-right px-2 py-2">
-                                % resultado
-                              </th>
-                              <th className="text-center px-2 py-2">
-                                Acciones, meses y derivaciones (+)
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {exclusiveSummaries.map((row) => {
-                              const { store, ventas, objetivo, pct } = row;
-                              const isExpanded =
-                                expandedStoreId ===
-                                `ex-${store.id}`;
-                              return (
-                                <React.Fragment key={store.id}>
-                                  <tr className="border-b bg-amber-50/40 hover:bg-amber-100/60 align-top">
-                                    <td className="px-2 py-1">
-                                      <span className="font-semibold">
-                                        {store.centro || store.codigo}
-                                      </span>
-                                    </td>
-                                    <td className="px-2 py-1">
-                                      {store.provincia || "-"}
-                                    </td>
-                                    <td className="px-2 py-1">
-                                      {store.centroRegional || "-"}
-                                    </td>
-                                    <td className="px-2 py-1 text-right">
-                                      {ventas.toLocaleString("es-ES", {
-                                        minimumFractionDigits: 0,
-                                      })}
-                                    </td>
-                                    <td className="px-2 py-1 text-right">
-                                      {objetivo.toLocaleString("es-ES", {
-                                        minimumFractionDigits: 0,
-                                      })}
-                                    </td>
-                                    <td className="px-2 py-1 text-right">
-                                      <span
-                                        className={
-                                          "inline-block px-2 py-0.5 rounded-full " +
-                                          resultBadgeClass(pct)
-                                        }
-                                      >
-                                        {pct !== null
-                                          ? `${pct.toFixed(0)}%`
-                                          : "-"}
-                                      </span>
-                                    </td>
-                                    <td className="px-2 py-1 text-center">
-                                      <button
-                                        className="text-[10px] px-2 py-1 rounded-full border border-amber-500 text-amber-700 hover:bg-amber-100"
-                                        onClick={() =>
-                                          setExpandedStoreId(
-                                            isExpanded
-                                              ? null
-                                              : `ex-${store.id}`
-                                          )
-                                        }
-                                      >
-                                        {isExpanded
-                                          ? "Ocultar acciones"
-                                          : "Ver / añadir (+)"}
-                                      </button>
-                                    </td>
-                                  </tr>
-                                  {isExpanded && (
-                                    <tr className="bg-amber-50 border-b">
-                                      <td
-                                        colSpan={7}
-                                        className="px-3 py-3"
-                                      >
-                                        <div className="text-[11px]">
-                                          <p className="font-semibold mb-2">
-                                            Acciones comerciales / derivaciones
-                                            – {store.centro || store.codigo}
-                                          </p>
-                                          <div className="overflow-x-auto mb-2">
-                                            <table className="min-w-full border-collapse">
-                                              <thead>
-                                                <tr className="bg-white border-b">
-                                                  <th className="text-left px-2 py-1">
-                                                    Acciones
-                                                  </th>
-                                                  <th className="text-left px-2 py-1">
-                                                    Mes
-                                                  </th>
-                                                  <th className="text-left px-2 py-1">
-                                                    Fecha acción
-                                                  </th>
-                                                  <th className="text-right px-2 py-1">
-                                                    Derivaciones
-                                                  </th>
-                                                  <th className="text-right px-2 py-1">
-                                                    Ventas mensuales €
-                                                  </th>
-                                                  <th className="text-right px-2 py-1">
-                                                    Objetivo mensual €
-                                                  </th>
-                                                  <th className="text-right px-2 py-1">
-                                                    % resultado
-                                                  </th>
-                                                </tr>
-                                              </thead>
-                                              <tbody>
-                                                {(store.exclusiveActions ||
-                                                  []
-                                                ).map((act) => {
-                                                  const ventasNum =
-                                                    Number(
-                                                      act.ventas
-                                                    ) || 0;
-                                                  const objNum =
-                                                    Number(
-                                                      act.objetivo
-                                                    ) || 0;
-                                                  const pctAct =
-                                                    objNum > 0
-                                                      ? (ventasNum /
-                                                          objNum) *
-                                                        100
-                                                      : null;
-                                                  return (
-                                                    <tr
-                                                      key={act.id}
-                                                      className="border-b bg-white"
-                                                    >
-                                                      <td className="px-2 py-1">
-                                                        <select
-                                                          className="w-full border rounded px-1 py-0.5"
-                                                          value={
-                                                            act.tipo || ""
-                                                          }
-                                                          onChange={(e) =>
-                                                            updateExclusiveActionField(
-                                                              store.id,
-                                                              act.id,
-                                                              "tipo",
-                                                              e.target.value
-                                                            )
-                                                          }
-                                                        >
-                                                          <option value="">
-                                                            Selecciona
-                                                          </option>
-                                                          {ACCION_TIPOS.map(
-                                                            (t) => (
-                                                              <option
-                                                                key={t}
-                                                                value={t}
-                                                              >
-                                                                {t}
-                                                              </option>
-                                                            )
-                                                          )}
-                                                        </select>
-                                                      </td>
-                                                      <td className="px-2 py-1">
-                                                        <select
-                                                          className="w-full border rounded px-1 py-0.5"
-                                                          value={
-                                                            act.mes || ""
-                                                          }
-                                                          onChange={(e) =>
-                                                            updateExclusiveActionField(
-                                                              store.id,
-                                                              act.id,
-                                                              "mes",
-                                                              e.target.value
-                                                            )
-                                                          }
-                                                        >
-                                                          <option value="">
-                                                            Mes
-                                                          </option>
-                                                          {MONTH_OPTIONS.map(
-                                                            (m) => (
-                                                              <option
-                                                                key={m.value}
-                                                                value={
-                                                                  m.value
-                                                                }
-                                                              >
-                                                                {m.label}
-                                                              </option>
-                                                            )
-                                                          )}
-                                                        </select>
-                                                      </td>
-                                                      <td className="px-2 py-1">
-                                                        <input
-                                                          type="date"
-                                                          className="w-full border rounded px-1 py-0.5"
-                                                          value={
-                                                            act.fecha || ""
-                                                          }
-                                                          onChange={(e) =>
-                                                            updateExclusiveActionField(
-                                                              store.id,
-                                                              act.id,
-                                                              "fecha",
-                                                              e.target.value
-                                                            )
-                                                          }
-                                                        />
-                                                      </td>
-                                                      <td className="px-2 py-1 text-right">
-                                                        <input
-                                                          type="number"
-                                                          min={0}
-                                                          className="w-full border rounded px-1 py-0.5 text-right"
-                                                          value={
-                                                            act.derivaciones ||
-                                                            ""
-                                                          }
-                                                          onChange={(e) =>
-                                                            updateExclusiveActionField(
-                                                              store.id,
-                                                              act.id,
-                                                              "derivaciones",
-                                                              e.target.value
-                                                            )
-                                                          }
-                                                        />
-                                                      </td>
-                                                      <td className="px-2 py-1 text-right">
-                                                        <input
-                                                          type="number"
-                                                          min={0}
-                                                          className="w-full border rounded px-1 py-0.5 text-right"
-                                                          value={
-                                                            act.ventas || ""
-                                                          }
-                                                          onChange={(e) =>
-                                                            updateExclusiveActionField(
-                                                              store.id,
-                                                              act.id,
-                                                              "ventas",
-                                                              e.target.value
-                                                            )
-                                                          }
-                                                        />
-                                                      </td>
-                                                      <td className="px-2 py-1 text-right">
-                                                        <input
-                                                          type="number"
-                                                          min={0}
-                                                          className="w-full border rounded px-1 py-0.5 text-right"
-                                                          value={
-                                                            act.objetivo || ""
-                                                          }
-                                                          onChange={(e) =>
-                                                            updateExclusiveActionField(
-                                                              store.id,
-                                                              act.id,
-                                                              "objetivo",
-                                                              e.target.value
-                                                            )
-                                                          }
-                                                        />
-                                                      </td>
-                                                      <td className="px-2 py-1 text-right">
-                                                        <span
-                                                          className={
-                                                            "inline-block px-2 py-0.5 rounded-full " +
-                                                            resultBadgeClass(
-                                                              pctAct
-                                                            )
-                                                          }
-                                                        >
-                                                          {pctAct !== null
-                                                            ? `${pctAct.toFixed(
-                                                                0
-                                                              )}%`
-                                                            : "-"}
-                                                        </span>
-                                                      </td>
-                                                    </tr>
-                                                  );
-                                                })}
-                                              </tbody>
-                                            </table>
-                                          </div>
-                                          <button
-                                            className="text-[11px] px-3 py-1 rounded-full bg-amber-600 text-white font-semibold"
-                                            onClick={() =>
-                                              addExclusiveAction(store.id)
-                                            }
-                                          >
-                                            Añadir acción (+)
-                                          </button>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  )}
-                                </React.Fragment>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    </>
-                  )}
-                </section>
-
-                {/* AUDIOLOGÍA AVANZADA REMOTO (AAR) */}
-                <section className="mt-10 bg-white p-6 rounded-2xl shadow mb-10">
-                  <h3 className="font-bold text-lg mb-2">
-                    Audiología avanzada remoto (AAR)
-                  </h3>
-                  <p className="text-xs text-gray-500 mb-3">
-                    Se muestran los centros con estado AAR ={" "}
-                    <strong>Sí</strong> o <strong>En formación</strong>. El
-                    estado AAR se define por las visitas (campo Centro AAR: Sí /
-                    No / En formación). Colores: verde = Sí, ámbar = En
-                    formación, rojo = No.
-                  </p>
-
-                  {aarCenters.length === 0 ? (
-                    <p className="text-xs text-gray-500">
-                      No hay centros con AAR activo o en formación.
-                    </p>
-                  ) : (
-                    <div className="overflow-x-auto text-[11px]">
-                      <table className="min-w-full border-collapse">
-                        <thead>
-                          <tr className="bg-blue-50 border-b">
-                            <th className="text-left px-2 py-2">Código</th>
-                            <th className="text-left px-2 py-2">Centro</th>
-                            <th className="text-left px-2 py-2">
-                              Provincia
-                            </th>
-                            <th className="text-left px-2 py-2">Delegado</th>
-                            <th className="text-left px-2 py-2">
-                              Resp. audio
-                            </th>
-                            <th className="text-left px-2 py-2">
-                              Estado AAR
-                            </th>
-                            <th className="text-right px-2 py-2">
-                              Nº visitas con Excel
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {aarCenters.map((store) => {
-                            const estado = deriveCentroAAR(store);
-                            const resp = deriveRespAudio(store);
-                            const numVis = store.visitas.filter(
-                              (v) => v.excelName && v.excelName !== ""
-                            ).length;
-                            return (
-                              <tr
-                                key={store.id}
-                                className="border-b hover:bg-blue-50/60"
-                              >
-                                <td className="px-2 py-1">
-                                  {store.codigo || "-"}
-                                </td>
-                                <td className="px-2 py-1">
-                                  {store.centro || "-"}
-                                </td>
-                                <td className="px-2 py-1">
-                                  {store.provincia || "-"}
-                                </td>
-                                <td className="px-2 py-1">
-                                  {store.centroRegional || "-"}
-                                </td>
-                                <td className="px-2 py-1">
-                                  {resp || "-"}
-                                </td>
-                                <td className="px-2 py-1">
-                                  <span
-                                    className={
-                                      "inline-block px-2 py-0.5 rounded-full " +
-                                      aarBadgeClass(estado)
-                                    }
-                                  >
-                                    {estado || "-"}
-                                  </span>
-                                </td>
-                                <td className="px-2 py-1 text-right">
-                                  {numVis}
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-                  )}
-                </section>
-              </div>
-            )}
-          </div>
-        );
-      }
-
-      const root = ReactDOM.createRoot(document.getElementById("root"));
-      root.render(<App />);
-    </script>
-  </body>
-</html>
+                      <h3 className
