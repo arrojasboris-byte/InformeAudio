@@ -18,12 +18,13 @@
   <body class="bg-gray-100">
     <div id="root"></div>
 
-    <script type="text/babel" data-presets="env,react">
+    <script type="text/babel">
       const { useState, useEffect } = React;
 
-      // ============================================================
-      // CHECKLIST OFICIAL (mismo texto que tu Excel)
-      // ============================================================
+      // =====================
+      // CHECKLIST: etapas + criterios
+      // =====================
+
       const CHECKLIST = [
         {
           etapa: "HOLA",
@@ -134,40 +135,27 @@
         },
       ];
 
-      // Flatten de criterios para numerarlos y mapearlos al Excel
-      function normalizeChecklistLabel(text) {
-        return text
-          .toString()
-          .toLowerCase()
-          .replace(/\s+/g, " ")
-          .replace(/[.,;:]+/g, "")
-          .trim();
-      }
-
-      const FLAT_POINTS = [];
-      const LABEL_TO_INDEX = {};
+      // Flatten checklist to enumerated points 1..N
+      const CHECKLIST_POINTS = [];
       const STAGE_OFFSETS = [];
-      let runningIndex = 0;
-
+      let globalCounter = 0;
       CHECKLIST.forEach((stage) => {
-        STAGE_OFFSETS.push(runningIndex);
-        stage.items.forEach((item) => {
-          const key = normalizeChecklistLabel(item);
-          if (!(key in LABEL_TO_INDEX)) {
-            LABEL_TO_INDEX[key] = runningIndex;
-            FLAT_POINTS.push({
-              index: runningIndex,
-              etapa: stage.etapa,
-              label: item,
-            });
-            runningIndex++;
-          }
+        STAGE_OFFSETS.push(globalCounter);
+        stage.items.forEach((text) => {
+          globalCounter += 1;
+          CHECKLIST_POINTS.push({
+            index: globalCounter,
+            etapa: stage.etapa,
+            text,
+          });
         });
       });
+      const TOTAL_POINTS = CHECKLIST_POINTS.length; // nº total de criterios
 
-      // ============================================================
-      // Helpers generales
-      // ============================================================
+      // =====================
+      // Utilidades
+      // =====================
+
       function createEmptyVisits() {
         return [1, 2, 3, 4].map((id) => ({
           id,
@@ -175,14 +163,14 @@
           responsable: "",
           excelName: "",
           hit: "",
-          checklist: null, // % F90
+          checklist: null, // % global (F90)
           centroAAR: "",
-          pointValues: null, // array 0/1 por criterio
+          pointValues: new Array(TOTAL_POINTS).fill(null), // 0/1 por criterio
         }));
       }
 
       function normalizarCentro(nombre) {
-        return nombre.trim().toUpperCase();
+        return (nombre || "").trim().toUpperCase();
       }
 
       function normalizarDelegado(nombre) {
@@ -223,8 +211,7 @@
           (v) => typeof v === "number" && !isNaN(v)
         );
         if (nums.length === 0) return null;
-        const total = nums.reduce((sum, v) => sum + v, 0);
-        return total / nums.length;
+        return nums.reduce((a, b) => a + b, 0) / nums.length;
       }
 
       function porcentajeSi(valores) {
@@ -235,26 +222,20 @@
       }
 
       function donutStyle(percent) {
-        const value = percent && percent > 0 ? Math.min(percent, 100) : 0;
+        const val = percent && percent > 0 ? Math.min(percent, 100) : 0;
         const color =
           percent !== null && percent >= 85 ? "#16a34a" : "#dc2626";
         return {
-          background: `conic-gradient(${color} ${value * 3.6}deg, #e5e7eb 0deg)`,
+          background: `conic-gradient(${color} ${val * 3.6}deg, #e5e7eb 0deg)`,
         };
-      }
-
-      function kpiBadgeClass(percent) {
-        if (percent === null) return "bg-gray-200 text-gray-700";
-        if (percent >= 85) return "bg-green-100 text-green-800";
-        return "bg-red-100 text-red-700";
       }
 
       function delegadoColor(texto) {
         if (!texto) return {};
         let hash = 0;
-        const str = texto.trim().toUpperCase();
-        for (let i = 0; i < str.length; i++) {
-          hash = (hash * 31 + str.charCodeAt(i)) | 0;
+        const t = texto.trim().toUpperCase();
+        for (let i = 0; i < t.length; i++) {
+          hash = (hash * 31 + t.charCodeAt(i)) | 0;
         }
         const hue = (Math.abs(hash) % 360 + 180) % 360;
         return {
@@ -265,9 +246,7 @@
 
       function getUniqueSorted(values) {
         const set = new Set(
-          values
-            .map((v) => (v || "").trim())
-            .filter((v) => v.length > 0)
+          values.map((v) => (v || "").trim()).filter((v) => v.length > 0)
         );
         return Array.from(set).sort((a, b) =>
           a.localeCompare(b, "es", { sensitivity: "base" })
@@ -279,8 +258,7 @@
           (v) => v.hit === "Sí" || v.hit === "No"
         );
         if (hits.length === 0) return null;
-        const anyYes = hits.some((v) => v.hit === "Sí");
-        return anyYes ? "Sí" : "No";
+        return hits.some((v) => v.hit === "Sí") ? "Sí" : "No";
       }
 
       function formatFechaHora(iso) {
@@ -306,125 +284,43 @@
           .map((v) => v.centroAAR)
           .filter((v) => v === "Sí" || v === "No");
         if (valores.length === 0) return "";
-        if (valores.includes("Sí")) return "Sí";
-        return "No";
+        return valores.includes("Sí") ? "Sí" : "No";
       }
 
-      // ============================================================
-      // Centros exclusivos (los marcamos por nombre de centro)
-      // ============================================================
-      const EXCLUSIVE_CENTER_NAMES = [
-        "PAMPLONA C. Exclusivo",
-        "CC LOS VALLES",
-        "SANTIAGO DE COMPOSTELA RUA DA ROSA",
-        "CC PLAZA DE LA ESTACIÓN",
-        "REINA DE MERCEDES",
-        "SANTANDER CC PEÑACASTILLO",
-        "TORRELAVEGA CARREFOUR CC",
-        "ZARAGOZA CALLE DELICIAS",
-      ];
+      // Punto a punto: calcula % de aplicación de cada criterio (0..100 o null)
+      function computePointPercents(stores) {
+        const sums = new Array(TOTAL_POINTS).fill(0);
+        const counts = new Array(TOTAL_POINTS).fill(0);
 
-      const EXCLUSIVE_MONTHS = [
-        { key: "2025-08", label: "Ago 2025" },
-        { key: "2025-09", label: "Sep 2025" },
-        { key: "2025-10", label: "Oct 2025" },
-        { key: "2025-11", label: "Nov 2025" },
-        { key: "2025-12", label: "Dic 2025" },
-        { key: "2026-01", label: "Ene 2026" },
-        { key: "2026-02", label: "Feb 2026" },
-        { key: "2026-03", label: "Mar 2026" },
-        { key: "2026-04", label: "Abr 2026" },
-        { key: "2026-05", label: "May 2026" },
-        { key: "2026-06", label: "Jun 2026" },
-        { key: "2026-07", label: "Jul 2026" },
-      ];
+        stores.forEach((store) => {
+          (store.visitas || []).forEach((visit) => {
+            if (!Array.isArray(visit.pointValues)) return;
+            visit.pointValues.forEach((val, idx) => {
+              if (val === 0 || val === 1) {
+                sums[idx] += val;
+                counts[idx] += 1;
+              }
+            });
+          });
+        });
 
-      function isExclusiveName(centro) {
-        const up = (centro || "").trim().toUpperCase();
-        return EXCLUSIVE_CENTER_NAMES.some(
-          (n) => n.toUpperCase() === up
+        return sums.map((sum, i) =>
+          counts[i] ? (sum / counts[i]) * 100 : null
         );
       }
 
-      // ============================================================
-      // LECTURA DETALLADA DEL EXCEL: F90 Y CADA CRITERIO (columna F)
-      // ============================================================
-      function extractChecklistPercentF90(sheet) {
-        const cell = sheet["F90"];
-        if (!cell || cell.v == null) return null;
-        let rawVal = cell.v;
-        if (typeof rawVal === "number") {
-          let v = rawVal;
-          if (v <= 1) v = v * 100;
-          return v;
-        } else if (typeof rawVal === "string") {
-          const m = rawVal.replace(",", ".").match(/(\d{1,3}(?:\.\d+)?)/);
-          if (m) {
-            let v = parseFloat(m[1]);
-            if (v <= 1) v = v * 100;
-            return v;
-          }
-        }
-        return null;
-      }
+      // =====================
+      // App
+      // =====================
 
-      function extractPointValuesFromSheet(sheet) {
-        const pointValues = Array(FLAT_POINTS.length).fill(null);
-        const ref = sheet["!ref"];
-        let maxRow = 200;
-        if (ref) {
-          const m = ref.match(/:[A-Z]+(\d+)/i);
-          if (m) maxRow = parseInt(m[1], 10);
-        }
-
-        for (let r = 1; r <= maxRow; r++) {
-          const cellB = sheet["B" + r];
-          if (!cellB || cellB.v == null) continue;
-          const critText = String(cellB.v).trim();
-          if (!critText) continue;
-          const key = normalizeChecklistLabel(critText);
-          const idx = LABEL_TO_INDEX[key];
-          if (idx === undefined) continue;
-
-          const cellF = sheet["F" + r];
-          if (!cellF || cellF.v == null) continue;
-
-          let raw = cellF.v;
-          if (typeof raw === "string") {
-            const lower = raw.toLowerCase().trim();
-            if (lower === "si" || lower === "sí") {
-              raw = 1;
-            } else if (lower === "no") {
-              raw = 0;
-            } else {
-              raw = raw.replace(",", ".");
-              const mm = raw.match(/-?\d+(\.\d+)?/);
-              if (mm) raw = parseFloat(mm[0]);
-            }
-          }
-
-          let val = null;
-          if (raw === 0 || raw === 1) {
-            val = raw;
-          } else if (typeof raw === "number" && !isNaN(raw)) {
-            if (raw >= 0.5) val = 1;
-            else if (raw >= 0) val = 0;
-          }
-
-          if (val !== null) {
-            pointValues[idx] = val;
-          }
-        }
-
-        return pointValues;
-      }
-
-      // ============================================================
-      // COMPONENTE PRINCIPAL
-      // ============================================================
       function App() {
         const [pin, setPin] = useState("");
         const [authorized, setAuthorized] = useState(false);
+
+        const [storesInput, setStoresInput] = useState("");
+        const [stores, setStores] = useState([]);
+        const [expandedStoreId, setExpandedStoreId] = useState(null);
+        const [dashboardStoreId, setDashboardStoreId] = useState(null);
 
         const [search, setSearch] = useState("");
         const [filterCodigo, setFilterCodigo] = useState("");
@@ -437,18 +333,12 @@
         const [filterCentroAAR, setFilterCentroAAR] = useState("");
         const [filterCorreo, setFilterCorreo] = useState("");
 
-        const [storesInput, setStoresInput] = useState("");
-        const [stores, setStores] = useState([]);
-        const [expandedStoreId, setExpandedStoreId] = useState(null);
-        const [dashboardStoreId, setDashboardStoreId] = useState(null);
         const [showCarga, setShowCarga] = useState(false);
         const [lastSavedAt, setLastSavedAt] = useState(null);
 
-        const [expandedExclusiveId, setExpandedExclusiveId] = useState(null);
+        const [hoverPointIdx, setHoverPointIdx] = useState(null);
 
-        const [selectedPointIdx, setSelectedPointIdx] = useState(null);
-
-        // cargar de "nube" localStorage
+        // Cargar desde "nube" (localStorage)
         useEffect(() => {
           try {
             const raw = localStorage.getItem("seguimientoAudioV1");
@@ -458,15 +348,7 @@
               const normalizedStores = parsed.stores.map((s, idx) => ({
                 ...s,
                 id: idx + 1,
-                centroRegional: normalizarDelegado(
-                  s.centroRegional || ""
-                ),
-                exclusivo: isExclusiveName(s.centro),
-                exclusivoData: s.exclusivoData || {
-                  ventas: {},
-                  objetivos: {},
-                  acciones: [],
-                },
+                centroRegional: normalizarDelegado(s.centroRegional || ""),
               }));
               setStores(normalizedStores);
             }
@@ -480,12 +362,11 @@
           if (pin.trim().toUpperCase() === "AR4321") setAuthorized(true);
         }
 
-        // aplicar listado pegado
         function handleApplyStores() {
           if (!storesInput.trim()) return;
           let lines = storesInput
             .split("\n")
-            .map((line) => line.trim())
+            .map((l) => l.trim())
             .filter(Boolean);
 
           if (
@@ -507,27 +388,19 @@
               centroRegional = "",
             ] = parts;
 
-            const delegadoNormalizado = normalizarDelegado(centroRegional);
-
             return {
               id: index + 1,
               raw,
               codigo,
               propietario,
               centro,
-              provincia: provincia.trim().toUpperCase(),
+              provincia: (provincia || "").trim().toUpperCase(),
               correo,
-              centroRegional: delegadoNormalizado,
+              centroRegional: normalizarDelegado(centroRegional),
               region: "",
               responsableAudio: "",
               centroAAR: "",
               visitas: createEmptyVisits(),
-              exclusivo: isExclusiveName(centro),
-              exclusivoData: {
-                ventas: {},
-                objetivos: {},
-                acciones: [],
-              },
             };
           });
 
@@ -558,24 +431,7 @@
           );
         }
 
-        function updateExclusiveData(storeId, updater) {
-          setStores((prev) =>
-            prev.map((store) => {
-              if (store.id !== storeId) return store;
-              const current = store.exclusivoData || {
-                ventas: {},
-                objetivos: {},
-                acciones: [],
-              };
-              return {
-                ...store,
-                exclusivoData: updater(current),
-              };
-            })
-          );
-        }
-
-        // LECTURA DEL ARCHIVO ADJUNTO (checklist)
+        // Lectura de checklist Excel: F90 + punto a punto (columna F de PROCESOS Y BASICOS)
         function handleChecklistFileChange(storeId, visitId, event) {
           const file = event.target.files?.[0];
           if (!file) return;
@@ -590,15 +446,36 @@
           reader.onload = (ev) => {
             try {
               const data = ev.target.result;
-              let checklistFromF90Set = false;
-
               if (isExcel && window.XLSX) {
                 const wb = XLSX.read(data, { type: "array" });
-                const mainSheetName = wb.SheetNames[0];
-                const mainSheet = wb.Sheets[mainSheetName];
+                const sheetName =
+                  wb.Sheets["PROCESOS Y BASICOS"]
+                    ? "PROCESOS Y BASICOS"
+                    : wb.Sheets["PROCESOS Y BÁSICOS"]
+                    ? "PROCESOS Y BÁSICOS"
+                    : wb.SheetNames[0];
+                const sheet = wb.Sheets[sheetName];
 
-                // F90
-                const checklistF90 = extractChecklistPercentF90(mainSheet);
+                // 1) F90 -> % checklist global
+                let checklistF90 = null;
+                const cellF90 = sheet["F90"];
+                if (cellF90 && cellF90.v != null) {
+                  let rawVal = cellF90.v;
+                  if (typeof rawVal === "number") {
+                    let v = rawVal;
+                    if (v <= 1) v = v * 100;
+                    checklistF90 = v;
+                  } else if (typeof rawVal === "string") {
+                    const m = rawVal
+                      .replace(",", ".")
+                      .match(/(\d{1,3}(?:\.\d+)?)/);
+                    if (m) {
+                      let v = parseFloat(m[1]);
+                      if (v <= 1) v = v * 100;
+                      checklistF90 = v;
+                    }
+                  }
+                }
                 if (checklistF90 !== null && !isNaN(checklistF90)) {
                   updateVisitField(
                     storeId,
@@ -606,57 +483,50 @@
                     "checklist",
                     checklistF90
                   );
-                  checklistFromF90Set = true;
                 }
 
-                // Hoja de procesos básicos
-                const detailSheetName =
-                  wb.SheetNames.find((n) =>
-                    n.toUpperCase().includes("PROCESOS")
-                  ) || mainSheetName;
-                const detailSheet = wb.Sheets[detailSheetName];
-
-                if (detailSheet) {
-                  const pointValues =
-                    extractPointValuesFromSheet(detailSheet);
-                  const hasAny =
-                    pointValues.filter((v) => v === 0 || v === 1)
-                      .length > 0;
-                  if (hasAny) {
-                    updateVisitField(
-                      storeId,
-                      visitId,
-                      "pointValues",
-                      pointValues
-                    );
+                // 2) Punto a punto: columna B (criterio) y F (0/1)
+                const pointValues = new Array(TOTAL_POINTS).fill(null);
+                let idx = 0;
+                for (let row = 1; row < 1000 && idx < TOTAL_POINTS; row++) {
+                  const cellB = sheet["B" + row];
+                  const cellF = sheet["F" + row];
+                  if (!cellB || String(cellB.v).toString().trim() === "") {
+                    continue;
+                  }
+                  const rawF = cellF ? cellF.v : null;
+                  if (
+                    rawF === 0 ||
+                    rawF === 1 ||
+                    rawF === "0" ||
+                    rawF === "1"
+                  ) {
+                    pointValues[idx] = Number(rawF);
+                    idx++;
                   }
                 }
+                updateVisitField(storeId, visitId, "pointValues", pointValues);
 
-                // Buscar HIT en texto (por si viene escrito)
-                const csv = XLSX.utils.sheet_to_csv(mainSheet);
-                parseFromText(csv, checklistFromF90Set);
+                // 3) De texto, detectamos HIT (por si aparece)
+                const csv = XLSX.utils.sheet_to_csv(sheet);
+                parseTextExtras(csv);
               } else {
                 const text =
                   typeof data === "string"
                     ? data
                     : new TextDecoder("utf-8").decode(data);
-                parseFromText(text, checklistFromF90Set);
+                parseTextExtras(text);
               }
             } catch (e) {
               console.error("Error leyendo Excel de checklist", e);
             }
           };
 
-          if (isExcel) {
-            reader.readAsArrayBuffer(file);
-          } else {
-            reader.readAsText(file);
-          }
+          if (isExcel) reader.readAsArrayBuffer(file);
+          else reader.readAsText(file);
 
-          function parseFromText(text, checklistAlreadySet) {
+          function parseTextExtras(text) {
             if (!text) return;
-
-            // HIT Sí/No
             const reHit = /hit[^a-zA-Z0-9]{0,15}(s[ií]|no)/i;
             const mHit = text.match(reHit);
             if (mHit) {
@@ -664,19 +534,6 @@
                 ? "Sí"
                 : "No";
               updateVisitField(storeId, visitId, "hit", val);
-            }
-
-            // Respaldo checklist si no tenemos F90
-            if (!checklistAlreadySet) {
-              const reCap =
-                /capacitaci[oó]n[^0-9%]{0,80}(\d{1,3})\s*%/i;
-              const mCap = text.match(reCap);
-              if (mCap) {
-                const n = Number(mCap[1]);
-                if (!isNaN(n)) {
-                  updateVisitField(storeId, visitId, "checklist", n);
-                }
-              }
             }
           }
         }
@@ -706,15 +563,7 @@
               const normalizedStores = parsed.stores.map((s, idx) => ({
                 ...s,
                 id: idx + 1,
-                centroRegional: normalizarDelegado(
-                  s.centroRegional || ""
-                ),
-                exclusivo: isExclusiveName(s.centro),
-                exclusivoData: s.exclusivoData || {
-                  ventas: {},
-                  objetivos: {},
-                  acciones: [],
-                },
+                centroRegional: normalizarDelegado(s.centroRegional || ""),
               }));
               setStores(normalizedStores);
               setExpandedStoreId(null);
@@ -726,68 +575,62 @@
           }
         }
 
-        // ========================================================
-        // FILTRADO LISTADO CENTROS
-        // ========================================================
+        // ========== FILTROS Y MÉTRICAS ==========
+
         const filteredStores = stores.filter((store) => {
           const respAudio = deriveRespAudio(store);
           const centroAARValor = deriveCentroAAR(store);
-          const textoGlobal = `${store.codigo} ${store.propietario} ${store.centro} ${store.provincia} ${store.centroRegional} ${store.correo} ${respAudio} ${centroAARValor}`.toLowerCase();
+          const textoGlobal = `${store.codigo} ${store.propietario} ${
+            store.centro
+          } ${store.provincia} ${store.centroRegional} ${
+            store.correo
+          } ${respAudio} ${centroAARValor}`.toLowerCase();
 
           if (search && !textoGlobal.includes(search.toLowerCase()))
             return false;
-
           if (
             filterCodigo &&
             store.codigo.toLowerCase() !== filterCodigo.toLowerCase()
           )
             return false;
-
           if (
             filterPropietario &&
             store.propietario.toLowerCase() !==
               filterPropietario.toLowerCase()
           )
             return false;
-
           if (
             filterCentro &&
             store.centro.toLowerCase() !== filterCentro.toLowerCase()
           )
             return false;
-
-          if (
-            filterCorreo &&
-            store.correo.toLowerCase() !== filterCorreo.toLowerCase()
-          )
-            return false;
-
           if (
             filterProvincia &&
             store.provincia.toLowerCase() !== filterProvincia.toLowerCase()
           )
             return false;
-
           if (
             filterDelegado &&
             store.centroRegional.toLowerCase() !==
               filterDelegado.toLowerCase()
           )
             return false;
-
           if (
             filterResponsableAudio &&
-            respAudio.toLowerCase() !==
+            deriveRespAudio(store).toLowerCase() !==
               filterResponsableAudio.toLowerCase()
           )
             return false;
-
           if (
             filterCentroAAR &&
             centroAARValor.toLowerCase() !== filterCentroAAR.toLowerCase()
           )
             return false;
-
+          if (
+            filterCorreo &&
+            (store.correo || "").toLowerCase() !== filterCorreo.toLowerCase()
+          )
+            return false;
           return true;
         });
 
@@ -817,9 +660,6 @@
           stores.map((s) => deriveRespAudio(s))
         );
 
-        // ========================================================
-        // MÉTRICAS GLOBALES VISITAS (F90 / HIT)
-        // ========================================================
         const allVisits = stores.flatMap((s) => s.visitas);
         const visitasValidasGlobal = allVisits.filter(
           (v) => v.excelName && v.excelName !== ""
@@ -841,48 +681,17 @@
           visitasValidasGlobal.map((v) => v.hit)
         );
         const aplicaHitGlobal = aplicaHitTexto(visitasValidasGlobal);
+
         const algunFechaInvalida = allVisits.some(
           (v) => v.fecha && !isValidFecha(v.fecha)
         );
 
-        // ========================================================
-        // MÉTRICAS PUNTO A PUNTO (columna F por criterio)
-        // ========================================================
-        const pointTotals = new Array(FLAT_POINTS.length).fill(0);
-        const pointApplies = new Array(FLAT_POINTS.length).fill(0);
-
-        stores.forEach((s) =>
-          s.visitas.forEach((v) => {
-            if (Array.isArray(v.pointValues)) {
-              v.pointValues.forEach((val, idx) => {
-                if (val === 0 || val === 1) {
-                  pointTotals[idx]++;
-                  if (val === 1) pointApplies[idx]++;
-                }
-              });
-            }
-          })
-        );
-
-        const pointPercents = pointTotals.map((tot, idx) =>
-          tot > 0 ? (pointApplies[idx] / tot) * 100 : null
-        );
-        const pointGlobalAverage = media(
-          pointPercents.filter((p) => p !== null)
-        );
-
-        // ========================================================
-        // DASHBOARD POR CENTRO
-        // ========================================================
         const dashboardStore =
-          stores.find((s) => s.id === dashboardStoreId) ||
-          stores[0] ||
-          null;
+          stores.find((s) => s.id === dashboardStoreId) || stores[0] || null;
 
         let dashVisitasConExcel = [];
         let dashChecklistMedio = null;
         let dashAplicaHit = null;
-
         if (dashboardStore) {
           dashVisitasConExcel = dashboardStore.visitas.filter(
             (v) => v.excelName && v.excelName !== ""
@@ -893,1136 +702,722 @@
           dashAplicaHit = aplicaHitTexto(dashVisitasConExcel);
         }
 
-        // ========================================================
-        // CENTROS EXCLUSIVOS: métricas acumuladas
-        // ========================================================
-        const exclusiveStores = stores.filter((s) => s.exclusivo);
+        // Dashboard punto a punto
+        const pointPercents = computePointPercents(stores);
+        const hasPointData = pointPercents.some(
+          (p) => p !== null && !isNaN(p)
+        );
+        const chartPoints = pointPercents
+          .map((pct, i) =>
+            pct === null
+              ? null
+              : {
+                  idx: i,
+                  num: CHECKLIST_POINTS[i].index,
+                  etapa: CHECKLIST_POINTS[i].etapa,
+                  text: CHECKLIST_POINTS[i].text,
+                  pct,
+                }
+          )
+          .filter(Boolean);
 
-        let totalVentasExclusivos = 0;
-        let totalObjetivosExclusivos = 0;
-
-        exclusiveStores.forEach((s) => {
-          const data = s.exclusivoData || { ventas: {}, objetivos: {} };
-          const ventas = Object.values(data.ventas || {});
-          const objetivos = Object.values(data.objetivos || {});
-          totalVentasExclusivos += ventas.reduce((a, b) => a + (b || 0), 0);
-          totalObjetivosExclusivos += objetivos.reduce(
-            (a, b) => a + (b || 0),
-            0
-          );
-        });
-
-        const porcentajeExclusivos =
-          totalObjetivosExclusivos > 0
-            ? (totalVentasExclusivos / totalObjetivosExclusivos) * 100
-            : null;
-
-        // ========================================================
+        // =====================
         // RENDER
-        // ========================================================
+        // =====================
+
+        if (!authorized) {
+          return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
+              <div className="bg-white p-10 rounded-2xl shadow-xl w-80">
+                <h2 className="text-xl font-bold text-center mb-4">
+                  Acceso Plataforma
+                </h2>
+                <p className="text-xs text-gray-500 mb-3">
+                  Introduce el PIN para acceder a la plataforma de seguimiento
+                  de audio.
+                </p>
+                <input
+                  type="password"
+                  className="w-full p-2 border rounded mb-4"
+                  placeholder="Introduce PIN"
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handlePin();
+                  }}
+                />
+                <button
+                  onClick={handlePin}
+                  className="w-full bg-red-600 text-white py-2 rounded-xl shadow font-semibold"
+                >
+                  Entrar
+                </button>
+              </div>
+            </div>
+          );
+        }
+
         return (
           <div className="min-h-screen bg-gray-100 font-sans">
-            {!authorized ? (
-              <div className="flex items-center justify-center h-screen">
-                <div className="bg-white p-10 rounded-2xl shadow-xl w-80">
-                  <h2 className="text-xl font-bold text-center mb-4">
-                    Acceso Plataforma
-                  </h2>
-                  <input
-                    type="password"
-                    className="w-full p-2 border rounded mb-4"
-                    placeholder="Introduce PIN"
-                    value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handlePin();
-                    }}
-                  />
-                  <button
-                    onClick={handlePin}
-                    className="w-full bg-red-600 text-white py-2 rounded-xl shadow"
-                  >
-                    Entrar
-                  </button>
+            {/* HEADER */}
+            <header className="bg-red-600 text-white p-5 rounded-b-3xl shadow flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-4xl">🎧</span>
+                <div>
+                  <h1 className="text-2xl font-bold">
+                    Seguimiento de procesos de Audio
+                  </h1>
+                  <p className="text-xs text-red-100">
+                    Checklist, visitas, centros exclusivos y audiología
+                    avanzada.
+                  </p>
                 </div>
               </div>
-            ) : (
-              <div className="p-6">
-                {/* HEADER */}
-                <header className="bg-red-600 text-white p-5 rounded-2xl shadow flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">🎧</span>
-                    <h1 className="text-2xl font-bold">
-                      Seguimiento de procesos de Audio
-                    </h1>
-                  </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={saveToCloud}
-                        className="bg-white text-red-600 px-3 py-1 rounded-xl shadow text-xs font-semibold"
-                      >
-                        Guardar en nube
-                      </button>
-                      <button
-                        onClick={loadFromCloud}
-                        className="bg-red-500 text-white px-3 py-1 rounded-xl shadow text-xs font-semibold border border-white/40"
-                      >
-                        Actualizar desde nube
-                      </button>
-                    </div>
-                    <p className="text-[10px] text-white/80">
-                      Última actualización:{" "}
-                      <span className="font-semibold">
-                        {formatFechaHora(lastSavedAt)}
-                      </span>
-                    </p>
-                  </div>
-                </header>
+              <div className="flex flex-col items-end gap-1">
+                <div className="flex gap-2">
+                  <button
+                    onClick={saveToCloud}
+                    className="bg-white text-red-600 px-3 py-1 rounded-xl shadow text-xs font-semibold"
+                  >
+                    Guardar en nube
+                  </button>
+                  <button
+                    onClick={loadFromCloud}
+                    className="bg-red-500 text-white px-3 py-1 rounded-xl shadow text-xs font-semibold border border-white/40"
+                  >
+                    Actualizar desde nube
+                  </button>
+                </div>
+                <p className="text-[10px] text-red-100">
+                  Última actualización:{" "}
+                  <span className="font-semibold">
+                    {formatFechaHora(lastSavedAt)}
+                  </span>
+                </p>
+              </div>
+            </header>
 
-                {/* MAPA CHECKLIST + DASHBOARD PUNTO A PUNTO */}
-                <section className="mt-6 space-y-4">
-                  <div className="bg-white p-6 rounded-2xl shadow">
-                    <h2 className="font-bold text-lg mb-2">
-                      Mapa horizontal de checklist de visita
-                    </h2>
-                    <p className="text-gray-500 mb-4 text-sm">
-                      Etapas del proceso de audio según el checklist oficial.
-                      Cada criterio está numerado y se usa para el mapa de
-                      aplicación detallado.
-                    </p>
-                    <div className="flex gap-4 overflow-x-auto pb-2">
-                      {CHECKLIST.map((stage, stageIdx) => (
-                        <div
-                          key={stage.etapa}
-                          className="min-w-[260px] max-w-xs bg-gray-50 border rounded-2xl px-4 py-3 flex-shrink-0"
-                        >
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-[11px] font-bold uppercase tracking-wide text-red-700">
-                              {stage.etapa}
-                            </span>
-                            <span className="text-[10px] text-gray-500">
-                              {stage.items.length} pts
-                            </span>
-                          </div>
-                          <ul className="space-y-1">
-                            {stage.items.map((item, itemIdx) => {
-                              const globalIndex =
-                                STAGE_OFFSETS[stageIdx] + itemIdx + 1;
-                              return (
-                                <li
-                                  key={itemIdx}
-                                  className="text-[11px] text-gray-700 flex gap-1"
-                                >
-                                  <span className="mt-1 h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
-                                  <span className="leading-tight">
-                                    <span className="font-semibold mr-1">
-                                      {globalIndex}.
-                                    </span>
-                                    {item}
-                                  </span>
-                                </li>
-                              );
-                            })}
-                          </ul>
-                        </div>
-                      ))}
+            <main className="p-6 space-y-10">
+              {/* MAPA CHECKLIST */}
+              <section className="bg-white p-6 rounded-2xl shadow">
+                <h2 className="font-bold text-lg mb-2">
+                  Mapa horizontal de checklist de visita
+                </h2>
+                <p className="text-gray-500 mb-4 text-sm">
+                  Etapas del proceso de audio según el checklist oficial. Cada
+                  criterio está numerado y se usa para el mapa de aplicación
+                  detallado punto a punto.
+                </p>
+                <div className="flex gap-4 overflow-x-auto pb-2">
+                  {CHECKLIST.map((stage, stageIdx) => (
+                    <div
+                      key={stage.etapa}
+                      className="min-w-[260px] max-w-xs bg-gray-50 border rounded-2xl px-4 py-3 flex-shrink-0"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-[11px] font-bold uppercase tracking-wide text-red-700">
+                          {stage.etapa}
+                        </span>
+                        <span className="text-[10px] text-gray-500">
+                          {stage.items.length} pts
+                        </span>
+                      </div>
+                      <ul className="space-y-1">
+                        {stage.items.map((item, itemIdx) => {
+                          const globalIdx =
+                            STAGE_OFFSETS[stageIdx] + itemIdx + 1;
+                          return (
+                            <li
+                              key={itemIdx}
+                              className="text-[11px] text-gray-700 flex gap-1"
+                            >
+                              <span className="mt-1 h-1.5 w-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                              <span className="leading-tight">
+                                <span className="font-semibold mr-1">
+                                  {globalIdx}.
+                                </span>
+                                {item}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </div>
+                  ))}
+                </div>
+              </section>
 
-                    {/* DASHBOARD PUNTO A PUNTO */}
-                    <div className="mt-6 bg-gray-50 border rounded-2xl p-4">
-                      <div className="flex items-center justify-between mb-2 gap-2">
+              {/* DASHBOARD GENERAL + POR CENTRO */}
+              <section className="bg-white p-4 rounded-2xl shadow space-y-4">
+                <h3 className="font-bold text-sm mb-1">
+                  Dashboard horizontal (general y por centro)
+                </h3>
+                {stores.length === 0 ? (
+                  <p className="text-xs text-gray-500">
+                    Aún no hay tiendas cargadas. Pega el listado en la sección
+                    de LISTADO DE CENTROS.
+                  </p>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    {/* GENERAL */}
+                    <div className="bg-gray-50 rounded-2xl px-4 py-3 border flex flex-col gap-2">
+                      <div className="flex justify-between items-start mb-2">
                         <div>
-                          <h3 className="font-semibold text-sm">
-                            Dashboard punto a punto del checklist
-                          </h3>
-                          <p className="text-[11px] text-gray-600">
-                            Basado en los Excels adjuntos (hoja{" "}
-                            <strong>PROCESOS Y BASICOS</strong>, columna
-                            F: 0 = no aplica, 1 = aplica). Cada punto es un
-                            criterio numerado.
+                          <p className="text-xs font-semibold">
+                            General red Afflelou Audio
+                          </p>
+                          <p className="text-[10px] text-gray-500">
+                            Visitas contabilizadas por Excel adjunto
+                            (checklist).
                           </p>
                         </div>
                         <div
-                          className="hidden sm:flex w-16 h-16 rounded-full items-center justify-center text-[11px] font-bold text-red-700"
-                          style={donutStyle(pointGlobalAverage)}
+                          className="w-12 h-12 rounded-full flex items-center justify-center text-[10px] font-bold text-red-700"
+                          style={donutStyle(checklistMediaGlobal)}
                         >
-                          <div className="w-11 h-11 rounded-full bg-white flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
                             <span>
-                              {pointGlobalAverage !== null
-                                ? `${pointGlobalAverage.toFixed(0)}%`
+                              {checklistMediaGlobal !== null
+                                ? `${checklistMediaGlobal.toFixed(0)}%`
                                 : "--"}
                             </span>
                           </div>
                         </div>
                       </div>
-
-                      {pointPercents.every((p) => p === null) ? (
-                        <p className="text-[11px] text-gray-500 mt-2">
-                          Aún no hay datos punto a punto. Adjunta al menos
-                          un Excel de checklist para ver la aplicación por
-                          criterio.
+                      <div className="text-[10px] space-y-1">
+                        <p>
+                          Total tiendas: <strong>{totalTiendas}</strong> · con
+                          al menos 1 visita:{" "}
+                          <strong>
+                            {tiendasConVisita} (
+                            {porcentajeTiendasVisitadas.toFixed(0)}%)
+                          </strong>
                         </p>
-                      ) : (
-                        <>
-                          <div className="relative overflow-x-auto pb-4 mt-3">
-                            <div className="min-w-max px-4 py-4 relative">
-                              <div className="absolute left-4 right-4 top-1/2 h-[2px] bg-gray-300 -translate-y-1/2" />
-                              <div className="relative flex gap-4">
-                                {FLAT_POINTS.map((pt) => {
-                                  const pct = pointPercents[pt.index];
-                                  const colorClass =
-                                    pct === null
-                                      ? "bg-gray-300"
-                                      : pct >= 85
-                                      ? "bg-green-500"
-                                      : "bg-red-500";
-                                  return (
-                                    <button
-                                      key={pt.index}
-                                      type="button"
-                                      onClick={() =>
-                                        setSelectedPointIdx(pt.index)
-                                      }
-                                      className="relative group flex flex-col items-center text-[9px] focus:outline-none"
-                                    >
-                                      <div
-                                        className={`w-4 h-4 rounded-full border-2 border-white shadow ${colorClass}`}
-                                      />
-                                      <span className="mt-1 text-[9px] text-gray-600">
-                                        {pt.index + 1}
-                                      </span>
-                                      <div className="absolute bottom-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 pointer-events-none bg-black text-white text-[9px] px-2 py-1 rounded max-w-xs whitespace-normal z-10">
-                                        #{pt.index + 1} · {pt.label}
-                                        <br />
-                                        {pct === null
-                                          ? "Sin datos"
-                                          : `${pct.toFixed(0)}% aplica`}
-                                      </div>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          </div>
-
-                          {selectedPointIdx !== null && (
-                            <div className="mt-2 bg-white border rounded-2xl px-3 py-2 text-[11px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                              <div>
-                                <p className="font-semibold">
-                                  Criterio #{selectedPointIdx + 1}:{" "}
-                                  {FLAT_POINTS[selectedPointIdx].label}
-                                </p>
-                                <p className="text-gray-600">
-                                  Etapa:{" "}
-                                  {
-                                    FLAT_POINTS[selectedPointIdx]
-                                      .etapa
-                                  }
-                                </p>
-                              </div>
-                              <div className="flex items-center gap-3">
-                                <span
-                                  className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${kpiBadgeClass(
-                                    pointPercents[selectedPointIdx]
-                                  )}`}
-                                >
-                                  <span className="w-2 h-2 rounded-full bg-current/70" />
-                                  {pointPercents[selectedPointIdx] !==
-                                  null
-                                    ? `${pointPercents[
-                                        selectedPointIdx
-                                      ].toFixed(1)}% aplica`
-                                    : "Sin datos"}
-                                </span>
-                                <button
-                                  className="text-[10px] text-gray-500 underline"
-                                  onClick={() =>
-                                    setSelectedPointIdx(null)
-                                  }
-                                >
-                                  Limpiar selección
-                                </button>
-                              </div>
-                            </div>
+                        <p>
+                          Total visitas (Excels adjuntos):{" "}
+                          <strong>{totalVisitas}</strong>
+                        </p>
+                        <p>
+                          Checklist medio global:{" "}
+                          {checklistMediaGlobal !== null
+                            ? `${checklistMediaGlobal.toFixed(0)}%`
+                            : "-"}
+                        </p>
+                        <p>
+                          % aplicación HIT global:{" "}
+                          {hitMediaGlobal !== null
+                            ? `${hitMediaGlobal.toFixed(0)}%`
+                            : "-"}
+                          {aplicaHitGlobal && (
+                            <span>
+                              {" "}
+                              · Aplica HIT:{" "}
+                              <strong>{aplicaHitGlobal}</strong>
+                            </span>
                           )}
-                        </>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* POR CENTRO */}
+                    <div className="bg-gray-50 rounded-2xl px-4 py-3 border flex flex-col gap-2">
+                      <div className="flex items-center justify-between mb-2 gap-2">
+                        <div className="flex-1">
+                          <p className="text-xs font-semibold mb-1">
+                            Detalle por centro
+                          </p>
+                          <select
+                            className="w-full border rounded px-2 py-1 text-[11px]"
+                            value={dashboardStoreId || ""}
+                            onChange={(e) =>
+                              setDashboardStoreId(
+                                e.target.value ? Number(e.target.value) : null
+                              )
+                            }
+                          >
+                            {stores.length === 0 && (
+                              <option value="">
+                                No hay centros cargados
+                              </option>
+                            )}
+                            {stores.length > 0 && (
+                              <>
+                                <option value="">
+                                  (Selecciona un centro)
+                                </option>
+                                {stores.map((s) => (
+                                  <option key={s.id} value={s.id}>
+                                    {s.centro || s.codigo}
+                                  </option>
+                                ))}
+                              </>
+                            )}
+                          </select>
+                        </div>
+                        <div
+                          className="w-12 h-12 rounded-full flex items-center justify-center text-[10px] font-bold text-red-700"
+                          style={donutStyle(dashChecklistMedio)}
+                        >
+                          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+                            <span>
+                              {dashChecklistMedio !== null
+                                ? `${dashChecklistMedio.toFixed(0)}%`
+                                : "--"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      {dashboardStore ? (
+                        <div className="text-[10px] space-y-1">
+                          <p className="font-semibold">
+                            {dashboardStore.centro || dashboardStore.codigo}
+                          </p>
+                          <p>
+                            Provincia:{" "}
+                            <span
+                              className="inline-block px-2 py-0.5 rounded-full"
+                              style={delegadoColor(
+                                dashboardStore.centroRegional
+                              )}
+                            >
+                              {dashboardStore.provincia ||
+                                "Provincia sin definir"}
+                            </span>
+                          </p>
+                          <p>
+                            Nº visitas (Excels adjuntos):{" "}
+                            <strong>{dashVisitasConExcel.length}</strong>
+                          </p>
+                          <p>
+                            % checklist medio:{" "}
+                            {dashChecklistMedio !== null
+                              ? `${dashChecklistMedio.toFixed(0)}%`
+                              : "-"}
+                          </p>
+                          <p>
+                            Aplica HIT:{" "}
+                            <strong>{dashAplicaHit || "-"}</strong>
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-[10px] text-gray-500">
+                          Selecciona un centro en el desplegable para ver su
+                          detalle.
+                        </p>
                       )}
                     </div>
                   </div>
+                )}
 
-                  {/* DASHBOARD GLOBAL Y POR CENTRO */}
-                  <div className="bg-white p-4 rounded-2xl shadow">
-                    <h3 className="font-bold text-sm mb-3">
-                      Dashboard horizontal (general y por centro)
-                    </h3>
-                    {stores.length === 0 ? (
-                      <p className="text-xs text-gray-500">
-                        Aún no hay tiendas cargadas. Pega el listado en la
-                        sección de LISTADO DE CENTROS.
-                      </p>
-                    ) : (
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        {/* General */}
-                        <div className="bg-gray-50 rounded-2xl px-4 py-3 border flex flex-col gap-2">
-                          <div className="flex justify-between items-start mb-2">
-                            <div>
-                              <p className="text-xs font-semibold">
-                                General red Afflelou Audio
-                              </p>
-                              <p className="text-[10px] text-gray-500">
-                                Visitas contabilizadas por Excel adjunto
-                                (F90).
-                              </p>
-                            </div>
-                            <div
-                              className="w-12 h-12 rounded-full flex items-center justify-center text-[10px] font-bold text-red-700"
-                              style={donutStyle(checklistMediaGlobal)}
-                            >
-                              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                                <span>
-                                  {checklistMediaGlobal !== null
-                                    ? `${checklistMediaGlobal.toFixed(
-                                        0
-                                      )}%`
-                                    : "--"}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          <div className="text-[10px] space-y-1">
-                            <p>
-                              Total tiendas:{" "}
-                              <strong>{totalTiendas}</strong> · con al
-                              menos 1 visita:{" "}
-                              <strong>
-                                {tiendasConVisita} (
-                                {porcentajeTiendasVisitadas.toFixed(0)}%)
-                              </strong>
-                            </p>
-                            <p>
-                              Total visitas (Excels adjuntos):{" "}
-                              <strong>{totalVisitas}</strong>
-                            </p>
-                            <p>
-                              Checklist medio global (F90):{" "}
-                              {checklistMediaGlobal !== null
-                                ? `${checklistMediaGlobal.toFixed(0)}%`
-                                : "-"}
-                            </p>
-                            <p>
-                              % aplicación HIT global:{" "}
-                              {hitMediaGlobal !== null
-                                ? `${hitMediaGlobal.toFixed(0)}%`
-                                : "-"}
-                              {aplicaHitGlobal && (
-                                <span>
-                                  {" "}
-                                  · Aplica HIT:{" "}
-                                  <strong>{aplicaHitGlobal}</strong>
-                                </span>
-                              )}
-                            </p>
-                          </div>
-                        </div>
+                {algunFechaInvalida && (
+                  <p className="text-xs text-red-500 mt-2">
+                    Hay fechas con formato incorrecto. Usa siempre el formato{" "}
+                    <strong>dd/mm/aaaa</strong>.
+                  </p>
+                )}
+              </section>
 
-                        {/* Por centro */}
-                        <div className="bg-gray-50 rounded-2xl px-4 py-3 border flex flex-col gap-2">
-                          <div className="flex items-center justify-between mb-2 gap-2">
-                            <div className="flex-1">
-                              <p className="text-xs font-semibold mb-1">
-                                Detalle por centro
-                              </p>
-                              <select
-                                className="w-full border rounded px-2 py-1 text-[11px]"
-                                value={dashboardStoreId || ""}
-                                onChange={(e) =>
-                                  setDashboardStoreId(
-                                    e.target.value
-                                      ? Number(e.target.value)
-                                      : null
-                                  )
-                                }
-                              >
-                                {stores.length === 0 && (
-                                  <option value="">
-                                    No hay centros cargados
-                                  </option>
-                                )}
-                                {stores.length > 0 && (
-                                  <>
-                                    <option value="">
-                                      (Selecciona un centro)
-                                    </option>
-                                    {stores.map((s) => (
-                                      <option key={s.id} value={s.id}>
-                                        {s.centro || s.codigo}
-                                      </option>
-                                    ))}
-                                  </>
-                                )}
-                              </select>
-                            </div>
-                            <div
-                              className="w-12 h-12 rounded-full flex items-center justify-center text-[10px] font-bold text-red-700"
-                              style={donutStyle(dashChecklistMedio)}
-                            >
-                              <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-                                <span>
-                                  {dashChecklistMedio !== null
-                                    ? `${dashChecklistMedio.toFixed(0)}%`
-                                    : "--"}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                          {dashboardStore ? (
-                            <div className="text-[10px] space-y-1">
-                              <p className="font-semibold">
-                                {dashboardStore.centro ||
-                                  dashboardStore.codigo}
-                              </p>
-                              <p>
-                                Provincia:{" "}
-                                <span
-                                  className="inline-block px-2 py-0.5 rounded-full"
-                                  style={delegadoColor(
-                                    dashboardStore.centroRegional
-                                  )}
-                                >
-                                  {dashboardStore.provincia ||
-                                    "Provincia sin definir"}
-                                </span>
-                              </p>
-                              <p>
-                                Nº visitas (Excels adjuntos):{" "}
-                                <strong>
-                                  {dashVisitasConExcel.length}
-                                </strong>
-                              </p>
-                              <p>
-                                % checklist medio (F90):{" "}
-                                {dashChecklistMedio !== null
-                                  ? `${dashChecklistMedio.toFixed(0)}%`
-                                  : "-"}
-                              </p>
-                              <p>
-                                Aplica HIT:{" "}
-                                <strong>
-                                  {dashAplicaHit ? dashAplicaHit : "-"}
-                                </strong>
-                              </p>
-                            </div>
-                          ) : (
-                            <p className="text-[10px] text-gray-500">
-                              Selecciona un centro en el desplegable para
-                              ver su detalle.
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    )}
+              {/* DASHBOARD PUNTO A PUNTO */}
+              <section className="bg-white p-6 rounded-2xl shadow">
+                <h3 className="font-bold text-sm mb-1">
+                  Dashboard punto a punto del checklist
+                </h3>
+                <p className="text-[11px] text-gray-600 mb-3">
+                  Basado en los Excels adjuntos (hoja{" "}
+                  <strong>PROCESOS Y BASICOS</strong>, columna F: 0 = no aplica,
+                  1 = aplica). Cada punto es un criterio numerado.
+                </p>
 
-                    {algunFechaInvalida && (
-                      <p className="text-xs text-red-500 mt-3">
-                        Hay fechas con formato incorrecto. Usa siempre el
-                        formato <strong>dd/mm/aaaa</strong>.
-                      </p>
-                    )}
-                  </div>
-                </section>
-
-                {/* LISTADO DE CENTROS */}
-                <section className="mt-10 bg-white p-6 rounded-2xl shadow">
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-wrap items-center justify-between gap-3">
-                      <h3 className="font-bold text-lg bg-red-600 text-white inline-flex items-center px-4 py-2 rounded-2xl">
-                        LISTADO DE CENTROS
-                      </h3>
-                      <button
-                        className="text-xs px-3 py-1 rounded-full border border-red-300 text-red-700 bg-white/80 hover:bg-white"
-                        onClick={() => setShowCarga((p) => !p)}
+                {!hasPointData ? (
+                  <p className="text-xs text-gray-500">
+                    Aún no hay datos punto a punto. Adjunta al menos un Excel de
+                    checklist para ver la aplicación por criterio.
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="w-full bg-gray-50 border rounded-2xl px-4 py-3">
+                      <svg
+                        viewBox="0 0 100 100"
+                        preserveAspectRatio="none"
+                        className="w-full h-40"
                       >
-                        {showCarga
-                          ? "Ocultar edición de listado"
-                          : "Cargar / editar listado desde Excel"}
+                        {/* Eje base */}
+                        <line
+                          x1="0"
+                          y1="90"
+                          x2="100"
+                          y2="90"
+                          stroke="#9ca3af"
+                          strokeWidth="0.4"
+                        />
+
+                        {/* Líneas de referencia 25/50/75 */}
+                        {[25, 50, 75].map((p) => (
+                          <line
+                            key={p}
+                            x1="0"
+                            y1={90 - p * 0.8}
+                            x2="100"
+                            y2={90 - p * 0.8}
+                            stroke="#e5e7eb"
+                            strokeWidth="0.3"
+                            strokeDasharray="1 2"
+                          />
+                        ))}
+
+                        {/* Path principal */}
+                        {chartPoints.length > 1 && (
+                          <path
+                            d={
+                              "M " +
+                              chartPoints
+                                .map((p, i) => {
+                                  const x =
+                                    (i /
+                                      (chartPoints.length - 1 || 1)) *
+                                    100;
+                                  const y = 90 - p.pct * 0.8;
+                                  return `${x} ${y}`;
+                                })
+                                .join(" L ")
+                            }
+                            fill="none"
+                            stroke="#ef4444"
+                            strokeWidth="0.7"
+                            strokeLinejoin="round"
+                            strokeLinecap="round"
+                          />
+                        )}
+
+                        {/* Puntos */}
+                        {chartPoints.map((p, i) => {
+                          const x =
+                            (i / (chartPoints.length - 1 || 1)) * 100;
+                          const y = 90 - p.pct * 0.8;
+                          const good = p.pct >= 85;
+                          const color = good ? "#16a34a" : "#dc2626";
+                          return (
+                            <g key={p.idx}>
+                              <circle
+                                cx={x}
+                                cy={y}
+                                r={1.3}
+                                fill={color}
+                                stroke="#ffffff"
+                                strokeWidth="0.4"
+                                onMouseEnter={() =>
+                                  setHoverPointIdx(p.idx)
+                                }
+                                onMouseLeave={() =>
+                                  setHoverPointIdx(null)
+                                }
+                                style={{ cursor: "pointer" }}
+                              />
+                            </g>
+                          );
+                        })}
+                      </svg>
+                      <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+                        <span>1</span>
+                        <span>{TOTAL_POINTS}</span>
+                      </div>
+                    </div>
+
+                    {/* Tooltip / detalle punto seleccionado */}
+                    <div className="bg-gray-50 border rounded-2xl px-4 py-3 text-[11px]">
+                      {hoverPointIdx === null ? (
+                        <p className="text-gray-500">
+                          Pasa el ratón por encima de cualquier punto para ver
+                          el detalle del criterio y su % medio de aplicación.
+                        </p>
+                      ) : (
+                        (() => {
+                          const pct = pointPercents[hoverPointIdx];
+                          const info = CHECKLIST_POINTS[hoverPointIdx];
+                          const good = pct >= 85;
+                          return (
+                            <div className="space-y-1">
+                              <p className="font-semibold">
+                                Punto {info.index} · {info.etapa}
+                              </p>
+                              <p>{info.text}</p>
+                              <p>
+                                % medio de aplicación:{" "}
+                                <span
+                                  className={
+                                    good
+                                      ? "font-bold text-green-600"
+                                      : "font-bold text-red-600"
+                                  }
+                                >
+                                  {pct.toFixed(1)}%
+                                </span>
+                              </p>
+                            </div>
+                          );
+                        })()
+                      )}
+                    </div>
+                  </div>
+                )}
+              </section>
+
+              {/* LISTADO DE CENTROS (resumen + visitas) */}
+              <section className="bg-white p-6 rounded-2xl shadow">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <h3 className="font-bold text-lg bg-red-600 text-white inline-flex items-center px-4 py-2 rounded-2xl">
+                      LISTADO DE CENTROS
+                    </h3>
+                    <button
+                      className="text-xs px-3 py-1 rounded-full border border-red-300 text-red-700 bg-white/80 hover:bg-white"
+                      onClick={() => setShowCarga((p) => !p)}
+                    >
+                      {showCarga
+                        ? "Ocultar edición de listado"
+                        : "Cargar / editar listado desde Excel"}
+                    </button>
+                  </div>
+
+                  {showCarga && (
+                    <div className="bg-gray-50 border rounded-2xl p-3">
+                      <p className="text-xs text-gray-600 mb-2">
+                        Pega aquí el listado de centros desde Excel (una fila
+                        por línea, campos separados por tabulador):{" "}
+                        <span className="font-semibold">
+                          CODIGO · PROPIETARIO · CENTRO · PROVINCIA · CORREO ·
+                          REGIONAL
+                        </span>
+                      </p>
+                      <textarea
+                        className="w-full p-2 border rounded mb-2 text-xs h-20"
+                        placeholder="Ejemplo:&#10;4ABB&#9;MAZA Oriol&#9;PAMPLONA C. Exclusivo&#9;NAVARRA&#9;navarra.pamplona.carrefour@afflelou.es&#9;Sonia Godino"
+                        value={storesInput}
+                        onChange={(e) => setStoresInput(e.target.value)}
+                      ></textarea>
+                      <button
+                        onClick={handleApplyStores}
+                        className="text-xs px-3 py-1 rounded-full bg-red-600 text-white font-semibold shadow"
+                      >
+                        Aplicar/actualizar listado
                       </button>
                     </div>
+                  )}
 
-                    {showCarga && (
-                      <div className="bg-gray-50 border rounded-2xl p-3">
-                        <p className="text-xs text-gray-600 mb-2">
-                          Pega aquí el listado de centros desde Excel (una
-                          fila por línea, campos separados por
-                          tabulador):<br />
-                          <span className="font-semibold">
-                            CODIGO · PROPIETARIO · CENTRO · PROVINCIA ·
-                            CORREO · REGIONAL
-                          </span>
-                        </p>
-                        <textarea
-                          className="w-full p-2 border rounded mb-2 text-xs h-20"
-                          placeholder="Ejemplo:&#10;4ABB&#9;MAZA Oriol&#9;PAMPLONA C. Exclusivo&#9;NAVARRA&#9;navarra.pamplona.carrefour@afflelou.es&#9;Sonia Godino"
-                          value={storesInput}
-                          onChange={(e) => setStoresInput(e.target.value)}
-                        ></textarea>
-                        <button
-                          onClick={handleApplyStores}
-                          className="text-xs px-3 py-1 rounded-full bg-red-600 text-white font-semibold shadow"
-                        >
-                          Aplicar/actualizar listado
-                        </button>
+                  {/* Filtros horizontal en faldón rojo */}
+                  <div className="bg-red-600 text-white rounded-2xl p-3">
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+                      <div className="flex items-center gap-2 flex-1">
+                        <span className="text-xl">🔍</span>
+                        <input
+                          type="text"
+                          placeholder="Buscar en todos los campos..."
+                          className="flex-1 px-3 py-1 rounded text-xs text-gray-800"
+                          value={search}
+                          onChange={(e) => setSearch(e.target.value)}
+                        />
                       </div>
-                    )}
-
-                    {/* Faldón rojo buscador + filtros */}
-                    <div className="bg-red-600 text-white rounded-2xl p-3">
-                      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-                        <div className="flex items-center gap-2 flex-1">
-                          <span className="text-xl">🔍</span>
-                          <input
-                            type="text"
-                            placeholder="Buscar en todos los campos..."
-                            className="flex-1 px-3 py-1 rounded text-xs text-gray-800"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                          />
-                        </div>
-                        <div className="text-[10px] opacity-90 lg:text-right">
-                          Filtros por columna: selecciona un valor en
-                          cualquier desplegable para filtrar el listado
-                          (como en Excel).
-                        </div>
-                      </div>
-
-                      <div className="mt-3 flex flex-nowrap gap-2 text-[11px] overflow-x-auto">
-                        <select
-                          className="bg-white text-red-700 rounded px-2 py-1 min-w-[110px]"
-                          value={filterCodigo}
-                          onChange={(e) => setFilterCodigo(e.target.value)}
-                        >
-                          <option value="">Código (todos)</option>
-                          {opcionesCodigo.map((op) => (
-                            <option key={op} value={op}>
-                              {op}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          className="bg-white text-red-700 rounded px-2 py-1 min-w-[130px]"
-                          value={filterPropietario}
-                          onChange={(e) =>
-                            setFilterPropietario(e.target.value)
-                          }
-                        >
-                          <option value="">Propietario (todos)</option>
-                          {opcionesPropietario.map((op) => (
-                            <option key={op} value={op}>
-                              {op}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          className="bg-white text-red-700 rounded px-2 py-1 min-w-[160px]"
-                          value={filterCentro}
-                          onChange={(e) => setFilterCentro(e.target.value)}
-                        >
-                          <option value="">Centro (todos)</option>
-                          {opcionesCentro.map((op) => (
-                            <option key={op} value={op}>
-                              {op}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          className="bg-white text-red-700 rounded px-2 py-1 min-w-[140px]"
-                          value={filterProvincia}
-                          onChange={(e) =>
-                            setFilterProvincia(e.target.value)
-                          }
-                        >
-                          <option value="">Provincia (todas)</option>
-                          {opcionesProvincia.map((op) => (
-                            <option key={op} value={op}>
-                              {op}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          className="bg-white text-red-700 rounded px-2 py-1 min-w-[140px]"
-                          value={filterCorreo}
-                          onChange={(e) => setFilterCorreo(e.target.value)}
-                        >
-                          <option value="">Correo (todos)</option>
-                          {opcionesCorreo.map((op) => (
-                            <option key={op} value={op}>
-                              {op}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          className="bg-white text-red-700 rounded px-2 py-1 min-w-[150px]"
-                          value={filterDelegado}
-                          onChange={(e) => setFilterDelegado(e.target.value)}
-                        >
-                          <option value="">Delegado (todos)</option>
-                          {opcionesDelegado.map((op) => (
-                            <option key={op} value={op}>
-                              {op || "Sin delegado"}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          className="bg-white text-red-700 rounded px-2 py-1 min-w-[150px]"
-                          value={filterResponsableAudio}
-                          onChange={(e) =>
-                            setFilterResponsableAudio(e.target.value)
-                          }
-                        >
-                          <option value="">Resp. audio (todos)</option>
-                          {opcionesRespAudio.map((op) => (
-                            <option key={op} value={op}>
-                              {op}
-                            </option>
-                          ))}
-                        </select>
-
-                        <select
-                          className="bg-white text-red-700 rounded px-2 py-1 min-w-[120px]"
-                          value={filterCentroAAR}
-                          onChange={(e) => setFilterCentroAAR(e.target.value)}
-                        >
-                          <option value="">Centro AAR (todos)</option>
-                          <option value="Sí">Sí</option>
-                          <option value="No">No</option>
-                        </select>
+                      <div className="text-[10px] opacity-90 lg:text-right">
+                        Filtros por columna: selecciona un valor en cualquier
+                        desplegable para filtrar el listado (como en Excel).
                       </div>
                     </div>
 
-                    {/* Tabla sin scroll horizontal */}
-                    {stores.length === 0 ? (
-                      <p className="text-xs text-gray-500">
-                        Aún no hay centros cargados. Pega el listado arriba y
-                        pulsa "Aplicar/actualizar listado".
-                      </p>
-                    ) : (
-                      <div className="overflow-y-auto">
-                        <table className="w-full text-[11px] border-collapse">
-                          <thead>
-                            <tr className="bg-gray-50 border-b">
-                              <th className="text-left px-2 py-2">Nº</th>
-                              <th className="text-left px-2 py-2">Código</th>
-                              <th className="text-left px-2 py-2">
-                                Propietario
-                              </th>
-                              <th className="text-left px-2 py-2">Centro</th>
-                              <th className="text-left px-2 py-2">
-                                Provincia
-                              </th>
-                              <th className="text-left px-2 py-2">Correo</th>
-                              <th className="text-left px-2 py-2">
-                                Delegado regional
-                              </th>
-                              <th className="text-left px-2 py-2">
-                                Resp. audio
-                              </th>
-                              <th className="text-left px-2 py-2">
-                                Centro AAR
-                              </th>
-                              <th className="text-right px-2 py-2">
-                                Nº visitas
-                              </th>
-                              <th className="text-right px-2 py-2">
-                                Checklist medio %
-                              </th>
-                              <th className="text-right px-2 py-2">
-                                Aplica HIT
-                              </th>
-                              <th className="text-center px-2 py-2">
-                                Visitas / checklist (4)
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {sortedFilteredStores.map((store, index) => {
-                              const visitasConExcel = store.visitas.filter(
-                                (v) => v.excelName && v.excelName !== ""
-                              );
-                              const checklistMedioTienda = media(
-                                visitasConExcel.map((v) => v.checklist)
-                              );
-                              const aplicaHitTienda =
-                                aplicaHitTexto(visitasConExcel);
+                    <div className="mt-3 flex flex-nowrap gap-2 text-[11px] overflow-x-auto">
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[110px]"
+                        value={filterCodigo}
+                        onChange={(e) => setFilterCodigo(e.target.value)}
+                      >
+                        <option value="">Código (todos)</option>
+                        {opcionesCodigo.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
 
-                              const respAudioCentro = deriveRespAudio(store);
-                              const centroAARValor = deriveCentroAAR(store);
-                              const isExpanded =
-                                expandedStoreId === store.id;
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[130px]"
+                        value={filterPropietario}
+                        onChange={(e) =>
+                          setFilterPropietario(e.target.value)
+                        }
+                      >
+                        <option value="">Propietario (todos)</option>
+                        {opcionesPropietario.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
 
-                              const checklistBadge =
-                                checklistMedioTienda !== null ? (
-                                  <span
-                                    className={`inline-block min-w-[40px] px-2 py-0.5 rounded-full ${
-                                      checklistMedioTienda >= 85
-                                        ? "bg-green-100 text-green-800"
-                                        : "bg-red-100 text-red-700"
-                                    }`}
-                                  >
-                                    {checklistMedioTienda.toFixed(0)}%
-                                  </span>
-                                ) : (
-                                  "-"
-                                );
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[160px]"
+                        value={filterCentro}
+                        onChange={(e) => setFilterCentro(e.target.value)}
+                      >
+                        <option value="">Centro (todos)</option>
+                        {opcionesCentro.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
 
-                              const rowBg =
-                                store.exclusivo &&
-                                "bg-yellow-50 hover:bg-yellow-100";
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[140px]"
+                        value={filterProvincia}
+                        onChange={(e) => setFilterProvincia(e.target.value)}
+                      >
+                        <option value="">Provincia (todas)</option>
+                        {opcionesProvincia.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
 
-                              return (
-                                <React.Fragment key={store.id}>
-                                  <tr
-                                    className={`border-b align-top hover:bg-gray-50 ${rowBg}`}
-                                  >
-                                    <td className="px-2 py-1">
-                                      {index + 1}
-                                    </td>
-                                    <td className="px-2 py-1">
-                                      <span className="font-semibold">
-                                        {store.codigo || "-"}
-                                      </span>
-                                    </td>
-                                    <td className="px-2 py-1">
-                                      {store.propietario || "-"}
-                                    </td>
-                                    <td className="px-2 py-1">
-                                      {store.centro || "-"}
-                                    </td>
-                                    <td className="px-2 py-1">
-                                      <span
-                                        className="inline-block px-2 py-0.5 rounded-full"
-                                        style={delegadoColor(
-                                          store.centroRegional
-                                        )}
-                                      >
-                                        {store.provincia || "-"}
-                                      </span>
-                                    </td>
-                                    <td className="px-2 py-1 break-all">
-                                      {store.correo || "-"}
-                                    </td>
-                                    <td className="px-2 py-1">
-                                      <span
-                                        className="inline-block px-2 py-0.5 rounded-full"
-                                        style={delegadoColor(
-                                          store.centroRegional
-                                        )}
-                                      >
-                                        {store.centroRegional ||
-                                          "Sin delegado"}
-                                      </span>
-                                    </td>
-                                    <td className="px-2 py-1">
-                                      {respAudioCentro || "-"}
-                                    </td>
-                                    <td className="px-2 py-1">
-                                      {centroAARValor || "-"}
-                                    </td>
-                                    <td className="px-2 py-1 text-right">
-                                      {visitasConExcel.length}
-                                    </td>
-                                    <td className="px-2 py-1 text-right">
-                                      {checklistBadge}
-                                    </td>
-                                    <td className="px-2 py-1 text-right">
-                                      {aplicaHitTienda || "-"}
-                                    </td>
-                                    <td className="px-2 py-1 text-center">
-                                      <button
-                                        className={`text-[10px] px-2 py-1 rounded-full border ${
-                                          isExpanded
-                                            ? "border-red-500 text-white bg-red-500"
-                                            : "border-red-400 text-red-600 bg-white hover:bg-red-50"
-                                        }`}
-                                        onClick={() =>
-                                          setExpandedStoreId(
-                                            isExpanded ? null : store.id
-                                          )
-                                        }
-                                      >
-                                        {isExpanded
-                                          ? "Ocultar visitas"
-                                          : "Ver/editar visitas"}
-                                      </button>
-                                    </td>
-                                  </tr>
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[140px]"
+                        value={filterCorreo}
+                        onChange={(e) => setFilterCorreo(e.target.value)}
+                      >
+                        <option value="">Correo (todos)</option>
+                        {opcionesCorreo.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
 
-                                  {isExpanded && (
-                                    <tr className="bg-gray-50 border-b">
-                                      <td
-                                        colSpan={13}
-                                        className="px-3 py-3"
-                                      >
-                                        <div className="text-[11px]">
-                                          <p className="font-semibold mb-2">
-                                            Visitas y checklist adjunto
-                                            (hasta 4) –{" "}
-                                            {store.centro || store.codigo}
-                                          </p>
-                                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-                                            {store.visitas.map((visit) => (
-                                              <div
-                                                key={visit.id}
-                                                className="border rounded-xl p-2 bg-white"
-                                              >
-                                                <p className="font-semibold mb-1">
-                                                  Visita {visit.id}
-                                                </p>
-                                                <input
-                                                  type="text"
-                                                  placeholder="dd/mm/aaaa"
-                                                  className={`w-full border rounded px-2 py-1 mb-1 ${
-                                                    visit.fecha &&
-                                                    !isValidFecha(visit.fecha)
-                                                      ? "border-red-500 bg-red-50"
-                                                      : ""
-                                                  }`}
-                                                  value={visit.fecha}
-                                                  onChange={(e) =>
-                                                    updateVisitField(
-                                                      store.id,
-                                                      visit.id,
-                                                      "fecha",
-                                                      e.target.value
-                                                    )
-                                                  }
-                                                />
-                                                <select
-                                                  className="w-full border rounded px-2 py-1 mb-1"
-                                                  value={
-                                                    visit.responsable || ""
-                                                  }
-                                                  onChange={(e) =>
-                                                    updateVisitField(
-                                                      store.id,
-                                                      visit.id,
-                                                      "responsable",
-                                                      e.target.value
-                                                    )
-                                                  }
-                                                >
-                                                  <option value="">
-                                                    Resp. audio
-                                                  </option>
-                                                  <option value="Sonia">
-                                                    Sonia
-                                                  </option>
-                                                  <option value="Ary Rojas">
-                                                    Ary Rojas
-                                                  </option>
-                                                </select>
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[150px]"
+                        value={filterDelegado}
+                        onChange={(e) => setFilterDelegado(e.target.value)}
+                      >
+                        <option value="">Delegado (todos)</option>
+                        {opcionesDelegado.map((op) => (
+                          <option key={op} value={op}>
+                            {op || "Sin delegado"}
+                          </option>
+                        ))}
+                      </select>
 
-                                                <label className="inline-flex items-center px-3 py-1 rounded-xl border cursor-pointer hover:bg-gray-50 mb-1">
-                                                  <span className="text-[11px] font-semibold">
-                                                    Adjuntar Excel checklist
-                                                  </span>
-                                                  <input
-                                                    type="file"
-                                                    accept=".xlsx,.xls,.csv"
-                                                    className="hidden"
-                                                    onChange={(e) =>
-                                                      handleChecklistFileChange(
-                                                        store.id,
-                                                        visit.id,
-                                                        e
-                                                      )
-                                                    }
-                                                  />
-                                                </label>
-                                                <p className="text-[10px] text-gray-500 mb-1 truncate">
-                                                  {visit.excelName ||
-                                                    "Sin archivo"}
-                                                </p>
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[150px]"
+                        value={filterResponsableAudio}
+                        onChange={(e) =>
+                          setFilterResponsableAudio(e.target.value)
+                        }
+                      >
+                        <option value="">Resp. audio (todos)</option>
+                        {opcionesRespAudio.map((op) => (
+                          <option key={op} value={op}>
+                            {op}
+                          </option>
+                        ))}
+                      </select>
 
-                                                <div className="grid grid-cols-3 gap-1 mt-1">
-                                                  <div>
-                                                    <p className="text-[10px] mb-0.5">
-                                                      Checklist % (F90)
-                                                    </p>
-                                                    <input
-                                                      type="number"
-                                                      min={0}
-                                                      max={100}
-                                                      className="w-full border rounded px-1 py-0.5"
-                                                      value={
-                                                        visit.checklist ?? ""
-                                                      }
-                                                      onChange={(e) => {
-                                                        const val =
-                                                          e.target.value;
-                                                        const num =
-                                                          val === ""
-                                                            ? null
-                                                            : Number(val);
-                                                        updateVisitField(
-                                                          store.id,
-                                                          visit.id,
-                                                          "checklist",
-                                                          isNaN(num)
-                                                            ? null
-                                                            : num
-                                                        );
-                                                      }}
-                                                    />
-                                                  </div>
-                                                  <div>
-                                                    <p className="text-[10px] mb-0.5">
-                                                      HIT
-                                                    </p>
-                                                    <select
-                                                      className="w-full border rounded px-1 py-0.5"
-                                                      value={visit.hit || ""}
-                                                      onChange={(e) =>
-                                                        updateVisitField(
-                                                          store.id,
-                                                          visit.id,
-                                                          "hit",
-                                                          e.target.value
-                                                        )
-                                                      }
-                                                    >
-                                                      <option value="">
-                                                        -
-                                                      </option>
-                                                      <option value="Sí">
-                                                        Sí
-                                                      </option>
-                                                      <option value="No">
-                                                        No
-                                                      </option>
-                                                    </select>
-                                                  </div>
-                                                  <div>
-                                                    <p className="text-[10px] mb-0.5">
-                                                      Centro AAR
-                                                    </p>
-                                                    <select
-                                                      className="w-full border rounded px-1 py-0.5"
-                                                      value={
-                                                        visit.centroAAR || ""
-                                                      }
-                                                      onChange={(e) =>
-                                                        updateVisitField(
-                                                          store.id,
-                                                          visit.id,
-                                                          "centroAAR",
-                                                          e.target.value
-                                                        )
-                                                      }
-                                                    >
-                                                      <option value="">
-                                                        -
-                                                      </option>
-                                                      <option value="Sí">
-                                                        Sí
-                                                      </option>
-                                                      <option value="No">
-                                                        No
-                                                      </option>
-                                                    </select>
-                                                  </div>
-                                                </div>
-                                                <p className="mt-2 text-[10px] text-gray-500">
-                                                  La plataforma lee
-                                                  automáticamente cada
-                                                  criterio de la hoja{" "}
-                                                  <strong>
-                                                    PROCESOS Y BASICOS
-                                                  </strong>{" "}
-                                                  (B = descripción, F = 0/1)
-                                                  para el mapa punto a punto.
-                                                </p>
-                                              </div>
-                                            ))}
-                                          </div>
-                                          <button
-                                            className="mt-1 text-[11px] px-3 py-1 rounded-full bg-red-600 text-white font-semibold"
-                                            onClick={() =>
-                                              setExpandedStoreId(null)
-                                            }
-                                          >
-                                            Guardar visitas de este centro
-                                            (datos ya guardados en nube al
-                                            pulsar arriba)
-                                          </button>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  )}
-                                </React.Fragment>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-
-                        {/* KPIs globales */}
-                        <div className="mt-4 text-[11px] text-gray-600 flex flex-wrap gap-3">
-                          <span>
-                            Total tiendas: <strong>{totalTiendas}</strong>
-                          </span>
-                          <span>
-                            Tiendas con al menos 1 visita (Excel):{" "}
-                            <strong>
-                              {tiendasConVisita} (
-                              {porcentajeTiendasVisitadas.toFixed(0)}%)
-                            </strong>
-                          </span>
-                          <span>
-                            Total visitas (Excels adjuntos):{" "}
-                            <strong>{totalVisitas}</strong>
-                          </span>
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${kpiBadgeClass(
-                              checklistMediaGlobal
-                            )}`}
-                          >
-                            <span className="w-2 h-2 rounded-full bg-current/70" />
-                            <span>
-                              Checklist medio global (F90):{" "}
-                              {checklistMediaGlobal !== null
-                                ? `${checklistMediaGlobal.toFixed(0)}%`
-                                : "-"}
-                            </span>
-                          </span>
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full ${kpiBadgeClass(
-                              hitMediaGlobal
-                            )}`}
-                          >
-                            <span className="w-2 h-2 rounded-full bg-current/70" />
-                            <span>
-                              % aplicación HIT global:{" "}
-                              {hitMediaGlobal !== null
-                                ? `${hitMediaGlobal.toFixed(0)}%`
-                                : "-"}
-                            </span>
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </section>
-
-                {/* CENTROS EXCLUSIVOS */}
-                <section className="mt-10 bg-white p-6 rounded-2xl shadow">
-                  <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-2xl px-4 py-3 flex flex-wrap items-center gap-4">
-                    <span className="text-sm">
-                      Nº centros exclusivos:{" "}
-                      <strong>{exclusiveStores.length}</strong>
-                    </span>
-                    <span className="text-sm">
-                      Ventas acumuladas:{" "}
-                      <strong>{totalVentasExclusivos.toFixed(0)}€</strong>
-                    </span>
-                    <span className="text-sm">
-                      Objetivo acumulado:{" "}
-                      <strong>
-                        {totalObjetivosExclusivos.toFixed(0)}€
-                      </strong>
-                    </span>
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full ${
-                        porcentajeExclusivos === null
-                          ? "bg-gray-100 text-gray-700"
-                          : porcentajeExclusivos >= 100
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      % resultado acumulado año:{" "}
-                      {porcentajeExclusivos === null
-                        ? "-"
-                        : `${porcentajeExclusivos.toFixed(1)}%`}
-                    </span>
+                      <select
+                        className="bg-white text-red-700 rounded px-2 py-1 min-w-[120px]"
+                        value={filterCentroAAR}
+                        onChange={(e) => setFilterCentroAAR(e.target.value)}
+                      >
+                        <option value="">Centro AAR (todos)</option>
+                        <option value="Sí">Sí</option>
+                        <option value="No">No</option>
+                      </select>
+                    </div>
                   </div>
 
-                  <h3 className="font-bold text-lg mb-3">
-                    Centros exclusivos
-                  </h3>
-
-                  {exclusiveStores.length === 0 ? (
+                  {/* Tabla centros */}
+                  {stores.length === 0 ? (
                     <p className="text-xs text-gray-500">
-                      No hay centros exclusivos detectados en el listado (se
-                      reconocen por nombre: PAMPLONA C. Exclusivo, CC LOS
-                      VALLES, SANTIAGO DE COMPOSTELA RUA DA ROSA, CC PLAZA
-                      DE LA ESTACIÓN, REINA DE MERCEDES, SANTANDER CC
-                      PEÑACASTILLO, TORRELAVEGA CARREFOUR CC, ZARAGOZA
-                      CALLE DELICIAS).
+                      Aún no hay centros cargados. Pega el listado arriba y
+                      pulsa "Aplicar/actualizar listado".
                     </p>
                   ) : (
-                    <div className="overflow-x-auto">
+                    <div className="overflow-y-auto">
                       <table className="w-full text-[11px] border-collapse">
                         <thead>
-                          <tr className="bg-yellow-50 border-b">
+                          <tr className="bg-gray-50 border-b">
+                            <th className="text-left px-2 py-2">Nº</th>
+                            <th className="text-left px-2 py-2">Código</th>
+                            <th className="text-left px-2 py-2">
+                              Propietario
+                            </th>
                             <th className="text-left px-2 py-2">Centro</th>
+                            <th className="text-left px-2 py-2">Provincia</th>
+                            <th className="text-left px-2 py-2">Correo</th>
                             <th className="text-left px-2 py-2">
-                              Provincia
+                              Delegado regional
                             </th>
                             <th className="text-left px-2 py-2">
-                              Delegado
+                              Resp. audio
+                            </th>
+                            <th className="text-left px-2 py-2">
+                              Centro AAR
+                            </th>
+                            <th className="text-right px-2 py-2">Nº visitas</th>
+                            <th className="text-right px-2 py-2">
+                              Checklist medio %
                             </th>
                             <th className="text-right px-2 py-2">
-                              Ventas mensuales €
-                            </th>
-                            <th className="text-right px-2 py-2">
-                              Objetivo mensual €
-                            </th>
-                            <th className="text-right px-2 py-2">
-                              % resultado
+                              Aplica HIT
                             </th>
                             <th className="text-center px-2 py-2">
-                              Acciones, meses y derivaciones (+)
+                              Visitas / checklist (4)
                             </th>
                           </tr>
                         </thead>
                         <tbody>
-                          {exclusiveStores.map((store) => {
-                            const data =
-                              store.exclusivoData || {
-                                ventas: {},
-                                objetivos: {},
-                                acciones: [],
-                              };
-                            const ventas = Object.values(
-                              data.ventas || {}
-                            ).reduce((a, b) => a + (b || 0), 0);
-                            const objetivos = Object.values(
-                              data.objetivos || {}
-                            ).reduce((a, b) => a + (b || 0), 0);
-                            const pct =
-                              objetivos > 0
-                                ? (ventas / objetivos) * 100
-                                : null;
-                            const isOpen =
-                              expandedExclusiveId === store.id;
+                          {sortedFilteredStores.map((store, index) => {
+                            const visitasConExcel = store.visitas.filter(
+                              (v) => v.excelName && v.excelName !== ""
+                            );
+                            const checklistMedioTienda = media(
+                              visitasConExcel.map((v) => v.checklist)
+                            );
+                            const aplicaHitTienda =
+                              aplicaHitTexto(visitasConExcel);
+
+                            const respAudioCentro = deriveRespAudio(store);
+                            const centroAARValor = deriveCentroAAR(store);
+                            const isExpanded =
+                              expandedStoreId === store.id;
+
+                            const checklistBadge =
+                              checklistMedioTienda !== null ? (
+                                <span
+                                  className={`inline-block min-w-[40px] px-2 py-0.5 rounded-full ${
+                                    checklistMedioTienda >= 85
+                                      ? "bg-green-100 text-green-800"
+                                      : "bg-red-100 text-red-700"
+                                  }`}
+                                >
+                                  {checklistMedioTienda.toFixed(0)}%
+                                </span>
+                              ) : (
+                                "-"
+                              );
 
                             return (
                               <React.Fragment key={store.id}>
-                                <tr className="border-b bg-yellow-50/40">
+                                <tr className="border-b hover:bg-gray-50 align-top">
                                   <td className="px-2 py-1">
-                                    {store.centro}
+                                    {index + 1}
                                   </td>
                                   <td className="px-2 py-1">
-                                    <span
-                                      className="inline-block px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-900"
-                                    >
-                                      {store.provincia}
+                                    <span className="font-semibold">
+                                      {store.codigo || "-"}
                                     </span>
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    {store.propietario || "-"}
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    {store.centro || "-"}
                                   </td>
                                   <td className="px-2 py-1">
                                     <span
@@ -2031,406 +1426,240 @@
                                         store.centroRegional
                                       )}
                                     >
-                                      {store.centroRegional}
+                                      {store.provincia || "-"}
                                     </span>
                                   </td>
-                                  <td className="px-2 py-1 text-right">
-                                    {ventas.toFixed(0)}€
+                                  <td className="px-2 py-1 break-all">
+                                    {store.correo || "-"}
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    <span
+                                      className="inline-block px-2 py-0.5 rounded-full"
+                                      style={delegadoColor(
+                                        store.centroRegional
+                                      )}
+                                    >
+                                      {store.centroRegional ||
+                                        "Sin delegado"}
+                                    </span>
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    {respAudioCentro || "-"}
+                                  </td>
+                                  <td className="px-2 py-1">
+                                    {centroAARValor || "-"}
                                   </td>
                                   <td className="px-2 py-1 text-right">
-                                    {objetivos.toFixed(0)}€
+                                    {visitasConExcel.length}
                                   </td>
                                   <td className="px-2 py-1 text-right">
-                                    {pct === null ? (
-                                      "-"
-                                    ) : (
-                                      <span
-                                        className={`inline-block min-w-[40px] px-2 py-0.5 rounded-full ${
-                                          pct >= 100
-                                            ? "bg-green-100 text-green-800"
-                                            : "bg-red-100 text-red-700"
-                                        }`}
-                                      >
-                                        {pct.toFixed(0)}%
-                                      </span>
-                                    )}
+                                    {checklistBadge}
+                                  </td>
+                                  <td className="px-2 py-1 text-right">
+                                    {aplicaHitTienda || "-"}
                                   </td>
                                   <td className="px-2 py-1 text-center">
                                     <button
-                                      className={`text-[10px] px-3 py-1 rounded-full border flex items-center gap-1 mx-auto ${
-                                        isOpen
-                                          ? "border-red-500 bg-red-500 text-white"
-                                          : "border-amber-500 bg-amber-50 text-amber-800 hover:bg-amber-100"
+                                      className={`text-[10px] px-2 py-1 rounded-full border ${
+                                        isExpanded
+                                          ? "border-red-600 bg-red-50 text-red-700"
+                                          : "border-red-400 text-red-600 hover:bg-red-50"
                                       }`}
                                       onClick={() =>
-                                        setExpandedExclusiveId(
-                                          isOpen ? null : store.id
+                                        setExpandedStoreId(
+                                          isExpanded ? null : store.id
                                         )
                                       }
                                     >
-                                      <span className="cursor-pointer">
-                                        {isOpen
-                                          ? "Ocultar"
-                                          : "Ver / añadir (+)"}
-                                      </span>
+                                      {isExpanded
+                                        ? "Ocultar visitas"
+                                        : "Ver/editar visitas"}
                                     </button>
                                   </td>
                                 </tr>
 
-                                {isOpen && (
-                                  <tr className="bg-yellow-50 border-b">
-                                    <td
-                                      colSpan={7}
-                                      className="px-4 py-3"
-                                    >
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px]">
-                                        {/* Ventas / objetivos por mes */}
-                                        <div className="bg-white rounded-2xl border px-3 py-2">
-                                          <p className="font-semibold mb-2">
-                                            Ventas y objetivos mensuales
-                                            (Ago 2025 - Jul 2026)
-                                          </p>
-                                          <table className="w-full text-[11px] border-collapse">
-                                            <thead>
-                                              <tr className="border-b bg-gray-50">
-                                                <th className="text-left px-2 py-1">
-                                                  Mes
-                                                </th>
-                                                <th className="text-right px-2 py-1">
-                                                  Ventas €
-                                                </th>
-                                                <th className="text-right px-2 py-1">
-                                                  Objetivo €
-                                                </th>
-                                                <th className="text-right px-2 py-1">
-                                                  %
-                                                </th>
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              {EXCLUSIVE_MONTHS.map(
-                                                (m) => {
-                                                  const v =
-                                                    (data.ventas &&
-                                                      data.ventas[m.key]) ||
-                                                    0;
-                                                  const o =
-                                                    (data.objetivos &&
-                                                      data.objetivos[
-                                                        m.key
-                                                      ]) || 0;
-                                                  const p =
-                                                    o > 0
-                                                      ? (v / o) * 100
-                                                      : null;
-                                                  return (
-                                                    <tr
-                                                      key={m.key}
-                                                      className="border-b last:border-0"
-                                                    >
-                                                      <td className="px-2 py-1">
-                                                        {m.label}
-                                                      </td>
-                                                      <td className="px-2 py-1 text-right">
-                                                        <input
-                                                          type="number"
-                                                          className="w-full text-right border rounded px-1 py-0.5"
-                                                          value={v}
-                                                          onChange={(
-                                                            e
-                                                          ) => {
-                                                            const num =
-                                                              Number(
-                                                                e
-                                                                  .target
-                                                                  .value
-                                                              ) || 0;
-                                                            updateExclusiveData(
-                                                              store.id,
-                                                              (
-                                                                prev
-                                                              ) => ({
-                                                                ...prev,
-                                                                ventas:
-                                                                  {
-                                                                    ...prev.ventas,
-                                                                    [m.key]:
-                                                                      num,
-                                                                  },
-                                                              })
-                                                            );
-                                                          }}
-                                                        />
-                                                      </td>
-                                                      <td className="px-2 py-1 text-right">
-                                                        <input
-                                                          type="number"
-                                                          className="w-full text-right border rounded px-1 py-0.5"
-                                                          value={o}
-                                                          onChange={(
-                                                            e
-                                                          ) => {
-                                                            const num =
-                                                              Number(
-                                                                e
-                                                                  .target
-                                                                  .value
-                                                              ) || 0;
-                                                            updateExclusiveData(
-                                                              store.id,
-                                                              (
-                                                                prev
-                                                              ) => ({
-                                                                ...prev,
-                                                                objetivos:
-                                                                  {
-                                                                    ...prev.objetivos,
-                                                                    [m.key]:
-                                                                      num,
-                                                                  },
-                                                              })
-                                                            );
-                                                          }}
-                                                        />
-                                                      </td>
-                                                      <td className="px-2 py-1 text-right">
-                                                        {p === null ? (
-                                                          "-"
-                                                        ) : (
-                                                          <span
-                                                            className={`inline-block min-w-[34px] px-1 py-0.5 rounded-full ${
-                                                              p >= 100
-                                                                ? "bg-green-100 text-green-800"
-                                                                : "bg-red-100 text-red-700"
-                                                            }`}
-                                                          >
-                                                            {p.toFixed(
-                                                              0
-                                                            )}
-                                                            %
-                                                          </span>
-                                                        )}
-                                                      </td>
-                                                    </tr>
-                                                  );
+                                {isExpanded && (
+                                  <tr className="bg-gray-50 border-b">
+                                    <td colSpan={13} className="px-3 py-3">
+                                      <div className="text-[11px]">
+                                        <p className="font-semibold mb-2">
+                                          Visitas y checklist adjunto (hasta 4)
+                                          – {store.centro || store.codigo}
+                                        </p>
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
+                                          {store.visitas.map((visit) => (
+                                            <div
+                                              key={visit.id}
+                                              className="border rounded-xl p-2 bg-white"
+                                            >
+                                              <p className="font-semibold mb-1">
+                                                Visita {visit.id}
+                                              </p>
+                                              <input
+                                                type="text"
+                                                placeholder="dd/mm/aaaa"
+                                                className={`w-full border rounded px-2 py-1 mb-1 ${
+                                                  visit.fecha &&
+                                                  !isValidFecha(visit.fecha)
+                                                    ? "border-red-500 bg-red-50"
+                                                    : ""
+                                                }`}
+                                                value={visit.fecha}
+                                                onChange={(e) =>
+                                                  updateVisitField(
+                                                    store.id,
+                                                    visit.id,
+                                                    "fecha",
+                                                    e.target.value
+                                                  )
                                                 }
-                                              )}
-                                            </tbody>
-                                          </table>
-                                        </div>
-
-                                        {/* Acciones y derivaciones */}
-                                        <div className="bg-white rounded-2xl border px-3 py-2">
-                                          <p className="font-semibold mb-2">
-                                            Acciones, fechas y
-                                            derivaciones
-                                          </p>
-                                          <p className="text-[10px] text-gray-600 mb-2">
-                                            Selecciona tipo de acción,
-                                            fecha y nº de derivaciones.
-                                          </p>
-                                          <button
-                                            className="mb-2 text-[10px] px-2 py-1 rounded-full bg-amber-500 text-white"
-                                            onClick={() =>
-                                              updateExclusiveData(
-                                                store.id,
-                                                (prev) => ({
-                                                  ...prev,
-                                                  acciones: [
-                                                    ...(prev.acciones ||
-                                                      []),
-                                                    {
-                                                      id:
-                                                        Date.now(),
-                                                      tipo: "",
-                                                      fecha: "",
-                                                      derivaciones:
-                                                        "",
-                                                    },
-                                                  ],
-                                                })
-                                              )
-                                            }
-                                          >
-                                            + Añadir acción
-                                          </button>
-                                          <div className="space-y-2 max-h-60 overflow-y-auto">
-                                            {(data.acciones ||
-                                              []).map((acc) => (
-                                              <div
-                                                key={acc.id}
-                                                className="border rounded-xl px-2 py-1.5 flex flex-col gap-1"
+                                              />
+                                              <select
+                                                className="w-full border rounded px-2 py-1 mb-1"
+                                                value={visit.responsable || ""}
+                                                onChange={(e) =>
+                                                  updateVisitField(
+                                                    store.id,
+                                                    visit.id,
+                                                    "responsable",
+                                                    e.target.value
+                                                  )
+                                                }
                                               >
-                                                <div className="flex gap-1">
-                                                  <select
-                                                    className="flex-1 border rounded px-1 py-0.5 text-[10px]"
+                                                <option value="">
+                                                  Resp. audio
+                                                </option>
+                                                <option value="Sonia">
+                                                  Sonia
+                                                </option>
+                                                <option value="Ary Rojas">
+                                                  Ary Rojas
+                                                </option>
+                                              </select>
+
+                                              <label className="inline-flex items-center px-3 py-1 rounded-xl border cursor-pointer hover:bg-gray-50 mb-1">
+                                                <span className="text-[11px] font-semibold">
+                                                  Adjuntar Excel checklist
+                                                </span>
+                                                <input
+                                                  type="file"
+                                                  accept=".xlsx,.xls,.csv"
+                                                  className="hidden"
+                                                  onChange={(e) =>
+                                                    handleChecklistFileChange(
+                                                      store.id,
+                                                      visit.id,
+                                                      e
+                                                    )
+                                                  }
+                                                />
+                                              </label>
+                                              <p className="text-[10px] text-gray-500 mb-1 truncate">
+                                                {visit.excelName ||
+                                                  "Sin archivo"}
+                                              </p>
+
+                                              <div className="grid grid-cols-3 gap-1 mt-1">
+                                                <div>
+                                                  <p className="text-[10px] mb-0.5">
+                                                    Checklist % (F90)
+                                                  </p>
+                                                  <input
+                                                    type="number"
+                                                    min={0}
+                                                    max={100}
+                                                    className="w-full border rounded px-1 py-0.5"
                                                     value={
-                                                      acc.tipo || ""
+                                                      visit.checklist ?? ""
                                                     }
-                                                    onChange={(e) =>
-                                                      updateExclusiveData(
+                                                    onChange={(e) => {
+                                                      const val =
+                                                        e.target.value;
+                                                      const num =
+                                                        val === ""
+                                                          ? null
+                                                          : Number(val);
+                                                      updateVisitField(
                                                         store.id,
-                                                        (prev) => ({
-                                                          ...prev,
-                                                          acciones:
-                                                            prev.acciones.map(
-                                                              (
-                                                                a
-                                                              ) =>
-                                                                a.id ===
-                                                                acc.id
-                                                                  ? {
-                                                                      ...a,
-                                                                      tipo:
-                                                                        e
-                                                                          .target
-                                                                          .value,
-                                                                    }
-                                                                  : a
-                                                            ),
-                                                        })
+                                                        visit.id,
+                                                        "checklist",
+                                                        isNaN(num)
+                                                          ? null
+                                                          : num
+                                                      );
+                                                    }}
+                                                  />
+                                                </div>
+                                                <div>
+                                                  <p className="text-[10px] mb-0.5">
+                                                    HIT
+                                                  </p>
+                                                  <select
+                                                    className="w-full border rounded px-1 py-0.5"
+                                                    value={visit.hit || ""}
+                                                    onChange={(e) =>
+                                                      updateVisitField(
+                                                        store.id,
+                                                        visit.id,
+                                                        "hit",
+                                                        e.target.value
                                                       )
                                                     }
                                                   >
                                                     <option value="">
-                                                      Tipo acción
+                                                      -
                                                     </option>
-                                                    <option value="Stand">
-                                                      Stand
+                                                    <option value="Sí">
+                                                      Sí
                                                     </option>
-                                                    <option value="Mailing">
-                                                      Mailing
-                                                    </option>
-                                                    <option value="Cashback">
-                                                      Cashback
-                                                    </option>
-                                                    <option value="Azafata calle">
-                                                      Azafata calle
-                                                    </option>
-                                                    <option value="Ruleta">
-                                                      Ruleta
-                                                    </option>
-                                                    <option value="Acción colectivo">
-                                                      Acción colectivo
-                                                    </option>
-                                                    <option value="Call center">
-                                                      Call center
-                                                    </option>
-                                                    <option value="Acción derivación tienda">
-                                                      Acción
-                                                      derivación
-                                                      tienda
-                                                    </option>
-                                                    <option value="Derivación colectivo">
-                                                      Derivación
-                                                      colectivo
+                                                    <option value="No">
+                                                      No
                                                     </option>
                                                   </select>
-                                                  <input
-                                                    type="date"
-                                                    className="border rounded px-1 py-0.5 text-[10px]"
+                                                </div>
+                                                <div>
+                                                  <p className="text-[10px] mb-0.5">
+                                                    Centro AAR
+                                                  </p>
+                                                  <select
+                                                    className="w-full border rounded px-1 py-0.5"
                                                     value={
-                                                      acc.fecha || ""
+                                                      visit.centroAAR || ""
                                                     }
                                                     onChange={(e) =>
-                                                      updateExclusiveData(
+                                                      updateVisitField(
                                                         store.id,
-                                                        (prev) => ({
-                                                          ...prev,
-                                                          acciones:
-                                                            prev.acciones.map(
-                                                              (
-                                                                a
-                                                              ) =>
-                                                                a.id ===
-                                                                acc.id
-                                                                  ? {
-                                                                      ...a,
-                                                                      fecha:
-                                                                        e
-                                                                          .target
-                                                                          .value,
-                                                                    }
-                                                                  : a
-                                                            ),
-                                                        })
-                                                      )
-                                                    }
-                                                  />
-                                                </div>
-                                                <div className="flex justify-between items-center gap-1">
-                                                  <div className="flex items-center gap-1">
-                                                    <span className="text-[10px] text-gray-600">
-                                                      Derivaciones:
-                                                    </span>
-                                                    <input
-                                                      type="number"
-                                                      className="w-16 border rounded px-1 py-0.5 text-[10px] text-right"
-                                                      value={
-                                                        acc.derivaciones ||
-                                                        ""
-                                                      }
-                                                      onChange={(e) =>
-                                                        updateExclusiveData(
-                                                          store.id,
-                                                          (
-                                                            prev
-                                                          ) => ({
-                                                            ...prev,
-                                                            acciones:
-                                                              prev.acciones.map(
-                                                                (
-                                                                  a
-                                                                ) =>
-                                                                  a.id ===
-                                                                  acc.id
-                                                                    ? {
-                                                                        ...a,
-                                                                        derivaciones:
-                                                                          e
-                                                                            .target
-                                                                            .value,
-                                                                      }
-                                                                    : a
-                                                              ),
-                                                          })
-                                                        )
-                                                      }
-                                                    />
-                                                  </div>
-                                                  <button
-                                                    className="text-[10px] text-red-500"
-                                                    onClick={() =>
-                                                      updateExclusiveData(
-                                                        store.id,
-                                                        (prev) => ({
-                                                          ...prev,
-                                                          acciones:
-                                                            prev.acciones.filter(
-                                                              (
-                                                                a
-                                                              ) =>
-                                                                a.id !==
-                                                                acc.id
-                                                            ),
-                                                        })
+                                                        visit.id,
+                                                        "centroAAR",
+                                                        e.target.value
                                                       )
                                                     }
                                                   >
-                                                    Eliminar
-                                                  </button>
+                                                    <option value="">
+                                                      -
+                                                    </option>
+                                                    <option value="Sí">
+                                                      Sí
+                                                    </option>
+                                                    <option value="No">
+                                                      No
+                                                    </option>
+                                                  </select>
                                                 </div>
                                               </div>
-                                            ))}
-                                            {(data.acciones || [])
-                                              .length === 0 && (
-                                              <p className="text-[10px] text-gray-500">
-                                                No hay acciones
-                                                registradas todavía.
-                                              </p>
-                                            )}
-                                          </div>
+                                            </div>
+                                          ))}
                                         </div>
+                                        <p className="text-[10px] text-gray-500">
+                                          Adjunta el Excel del checklist: la
+                                          plataforma lee automáticamente el %
+                                          global desde la celda{" "}
+                                          <strong>F90</strong> y, punto a
+                                          punto, todos los criterios de la hoja{" "}
+                                          <strong>PROCESOS Y BASICOS</strong>{" "}
+                                          (columna F, 0 = no aplica, 1 =
+                                          aplica).
+                                        </p>
                                       </div>
                                     </td>
                                   </tr>
@@ -2442,9 +1671,9 @@
                       </table>
                     </div>
                   )}
-                </section>
-              </div>
-            )}
+                </div>
+              </section>
+            </main>
           </div>
         );
       }
