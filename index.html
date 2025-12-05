@@ -16,6 +16,7 @@
       --accent-red: #ff2440;
       --accent-blue: #38bdf8;
       --accent-green: #22c55e;
+      --accent-green-light: #4ade80;
       --accent-orange: #f97316;
     }
 
@@ -166,7 +167,7 @@
       background: #020617;
       color: #e5e7eb;
       white-space: nowrap;
-      box-shadow: none; /* SIN SOMBRAS */
+      box-shadow: none; /* sin sombras */
     }
 
     .btn-cta {
@@ -270,7 +271,7 @@
       flex-wrap: wrap;
     }
 
-    /* DELEGADOS Y CENTROS (COLUMNA IZQUIERDA) */
+    /* DELEGADOS Y CENTROS (IZQUIERDA) */
     .delegados-panel {
       display: flex;
       flex-direction: column;
@@ -349,7 +350,7 @@
       margin-bottom: 2px;
     }
 
-    /* CALENDARIO (COLUMNA CENTRAL) */
+    /* CALENDARIO (CENTRO) */
     .calendar-panel {
       display: flex;
       flex-direction: column;
@@ -444,17 +445,22 @@
       color: #eab308;
     }
 
-    .calendar-dot.estado-realizada {
-      background: rgba(34,197,94,.16);
-      color: #22c55e;
+    .calendar-dot.estado-enproceso {
+      background: rgba(74,222,128,.18);
+      color: var(--accent-green-light);
+    }
+
+    .calendar-dot.estado-finalizada {
+      background: rgba(22,163,74,.24);
+      color: var(--accent-green);
     }
 
     .calendar-dot.estado-anulada {
-      background: rgba(248,113,113,.16);
+      background: rgba(248,113,113,.18);
       color: #f97373;
     }
 
-    /* VISITAS (COLUMNA DERECHA) */
+    /* VISITAS (DERECHA) */
     .visits-panel {
       display: flex;
       flex-direction: column;
@@ -504,9 +510,14 @@
       color: #eab308;
     }
 
-    .estado-realizada {
-      background: rgba(34,197,94,.16);
-      color: #22c55e;
+    .estado-enproceso {
+      background: rgba(74,222,128,.18);
+      color: var(--accent-green-light);
+    }
+
+    .estado-finalizada {
+      background: rgba(22,163,74,.24);
+      color: var(--accent-green);
     }
 
     .estado-anulada {
@@ -540,7 +551,7 @@
       color: #f97373;
     }
 
-    /* TABLA CENTROS */
+    /* TABLA DE CENTROS (INFERIOR, TODA LA ANCHURA) */
     .table-wrapper {
       flex: 1;
       background: var(--bg-card);
@@ -549,6 +560,7 @@
       display: flex;
       flex-direction: column;
       min-height: 0;
+      margin-top: 6px;
     }
 
     .table-header {
@@ -779,7 +791,7 @@
 
   <!-- MAIN -->
   <main class="main">
-    <!-- Topbar con acciones generales -->
+    <!-- Topbar -->
     <div class="topbar">
       <button class="btn" id="themeToggle">
         <span class="icon">🌓</span> Oscuro / Claro
@@ -795,7 +807,7 @@
       </button>
     </div>
 
-    <!-- Buscador local de centros -->
+    <!-- Buscador de centros (afecta a la tabla inferior) -->
     <div class="centros-search-row">
       <div class="centros-search-wrapper">
         <span class="search-icon">🔍</span>
@@ -806,12 +818,12 @@
 
     <!-- BLOQUE SUPERIOR: DELEGADOS + CALENDARIO + VISITAS -->
     <section class="top-layout">
-      <!-- IZQUIERDA: DELEGADOS Y CENTROS -->
+      <!-- IZQUIERDA: DELEGADOS Y ACCIONES -->
       <article class="card delegados-panel">
         <div>
           <h3>Centros y delegados</h3>
           <p class="card-sub">
-            Cada barra muestra un delegado, su color y el número de centros. Haz clic para desplegar sus centros y filtrar la tabla.
+            Cada barra muestra un delegado, su color y el número de centros. Clic para desplegar sus centros y filtrar la tabla inferior.
           </p>
         </div>
 
@@ -851,24 +863,26 @@
         </p>
       </article>
 
-      <!-- DERECHA: VISITAS AGENDADAS -->
+      <!-- DERECHA: VISITAS -->
       <article class="card visits-panel">
         <div>
           <h3>Visitas agendadas</h3>
           <p class="card-sub">
-            Listado por fecha, centro, delegado y Responsable de Audio. Gestiona el estado e informes de cada visita.
+            Lista por fecha, centro, delegado y Responsable de Audio. El estado pasa de Pendiente → <b>En proceso</b> → <b>Finalizada</b> o Anulada.
           </p>
         </div>
         <div class="visitas-list" id="visitasList"></div>
       </article>
     </section>
 
-    <!-- TABLA CENTROS -->
+    <!-- TABLA INFERIOR: TODOS LOS CENTROS (TIPO EXCEL) -->
     <section class="table-wrapper">
       <div class="table-header">
         <div>
           <h3>Listado de centros</h3>
-          <span>Vista consolidada de centros Corner y Exclusivos · fuente: Excel maestro.</span>
+          <span>
+            Vista consolidada de centros Corner y Exclusivos · campos importados del Excel maestro + AAR + Informes.
+          </span>
         </div>
         <span class="badge-small" id="totalCentrosLabel"></span>
       </div>
@@ -982,12 +996,12 @@
   </div>
 
   <script>
-    // ---- TEMA OSCURO/CLARO (simple toggle de clase) ----
+    // ---- TEMA OSCURO/CLARO ----
     document.getElementById('themeToggle').addEventListener('click', () => {
       document.body.classList.toggle('light');
     });
 
-    // ---- COLORES DELEGADOS (puedes ampliar esta lista según tu Excel) ----
+    // ---- COLORES DELEGADOS ----
     const delegadosColores = {
       "ENERITZ ARANGUREN": "#22c55e",
       "LAURA PLAZAS": "#2563eb",
@@ -1005,10 +1019,10 @@
       "Sergio Perán": "#fb7185"
     };
 
-    // ---- DATOS ----
-    const centros = []; // se llenará desde Excel o altas manuales
+    // ---- DATOS CENTROS ----
+    const centros = [];  // se llena desde Excel o altas manuales
 
-    // Centros exclusivos de alto potencial (resto Corner)
+    // Exclusivos vs Corner
     const exclusivosNombres = new Set([
       "CC LOS VALLES",
       "FUENLABRADA Calle Leganes",
@@ -1022,8 +1036,8 @@
       "ZARAGOZA CALLE DELICIAS"
     ]);
 
-    const informesPorCentro = {}; // nombreCentro -> array de informes (placeholder)
-    const aarPorCentro = {};      // nombreCentro -> "No" | "En formación" | "Sí"
+    const informesPorCentro = {}; // centro -> array (placeholder)
+    const aarPorCentro = {};      // centro -> "No" | "En formación" | "Sí"
 
     const tablaBody = document.getElementById('tablaCentrosBody');
     const totalCentrosLabel = document.getElementById('totalCentrosLabel');
@@ -1032,7 +1046,6 @@
     let filtroDelegadoActual = null;
     let filtroTextoActual = "";
 
-    // ---- UTILIDADES ----
     function tipoCentro(nombreCentro) {
       return exclusivosNombres.has(nombreCentro) ? "Exclusivo" : "Corner";
     }
@@ -1045,7 +1058,7 @@
       return aarPorCentro[nombreCentro] || "No";
     }
 
-    // ---- TABLA DE CENTROS ----
+    // ---- TABLA CENTROS ----
     function renderTabla() {
       const texto = (filtroTextoActual || "").toLowerCase();
       tablaBody.innerHTML = "";
@@ -1092,7 +1105,7 @@
         `Centros mostrados: ${filtrados.length} · Total cargados desde Excel o altas manuales: ${centros.length}`;
     }
 
-    // ---- DELEGADOS Y CENTROS (tarjetas) ----
+    // ---- TARJETAS DE DELEGADOS ----
     const delegadosCards = document.getElementById('delegadosCards');
 
     function renderDelegadosCards() {
@@ -1144,9 +1157,7 @@
         card.addEventListener('click', () => {
           const lista = card.querySelector('.delegado-centros-list');
           const visible = lista.style.display !== 'none';
-          // colapsar/expandir
           lista.style.display = visible ? 'none' : 'block';
-          // aplicar filtro en tabla
           filtroDelegadoActual = visible ? null : nombre;
           renderTabla();
         });
@@ -1155,7 +1166,7 @@
       });
     }
 
-    // ---- DATALIST DE CENTROS PARA VISITAS ----
+    // ---- DATALIST CENTROS PARA AGENDAR VISITAS ----
     function renderCentrosDatalist() {
       const dl = document.getElementById('centrosList');
       if (!dl) return;
@@ -1168,7 +1179,7 @@
       });
     }
 
-    // ---- BUSCADOR TABLA CENTROS ----
+    // ---- BUSCADOR TABLA ----
     document.getElementById('buscadorCentros').addEventListener('input', e => {
       filtroTextoActual = e.target.value || "";
       renderTabla();
@@ -1185,7 +1196,7 @@
       el.addEventListener('click', () => cerrarModal(el.dataset.close));
     });
 
-    // ---- ALTA MANUAL DE CENTRO ----
+    // ---- ALTA MANUAL CENTRO ----
     document.getElementById('btnAddCentro').addEventListener('click', () => {
       const sel = document.getElementById('nuevoDelegado');
       sel.innerHTML = "";
@@ -1219,7 +1230,7 @@
       renderCentrosDatalist();
     });
 
-    // ---- ADJUNTAR CENTROS (EXCEL) ----
+    // ---- CARGA MASIVA EXCEL ----
     const inputExcel = document.getElementById('inputExcel');
     document.getElementById('btnAdjuntarExcel').addEventListener('click', () => {
       inputExcel.click();
@@ -1238,7 +1249,7 @@
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
         // Esperado: CODIGO | PROPIETARIO | CENTRO | PROVINCIA | DELEGADOS
-        centros.length = 0; // limpiamos
+        centros.length = 0;
         rows.slice(1).forEach(row => {
           if (!row || row.length < 5) return;
           const [codigo, propietario, centro, provincia, delegado] = row;
@@ -1264,7 +1275,7 @@
       reader.readAsArrayBuffer(file);
     });
 
-    // ---- INFORMES DE CENTRO (placeholder) ----
+    // ---- INFORMES CENTRO (placeholder) ----
     document.addEventListener('click', e => {
       if (e.target.matches('.btn-link[data-centro]')) {
         const nombreCentro = e.target.dataset.centro;
@@ -1274,7 +1285,7 @@
 
         if (!informes.length) {
           cont.innerHTML =
-            "<p style='font-size:.8rem;'>Este centro aún no tiene informes guardados. Desde el módulo de informes podrás adjuntar documentos de visita, auditoría, etc.</p>";
+            "<p style='font-size:.8rem;'>Este centro aún no tiene informes guardados. Desde el módulo de informes podrás adjuntar documentos.</p>";
         } else {
           informes.forEach((inf, idx) => {
             const div = document.createElement('div');
@@ -1287,7 +1298,7 @@
       }
     });
 
-    // ---- VISITAS Y CALENDARIO ----
+    // ---- VISITAS + CALENDARIO ----
     const visitas = [];
     const calendarTitle = document.getElementById('calendarTitle');
     const calendarGrid = document.getElementById('calendarGrid');
@@ -1297,67 +1308,54 @@
     let fechaSeleccionadaISO = null;
 
     const MONTHS_ES = [
-      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+      "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+      "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
     ];
 
-    function pad(n) {
-      return n.toString().padStart(2, "0");
-    }
+    function pad(n){ return n.toString().padStart(2,"0"); }
+    function isoFromYMD(y,m,d){ return `${y}-${pad(m)}-${pad(d)}`; }
 
-    function isoFromYMD(y, m, d) {
-      return `${y}-${pad(m)}-${pad(d)}`;
-    }
-
-    function formatFechaLarga(iso) {
+    function formatFechaLarga(iso){
       const d = new Date(iso);
-      return d.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric"
-      });
+      return d.toLocaleDateString("es-ES",{day:"2-digit",month:"long",year:"numeric"});
     }
 
-    function renderCalendar() {
+    function renderCalendar(){
       calendarGrid.innerHTML = "";
       calendarTitle.textContent = `${MONTHS_ES[currentMonth]} ${currentYear}`;
 
-      const first = new Date(currentYear, currentMonth, 1);
-      const firstWeekDay = (first.getDay() + 6) % 7; // 0 = lunes
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const todayISO = new Date().toISOString().slice(0, 10);
+      const first = new Date(currentYear,currentMonth,1);
+      const firstWeekDay = (first.getDay()+6)%7; // 0 = lunes
+      const daysInMonth = new Date(currentYear,currentMonth+1,0).getDate();
+      const todayISO = new Date().toISOString().slice(0,10);
 
-      // huecos antes del día 1
-      for (let i = 0; i < firstWeekDay; i++) {
+      for(let i=0;i<firstWeekDay;i++){
         const empty = document.createElement('div');
         empty.className = "calendar-day empty";
         calendarGrid.appendChild(empty);
       }
 
-      for (let day = 1; day <= daysInMonth; day++) {
-        const dateISO = isoFromYMD(
-          currentYear,
-          currentMonth + 1,
-          day
-        );
+      for(let day=1;day<=daysInMonth;day++){
+        const dateISO = isoFromYMD(currentYear,currentMonth+1,day);
         const dayDiv = document.createElement('div');
         dayDiv.className = "calendar-day";
-        if (dateISO === todayISO) dayDiv.classList.add("today");
+        if(dateISO===todayISO) dayDiv.classList.add("today");
 
         dayDiv.innerHTML = `<span class="calendar-day-number">${day}</span>`;
 
-        // visitas en ese día
         const delDia = visitas.filter(v => v.fecha === dateISO);
         const count = delDia.length;
-        if (count > 0) {
-          const hasAn = delDia.some(v => v.estado === "Anulada");
-          const hasPend = delDia.some(v => v.estado === "Pendiente");
-          const hasReal = delDia.some(v => v.estado === "Realizada");
+        if(count>0){
+          const hasAn = delDia.some(v=>v.estado==="Anulada");
+          const hasPend = delDia.some(v=>v.estado==="Pendiente");
+          const hasProc = delDia.some(v=>v.estado==="En proceso");
+          const hasFin = delDia.some(v=>v.estado==="Finalizada");
 
-          let cls = "estado-realizada";
-          if (hasAn) cls = "estado-anulada";
-          else if (hasPend) cls = "estado-pendiente";
-          else if (hasReal) cls = "estado-realizada";
+          let cls = "estado-finalizada";
+          if(hasAn) cls="estado-anulada";
+          else if(hasPend) cls="estado-pendiente";
+          else if(hasProc) cls="estado-enproceso";
+          else if(hasFin) cls="estado-finalizada";
 
           const dot = document.createElement('span');
           dot.className = `calendar-dot ${cls}`;
@@ -1365,7 +1363,7 @@
           dayDiv.appendChild(dot);
         }
 
-        dayDiv.addEventListener('click', () => {
+        dayDiv.addEventListener('click', ()=>{
           fechaSeleccionadaISO = dateISO;
           document.getElementById('visitaFecha').value = formatFechaLarga(dateISO);
           document.getElementById('visitaCentro').value = "";
@@ -1377,45 +1375,39 @@
       }
     }
 
-    document.getElementById('prevMonth').addEventListener('click', () => {
+    document.getElementById('prevMonth').addEventListener('click', ()=>{
       currentMonth--;
-      if (currentMonth < 0) {
-        currentMonth = 11;
-        currentYear--;
-      }
+      if(currentMonth<0){ currentMonth=11; currentYear--; }
       renderCalendar();
     });
 
-    document.getElementById('nextMonth').addEventListener('click', () => {
+    document.getElementById('nextMonth').addEventListener('click', ()=>{
       currentMonth++;
-      if (currentMonth > 11) {
-        currentMonth = 0;
-        currentYear++;
-      }
+      if(currentMonth>11){ currentMonth=0; currentYear++; }
       renderCalendar();
     });
 
-    // Guardar visita desde modal
-    document.getElementById('guardarVisita').addEventListener('click', () => {
-      if (!fechaSeleccionadaISO) return;
+    // Guardar visita
+    document.getElementById('guardarVisita').addEventListener('click', ()=>{
+      if(!fechaSeleccionadaISO) return;
       const centroNombre = document.getElementById('visitaCentro').value.trim();
       const responsable = document.getElementById('visitaResponsable').value;
 
-      if (!centroNombre) {
+      if(!centroNombre){
         alert("Selecciona un centro para la visita.");
         return;
       }
 
-      const centroObj = centros.find(c => c.centro === centroNombre);
+      const centroObj = centros.find(c=>c.centro===centroNombre);
       const delegado = centroObj ? centroObj.delegado : "N/D";
 
       visitas.push({
-        id: Date.now().toString(16) + Math.random().toString(16).slice(2),
+        id: Date.now().toString(16)+Math.random().toString(16).slice(2),
         fecha: fechaSeleccionadaISO,
         centro: centroNombre,
         delegado,
         responsable,
-        estado: "Pendiente"
+        estado: "Pendiente"  // ámbar
       });
 
       cerrarModal('modalVisita');
@@ -1423,33 +1415,33 @@
       renderVisitasList();
     });
 
-    // Listado de visitas (columna derecha)
     const visitasList = document.getElementById('visitasList');
 
-    function renderVisitasList() {
+    function renderVisitasList(){
       visitasList.innerHTML = "";
-      if (!visitas.length) {
+      if(!visitas.length){
         visitasList.innerHTML =
           "<p class='summary-text'>No hay visitas agendadas para este periodo.</p>";
         return;
       }
 
-      const todayISO = new Date().toISOString().slice(0, 10);
-      const sorted = [...visitas].sort((a, b) => a.fecha.localeCompare(b.fecha));
+      const todayISO = new Date().toISOString().slice(0,10);
+      const sorted = [...visitas].sort((a,b)=>a.fecha.localeCompare(b.fecha));
 
-      sorted.forEach(v => {
+      sorted.forEach(v=>{
         const card = document.createElement('div');
         card.className = "visita-card";
 
         const fecha = new Date(v.fecha);
-        const fechaTxt = fecha.toLocaleDateString("es-ES", { day: "2-digit", month: "short" });
+        const fechaTxt = fecha.toLocaleDateString("es-ES",{day:"2-digit",month:"short"});
 
         let estadoClass = "estado-pendiente";
-        if (v.estado === "Realizada") estadoClass = "estado-realizada";
-        else if (v.estado === "Anulada") estadoClass = "estado-anulada";
+        if(v.estado==="En proceso") estadoClass="estado-enproceso";
+        else if(v.estado==="Finalizada") estadoClass="estado-finalizada";
+        else if(v.estado==="Anulada") estadoClass="estado-anulada";
 
         const aviso =
-          (v.fecha < todayISO && v.estado !== "Realizada")
+          (v.fecha < todayISO && v.estado === "Pendiente")
             ? `<div class="alert-estado">Actualizar estado</div>`
             : "";
 
@@ -1472,36 +1464,41 @@
       });
     }
 
-    // Gestionar botones de cada visita
-    document.addEventListener('click', e => {
-      if (e.target.matches('.btn-informe')) {
+    // Botones de cada visita
+    document.addEventListener('click', e=>{
+      if(e.target.matches('.btn-informe')){
         const id = e.target.dataset.id;
-        const v = visitas.find(x => x.id === id);
-        if (!v) return;
+        const v = visitas.find(x=>x.id===id);
+        if(!v) return;
 
-        if (v.estado === "Pendiente") v.estado = "Realizada";
-        else if (v.estado === "Realizada") v.estado = "Pendiente";
-        else if (v.estado === "Anulada") v.estado = "Realizada";
-
-        // Aquí en el futuro se podría abrir el módulo "Informes de visita"
-        // alert("Aquí se abriría el módulo 'Informes de visita'.");
+        // Pendiente -> En proceso (verde claro)
+        // En proceso -> Finalizada (verde oscuro)
+        // Finalizada -> En proceso (por si se reabre)
+        // Anulada -> En proceso
+        if(v.estado==="Pendiente" || v.estado==="Anulada"){
+          v.estado = "En proceso";
+        } else if(v.estado==="En proceso"){
+          v.estado = "Finalizada";
+        } else if(v.estado==="Finalizada"){
+          v.estado = "En proceso";
+        }
 
         renderCalendar();
         renderVisitasList();
       }
 
-      if (e.target.matches('.btn-anular')) {
+      if(e.target.matches('.btn-anular')){
         const id = e.target.dataset.id;
-        const v = visitas.find(x => x.id === id);
-        if (!v) return;
+        const v = visitas.find(x=>x.id===id);
+        if(!v) return;
         v.estado = "Anulada";
         renderCalendar();
         renderVisitasList();
       }
     });
 
-    // ---- DEMO INICIAL: algunos centros para que veas todo funcionando ----
-    (function cargaDemoInicial() {
+    // ---- DEMO INICIAL (10 centros) ----
+    (function cargaDemoInicial(){
       const demo = [
         { codigo:"4ABB", propietario:"MAZA Oriol", centro:"PAMPLONA C. Exclusivo", provincia:"NAVARRA", delegado:"Sonia Godino" },
         { codigo:"4AFH", propietario:"MAZA Oriol", centro:"PAMPLONA Calle Sancho el Mayor", provincia:"NAVARRA", delegado:"Sonia Godino" },
@@ -1514,7 +1511,7 @@
         { codigo:"4AKI", propietario:"PIEDRAFITA Rocio", centro:"CC LOS VALLES", provincia:"MADRID", delegado:"Blanca Fdez. de la Pradilla" },
         { codigo:"4MLG", propietario:"AAO", centro:"FUENLABRADA Calle Leganes", provincia:"MADRID", delegado:"Marisa Carmona" }
       ];
-      demo.forEach(c => centros.push(c));
+      demo.forEach(c=>centros.push(c));
       renderTabla();
       renderDelegadosCards();
       renderCentrosDatalist();
