@@ -2,12 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Control Center Audio - Dashboard</title>
+  <title>Control Center Audio – v3</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- ============================
-       ESTILOS
-  =============================== -->
   <style>
     :root {
       /* Tema oscuro por defecto */
@@ -64,7 +61,7 @@
       display: flex;
     }
 
-    /* LAYOUT PRINCIPAL */
+    /* SIDEBAR */
     .sidebar {
       width: 250px;
       background: var(--bg-sidebar);
@@ -205,21 +202,21 @@
       opacity: 1;
     }
 
+    /* MAIN LAYOUT */
     .main {
       flex: 1;
-      padding: 12px 18px 16px;
+      padding: 10px 18px 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
       max-height: 100vh;
-      overflow: hidden; /* contenemos todo dentro */
+      overflow: hidden;
+      gap: 6px;
     }
 
     .topbar {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 4px;
     }
 
     .search-input-wrapper {
@@ -297,7 +294,6 @@
       justify-content: flex-end;
       gap: 8px;
       font-size: 0.8rem;
-      margin-bottom: 2px;
     }
 
     .select {
@@ -319,6 +315,7 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
+      margin-top: 4px;
       margin-bottom: 4px;
     }
 
@@ -332,17 +329,18 @@
       color: var(--text-muted);
     }
 
+    /* KPIs: 6 tarjetas como en tu captura */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(6, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-rows: 72px;
       gap: 8px;
-      margin-bottom: 4px;
     }
 
     .card {
       background: var(--bg-card);
       border-radius: var(--radius-xl);
-      padding: 10px 10px 8px;
+      padding: 10px 12px 8px;
       border: 1px solid rgba(15, 23, 42, 0.9);
       box-shadow: var(--shadow-soft);
     }
@@ -387,12 +385,21 @@
       margin-top: 2px;
     }
 
+    /* Bloque central: gráficas + ranking + delegados
+       para encajar en ~550px de alto: */
+    .center-block {
+      display: grid;
+      grid-template-rows: 210px 150px 150px;
+      gap: 6px;
+      flex: 1;
+      min-height: 0;
+    }
+
     .grid-main {
       display: grid;
-      grid-template-columns: 1.7fr 1.1fr 1.2fr;
-      gap: 10px;
+      grid-template-columns: 1.8fr 1.1fr 1.1fr;
+      gap: 8px;
       align-items: stretch;
-      margin-bottom: 6px;
     }
 
     .card h3 {
@@ -403,18 +410,18 @@
     .card-sub {
       font-size: 0.72rem;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .chart-container {
       position: relative;
-      height: 180px; /* compactado para encajar sin scroll */
+      height: 140px; /* compactado */
       width: 100%;
     }
 
-    /* RANKING */
+    /* Ranking */
     .ranking-grid {
-      margin-top: 6px;
+      margin-top: 4px;
     }
 
     .ranking-header,
@@ -466,16 +473,17 @@
       color: #facc15;
     }
 
-    /* FALDÓN DELEGADOS (tarjetas) */
+    /* Delegados */
     .delegados-section {
-      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .delegados-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 4px;
     }
 
     .delegados-header h3 {
@@ -490,8 +498,8 @@
     .delegados-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      max-height: 180px;
+      gap: 6px;
+      max-height: 120px;
     }
 
     .delegado-card {
@@ -515,7 +523,7 @@
     }
 
     .delegado-body {
-      padding: 8px 8px 6px;
+      padding: 6px 8px 4px;
     }
 
     .delegado-name {
@@ -530,14 +538,14 @@
 
     .centros-list {
       display: none;
-      padding: 4px 8px 6px;
+      padding: 3px 8px 5px;
       border-top: 1px solid rgba(148, 163, 184, 0.35);
-      max-height: 120px;
+      max-height: 80px;
       overflow-y: auto;
     }
 
     .centro-item {
-      margin-bottom: 3px;
+      margin-bottom: 2px;
     }
 
     .toggle-text {
@@ -546,7 +554,7 @@
       margin-top: 2px;
     }
 
-    /* SECCIONES "MÓDULOS" (para cambio en menú) */
+    /* Secciones (módulos) para menú lateral */
     .section {
       display: none;
       flex: 1;
@@ -569,24 +577,11 @@
       color: var(--text-muted);
       border-radius: 16px;
       border: 1px dashed var(--border-soft);
-      background: rgba(15,23,42,0.4);
+      background: rgba(15, 23, 42, 0.4);
     }
 
     body.light .section-placeholder {
-      background: rgba(229,231,235,0.8);
-    }
-
-    @media (max-width: 1400px) {
-      /* Solo por seguridad si se abre en pantallas pequeñas */
-      .delegados-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      .kpi-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      .grid-main {
-        grid-template-columns: 1fr;
-      }
+      background: rgba(229, 231, 235, 0.8);
     }
   </style>
 
@@ -677,17 +672,15 @@
       </select>
     </div>
 
-    <!-- SECCIONES (MÓDULOS) -->
+    <!-- SECCIONES -->
     <div id="section-dashboard" class="section active">
       <!-- Resumen general -->
-      <div>
-        <div class="section-header">
-          <h2>Resumen general KPIs</h2>
-          <span class="sub">Visión rápida de aplicaciones, visitas, servicios, ventas, AAR y ayudas</span>
-        </div>
+      <div class="section-header">
+        <h2>Resumen general KPIs</h2>
+        <span class="sub">Visión rápida de aplicaciones, visitas, servicios, ventas, AAR y ayudas</span>
       </div>
 
-      <!-- KPIs (4 originales + 2 nuevos AAR y Ayudas) -->
+      <!-- 6 KPI como en tu captura -->
       <section class="kpi-grid">
         <article class="card">
           <div class="card-header">
@@ -741,7 +734,6 @@
           </div>
         </article>
 
-        <!-- NUEVOS KPIs -->
         <article class="card">
           <div class="card-header">
             <span>AAR (Adaptaciones a Audífono en Revisión)</span>
@@ -767,158 +759,141 @@
         </article>
       </section>
 
-      <!-- GRÁFICAS: Línea + Donuts + Radar -->
-      <section class="grid-main">
-        <!-- Evolución mensual (gráfica original, compactada) -->
-        <article class="card">
-          <h3>Evolución mensual</h3>
+      <!-- BLOQUE CENTRAL: Gráficas + Ranking + Delegados -->
+      <div class="center-block">
+        <!-- Gráficas -->
+        <section class="grid-main">
+          <!-- Evolución mensual -->
+          <article class="card">
+            <h3>Evolución mensual</h3>
+            <p class="card-sub">
+              Visitas, aplicaciones en prueba y conversión a venta
+            </p>
+            <div class="chart-container">
+              <canvas id="chartEvolucion"></canvas>
+            </div>
+          </article>
+
+          <!-- Donut visitas -->
+          <article class="card">
+            <h3>Estado de visitas</h3>
+            <p class="card-sub">
+              Distribución de visitas realizadas, pendientes y anuladas
+            </p>
+            <div class="chart-container">
+              <canvas id="chartVisitas"></canvas>
+            </div>
+          </article>
+
+          <!-- Radar delegados -->
+          <article class="card">
+            <h3>Radar delegados</h3>
+            <p class="card-sub">
+              Comparativa relativa de visitas, servicios y ventas (demo)
+            </p>
+            <div class="chart-container">
+              <canvas id="chartRadar"></canvas>
+            </div>
+          </article>
+        </section>
+
+        <!-- Ranking -->
+        <section class="card">
+          <h3>Ranking rápido de centros</h3>
           <p class="card-sub">
-            Visitas, aplicaciones en prueba y conversión a venta
+            Mejores conversiones a venta y aplicación de procesos
           </p>
-          <div class="chart-container">
-            <canvas id="chartEvolucion"></canvas>
-          </div>
-        </article>
+          <div class="ranking-grid">
+            <div class="ranking-header">
+              <span>Centro</span>
+              <span>Delegado</span>
+              <span>Conv. prueba</span>
+              <span>Conv. venta</span>
+              <span>% Procesos</span>
+            </div>
 
-        <!-- Donut estado visitas -->
-        <article class="card">
-          <h3>Estado de visitas</h3>
-          <p class="card-sub">
-            Distribución de visitas realizadas, pendientes y anuladas
-          </p>
-          <div class="chart-container">
-            <canvas id="chartVisitas"></canvas>
+            <div class="ranking-row">
+              <span>Madrid · Reina Mercedes</span>
+              <span>Cecilia</span>
+              <span>64%</span>
+              <span><span class="chip success">34%</span></span>
+              <span>91%</span>
+            </div>
+            <div class="ranking-row">
+              <span>Madrid · Tetuán</span>
+              <span>Blanca</span>
+              <span>58%</span>
+              <span><span class="chip">29%</span></span>
+              <span>87%</span>
+            </div>
+            <div class="ranking-row">
+              <span>Sevilla · Nervión</span>
+              <span>Daniel</span>
+              <span>51%</span>
+              <span><span class="chip warn">22%</span></span>
+              <span>72%</span>
+            </div>
+            <div class="ranking-row">
+              <span>Bilbao · Gran Vía</span>
+              <span>Eneritz</span>
+              <span>47%</span>
+              <span><span class="chip">25%</span></span>
+              <span>69%</span>
+            </div>
           </div>
-        </article>
+        </section>
 
-        <!-- Radar delegados -->
-        <article class="card">
-          <h3>Radar delegados</h3>
-          <p class="card-sub">
-            Comparativa relativa por visitas, servicios y ventas (demo)
-          </p>
-          <div class="chart-container">
-            <canvas id="chartRadar"></canvas>
+        <!-- Delegados -->
+        <section class="delegados-section">
+          <div class="delegados-header">
+            <h3>Delegados</h3>
+            <span>Cada delegado con su color · Clic para desplegar sus centros</span>
           </div>
-        </article>
-      </section>
-
-      <!-- Ranking -->
-      <section class="card">
-        <h3>Ranking rápido de centros</h3>
-        <p class="card-sub">
-          Mejores conversiones a venta y aplicación de procesos
-        </p>
-        <div class="ranking-grid">
-          <div class="ranking-header">
-            <span>Centro</span>
-            <span>Delegado</span>
-            <span>Conv. prueba</span>
-            <span>Conv. venta</span>
-            <span>% Procesos</span>
-          </div>
-
-          <div class="ranking-row">
-            <span>Madrid · Reina Mercedes</span>
-            <span>Cecilia</span>
-            <span>64%</span>
-            <span><span class="chip success">34%</span></span>
-            <span>91%</span>
-          </div>
-          <div class="ranking-row">
-            <span>Madrid · Tetuán</span>
-            <span>Blanca</span>
-            <span>58%</span>
-            <span><span class="chip">29%</span></span>
-            <span>87%</span>
-          </div>
-          <div class="ranking-row">
-            <span>Sevilla · Nervión</span>
-            <span>Daniel</span>
-            <span>51%</span>
-            <span><span class="chip warn">22%</span></span>
-            <span>72%</span>
-          </div>
-          <div class="ranking-row">
-            <span>Bilbao · Gran Vía</span>
-            <span>Eneritz</span>
-            <span>47%</span>
-            <span><span class="chip">25%</span></span>
-            <span>69%</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- FALDÓN DELEGADOS -->
-      <section class="delegados-section">
-        <div class="delegados-header">
-          <h3>Delegados</h3>
-          <span>Cada delegado con su color · Clic para desplegar sus centros</span>
-        </div>
-        <div class="delegados-grid" id="delegadosGrid"></div>
-      </section>
+          <div class="delegados-grid" id="delegadosGrid"></div>
+        </section>
+      </div>
     </div>
 
-    <!-- Otros módulos (contenido placeholder, para que el menú cambie de módulo) -->
+    <!-- OTRAS SECCIONES (placeholders) -->
     <div id="section-centros" class="section">
-      <div class="section-placeholder">
-        Módulo <strong>Centros</strong> · Aquí podremos listar y filtrar centros en detalle.
-      </div>
+      <div class="section-placeholder">Módulo <strong>Centros</strong></div>
     </div>
-
     <div id="section-visitas" class="section">
-      <div class="section-placeholder">
-        Módulo <strong>Visitas</strong> · Agenda, planificación y seguimiento de visitas.
-      </div>
+      <div class="section-placeholder">Módulo <strong>Visitas</strong></div>
     </div>
-
     <div id="section-servicios" class="section">
-      <div class="section-placeholder">
-        Módulo <strong>Servicios</strong> · Detalle de servicios realizados, AAR, ajustes, etc.
-      </div>
+      <div class="section-placeholder">Módulo <strong>Servicios</strong></div>
     </div>
-
     <div id="section-ventas" class="section">
-      <div class="section-placeholder">
-        Módulo <strong>Ventas</strong> · Funnel, conversión, ticket medio, devoluciones.
-      </div>
+      <div class="section-placeholder">Módulo <strong>Ventas</strong></div>
     </div>
-
     <div id="section-proyectos" class="section">
-      <div class="section-placeholder">
-        Módulo <strong>Proyectos</strong> · Proyectos especiales, campañas y foco trimestral.
-      </div>
+      <div class="section-placeholder">Módulo <strong>Proyectos</strong></div>
     </div>
   </main>
 
-  <!-- ============================
-       SCRIPT
-  =============================== -->
   <script>
-    // ----- Toggle modo oscuro / claro -----
+    // Toggle oscuro / claro
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     themeToggle.addEventListener('click', () => {
       body.classList.toggle('light');
     });
 
-    // ----- Cambio de módulo por sidebar -----
+    // Cambio de módulo (sidebar)
     const navList = document.getElementById('navList');
     const sections = document.querySelectorAll('.section');
-
     navList.addEventListener('click', (e) => {
       const item = e.target.closest('.nav-item');
       if (!item) return;
       const sectionName = item.getAttribute('data-section');
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
       item.classList.add('active');
-
       sections.forEach(sec => sec.classList.remove('active'));
-      const activeSection = document.getElementById('section-' + sectionName);
-      if (activeSection) activeSection.classList.add('active');
+      document.getElementById('section-' + sectionName).classList.add('active');
     });
 
-    // ----- COLORES DELEGADOS -----
+    // Colores delegados
     const delegadosColores = {
       "Eneritz Aranguren": "#2ECC71",
       "Laura Plazas": "#3498DB",
@@ -935,157 +910,112 @@
       "Sergio Perán": "#CD6155"
     };
 
-    // ----- Centros por delegado (muestras representativas; se pueden extender fácilmente) -----
+    // Centros por delegado (resumen representativo)
     const centrosPorDelegado = {
       "Eneritz Aranguren": [
         "AVENIDA DIAGONAL - BARCELONA",
-        "BARCELONA CC DIAGONAL MAR",
+        "TARRAGONA Comte de Rius",
         "LLEIDA",
-        "Lleida CC Carrefour",
-        "C.C. TARRAGONA Comte de Rius,9",
-        "TERRASSA",
-        "SANT ADRIÀ DE BESÒS ALCAMPO CC",
-        "ZARAGOZA (varios centros)"
+        "VILANOVA",
+        "TERRASSA"
       ],
       "Laura Plazas": [
-        "CERDANYOLA - BARCELONA",
+        "CERDANYOLA",
         "BARCELONA CC DIAGONAL MAR",
         "BARCELONA SANTS",
-        "CARDedeu - BARCELONA",
-        "CORNELLÁ Rambla Josep Anselm Clavé",
-        "GRAN DE SANT ANDREU 135",
-        "CAMBRILS Carrer de les Barques",
-        "VIC - BARCELONA"
+        "CARDedeu",
+        "CORNELLÁ",
+        "GRAN DE SANT ANDREU",
+        "VIC"
       ],
       "Daniel Chazo": [
-        "AAA NARÓN - GALICIA",
-        "FERROL ALCAMPO CC - A CORUÑA",
-        "PONTEVELLA - OURENSE",
-        "LA CORUÑA Calle Juan Flórez",
-        "LUGO (dos centros)",
-        "VIVIERO Avda. Cantarrana - LUGO"
+        "NARÓN",
+        "FERROL ALCAMPO",
+        "MELIDE",
+        "LUGO",
+        "VIVIERO"
       ],
       "Manuel Cánovas": [
-        "AGUILAS - MURCIA",
+        "ÁGUILAS",
         "ALHAMA-MURCIA",
-        "ALICANTE Calle General Lacy",
-        "EL PALMAR - MURCIA",
-        "C.C. NUEVA CONDOMINA - MURCIA",
-        "CC ATALAYAS - MURCIA",
-        "CALPE - ALICANTE",
-        "ORIHUELA - ALICANTE",
-        "FINESTRAT CC LA MARINA - ALICANTE"
+        "EL PALMAR",
+        "NUEVA CONDOMINA",
+        "CALPE",
+        "ORIHUELA"
       ],
       "Cecilia Pérez": [
-        "ALAIN AFFLELOU CARLET - VALENCIA",
-        "ALZIRA Plaza del Reino - VALENCIA",
-        "BURJASSOT Carretera de Llíria - VALENCIA",
-        "VALENCIA LLIRIA",
-        "VALENCIA MALILLA C/Oltá",
-        "VALENCIA CC NUEVO CENTRO",
-        "VALENCIA MARQUES DE SOTELO",
-        "PATERNA - VALENCIA",
-        "MISLATA - VALENCIA",
-        "PUERTO DE SAGUNTO - VALENCIA",
-        "VINAROS - CASTELLON"
+        "CARLET",
+        "ALZIRA",
+        "BURJASSOT",
+        "PATERNA",
+        "MALILLA",
+        "NUEVO CENTRO",
+        "MARQUÉS DE SOTELO"
       ],
       "Martin Sebastián": [
-        "ALAMEDA MALAGA - MÁLAGA",
-        "ALGECIRAS - CÁDIZ",
-        "ALMERIA Calle Navarro Rodrigo",
-        "ALMERIA CARREFOUR",
-        "ESTEPONA - MÁLAGA",
-        "CÓRDOBA CARREFOUR CC",
-        "CÓRDOBA JESUS RESCATADO",
-        "MÁLAGA Hilera",
-        "MÁLAGA Calle Beethoven",
-        "PUERTO DE SANTA MARIA CARREFOUR CC"
+        "ALAMEDA MALAGA",
+        "ALGECIRAS",
+        "ALMERIA",
+        "ESTEPONA",
+        "CÓRDOBA CARREFOUR",
+        "CÓRDOBA JESUS RESCATADO"
       ],
       "Marisa Carmona": [
-        "ALBACETE CC ALBACENTER",
-        "ALBACETE CC LOS LLANOS",
-        "BOADILLA Av. Infante Don Luis",
-        "C.C. ISLAZUL - MADRID",
-        "C.C. LA GAVIA - MADRID",
-        "C.C. MADRID RIO 2",
-        "CASTELLON CARREFOUR",
-        "CASTELLON Calle Enmedio",
-        "TRS TOLEDO Talavera CC Los Alfares",
-        "SALAMANCA Reconquista"
+        "ALBACETE ALBACENTER",
+        "ALBACETE LOS LLANOS",
+        "ISLAZUL",
+        "LA GAVIA",
+        "MADRID RIO 2"
       ],
       "Laura Ramos": [
-        "ALCOBENDAS CONSTITUCIÓN - MADRID",
-        "C.C. CARREFOUR ALCOBENDAS",
-        "C.C. CARREFOUR LAS ROSAS",
-        "C.C. GETAFE 3 - MADRID",
-        "MADRID FRANCOS RODRÍGUEZ",
-        "MADRID LOPEZ DE HOYOS",
-        "MADRID CC XANADÚ",
-        "LEGANES CARREFOUR CC",
-        "VALDEMORO - MADRID",
-        "VILLAVERDE - MADRID"
+        "ALCOBENDAS",
+        "CARREFOUR ALCOBENDAS",
+        "CARREFOUR LAS ROSAS",
+        "XANADÚ",
+        "LEGANES CARREFOUR"
       ],
       "Blanca Fdez. de la Pradilla": [
-        "ARAVACA - MADRID",
-        "C.C. GRAN PLAZA 2 - MADRID",
-        "ALCALÁ DE HENARES CC",
-        "MADRID ACACIAS",
-        "MADRID Calle Ayacucho",
-        "MADRID Paseo Delicias",
-        "MADRID Principe de Vergara",
-        "Tres Cantos - MADRID",
-        "TORREJÓN CC Parque Corredor"
+        "ARAVACA",
+        "GRAN PLAZA 2",
+        "ALCALÁ DE HENARES",
+        "ACACIAS",
+        "AYACUCHO",
+        "P. DELICIAS"
       ],
       "Maribel Amezcua": [
-        "CACERES - CÁCERES",
-        "GANDIA - VALENCIA",
-        "CC NEVADA SHOPPING - GRANADA",
-        "MÁLAGA CC LA ROSALEDA",
-        "MÁLAGA Plaza Félix Sáenz",
-        "CAMAS CARREFOUR - SEVILLA",
-        "SEVILLA CALLE ASUNCION",
-        "SEVILLA CARREFOUR MACARENA",
-        "SEVILLA MONTEQUINTO CARREFOUR CC",
-        "SEVILLA San Pablo"
+        "CÁCERES",
+        "CAMAS",
+        "SEVILLA ASUNCIÓN",
+        "SEVILLA MACARENA",
+        "NEVADA SHOPPING"
       ],
       "Sonia Godino": [
-        "BARAKALDO - VIZCAYA",
-        "BILBAO CORREO - VIZCAYA",
-        "BILBONDO - VIZCAYA",
-        "GETXO - VIZCAYA",
-        "DONOSTI GROS - SAN SEBASTIÁN",
-        "PAMPLONA (varios: C. Exclusivo, Sancho el Mayor, Carlos III)",
-        "LAIN CALVO - BURGOS",
-        "VALLADOLID Paseo Zorrilla"
+        "BARAKALDO",
+        "BILBAO CORREO",
+        "BILBONDO",
+        "GETXO",
+        "DONOSTI GROS",
+        "PAMPLONA"
       ],
       "Verónica Alfonsín": [
-        "BOUZAS - PONTEVEDRA",
-        "CASTELAO - PONTEVEDRA",
-        "C.C. CARREFOUR PONTEVEDRA",
-        "GIJÓN - ASTURIAS",
+        "BOUZAS",
+        "CASTELAO",
+        "CARREFOUR PONTEVEDRA",
+        "GIJÓN",
         "OVIEDO Av. Galicia",
-        "MARÍN - PONTEVEDRA",
-        "MELIDE Ronda da Coruña - A CORUÑA",
-        "VILAGARCIA DE AROUSA - PONTEVEDRA"
+        "MARÍN"
       ],
       "Sergio Perán": [
-        "C.C. MADRID SUR",
-        "C/BURGOS - SANTANDER",
-        "SCB Santander CC",
-        "CC PLAZA DE LA ESTACIÓN - MADRID",
-        "MADRID CC La Vaguada",
-        "MADRID NARVÁEZ",
-        "MADRID ORTEGA Y GASSET",
-        "SALAMANCA C/Toro",
-        "SALAMANCA CARREFOUR CC",
-        "TORRELAVEGA CARREFOUR CC",
-        "TAF Talavera CC Los Alfares"
+        "MADRID SUR",
+        "SALAMANCA C/TORO",
+        "SALAMANCA CARREFOUR",
+        "TORRELAVEGA CARREFOUR",
+        "LA VAGUADA"
       ]
     };
 
-    // ----- Pintar tarjetas de delegados -----
+    // Pintar tarjetas de delegados
     const delegadosGrid = document.getElementById('delegadosGrid');
-
     Object.keys(centrosPorDelegado).forEach(nombre => {
       const card = document.createElement('div');
       card.className = 'delegado-card';
@@ -1115,7 +1045,6 @@
 
       const list = document.createElement('div');
       list.className = 'centros-list';
-
       centrosPorDelegado[nombre].forEach(c => {
         const item = document.createElement('div');
         item.className = 'centro-item';
@@ -1136,7 +1065,7 @@
       delegadosGrid.appendChild(card);
     });
 
-    // ----- GRÁFICAS -----
+    // Gráficas
     const ctxEvo = document.getElementById('chartEvolucion').getContext('2d');
     new Chart(ctxEvo, {
       type: 'line',
@@ -1148,7 +1077,7 @@
             data: [120,138,156,172,149,181,196,205,212,231,224,238],
             borderWidth: 2,
             tension: 0.35,
-            borderColor: '#4ade80'
+            borderColor: '#22c55e'
           },
           {
             label: '% Aplicaciones a prueba',
