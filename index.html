@@ -39,7 +39,7 @@
       background: var(--bg-main);
       color: var(--text-main);
       display: flex;
-      overflow: hidden; /* sin scroll general: app a pantalla completa */
+      overflow: hidden;
     }
 
     /* SIDEBAR */
@@ -53,7 +53,7 @@
       gap: 24px;
       color: #e5e7eb;
       height: 100vh;
-      overflow-y: auto; /* si la ventana es más baja, solo hace scroll la barra lateral */
+      overflow-y: auto;
     }
 
     .logo {
@@ -69,20 +69,9 @@
       background: radial-gradient(circle at 30% 20%, #fee2e2, var(--accent-red));
     }
 
-    .logo-text {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .logo-title {
-      font-weight: 700;
-      font-size: 1.05rem;
-    }
-
-    .logo-subtitle {
-      font-size: .7rem;
-      color: #9ca3af;
-    }
+    .logo-text { display: flex; flex-direction: column; }
+    .logo-title { font-weight: 700; font-size: 1.05rem; }
+    .logo-subtitle { font-size: .7rem; color: #9ca3af; }
 
     .section-title {
       font-size: .75rem;
@@ -92,11 +81,7 @@
       margin-bottom: 8px;
     }
 
-    .nav-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+    .nav-list { display: flex; flex-direction: column; gap: 4px; }
 
     .nav-item {
       display: flex;
@@ -127,9 +112,7 @@
       font-weight: 600;
     }
 
-    .nav-item.active span.icon {
-      background: rgba(15,23,42,.2);
-    }
+    .nav-item.active span.icon { background: rgba(15,23,42,.2); }
 
     .nav-item:hover:not(.active) {
       background: rgba(31,41,55,0.9);
@@ -142,7 +125,7 @@
       color: #9ca3af;
     }
 
-    /* MAIN LAYOUT: ocupa toda la altura y controla los scrolls internos */
+    /* MAIN */
     .main {
       flex: 1;
       padding: 10px 18px 12px;
@@ -151,7 +134,7 @@
       gap: 8px;
       height: 100vh;
       max-width: calc(100vw - 250px);
-      overflow: hidden; /* nada se sale lateralmente */
+      overflow: hidden;
     }
 
     .topbar {
@@ -177,6 +160,8 @@
       box-shadow: none;
     }
 
+    .btn span.icon { font-size: .85rem; }
+
     .btn-cta {
       background: linear-gradient(90deg, #ff2440, #fb7185);
       color: #111827;
@@ -184,23 +169,33 @@
       border-color: transparent;
     }
 
-    .btn span.icon {
-      font-size: .85rem;
+    .btn-colored-blue {
+      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
+      color: #020617;
+      border-color: transparent;
+      font-weight: 500;
     }
 
-    #themeToggle {
-      min-width: 110px;
-      justify-content: center;
+    .btn-colored-purple {
+      background: linear-gradient(90deg, #a855f7, #ec4899);
+      color: #020617;
+      border-color: transparent;
+      font-weight: 500;
     }
 
-    /* BUSCADOR SUPERIOR */
-    .centros-search-row {
-      flex-shrink: 0;
+    .btn-colored-teal {
+      background: linear-gradient(90deg, #22c55e, #14b8a6);
+      color: #020617;
+      border-color: transparent;
+      font-weight: 500;
     }
 
-    .centros-search-wrapper {
-      position: relative;
-    }
+    #themeToggle { min-width: 110px; justify-content: center; }
+
+    /* BUSCADOR */
+    .centros-search-row { flex-shrink: 0; }
+
+    .centros-search-wrapper { position: relative; }
 
     .centros-search-input {
       width: 100%;
@@ -213,9 +208,7 @@
       outline: none;
     }
 
-    .centros-search-input::placeholder {
-      color: var(--text-muted);
-    }
+    .centros-search-input::placeholder { color: var(--text-muted); }
 
     .centros-search-wrapper .search-icon {
       position: absolute;
@@ -226,14 +219,14 @@
       color: var(--text-muted);
     }
 
-    /* BLOQUE SUPERIOR: DELEGADOS + CALENDARIO + VISITAS */
+    /* BLOQUE SUPERIOR */
     .top-layout {
       display: grid;
       grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.5fr) minmax(0, 1.2fr);
       gap: 12px;
       margin-top: 8px;
-      flex: 0 0 290px;     /* altura base del bloque superior */
-      max-height: 310px;   /* nunca crece más de esto */
+      flex: 0 0 290px;
+      max-height: 310px;
       min-height: 260px;
     }
 
@@ -248,16 +241,8 @@
       min-height: 0;
     }
 
-    .card h3 {
-      font-size: .9rem;
-      margin-bottom: 4px;
-    }
-
-    .card-sub {
-      font-size: .72rem;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-    }
+    .card h3 { font-size: .9rem; margin-bottom: 4px; }
+    .card-sub { font-size: .72rem; color: var(--text-muted); margin-bottom: 6px; }
 
     .badge-small {
       font-size: .7rem;
@@ -268,7 +253,7 @@
       border: 1px solid var(--border-soft);
     }
 
-    /* PANEL IZQUIERDO: DELEGADOS */
+    /* DELEGADOS */
     .delegados-header {
       display: flex;
       justify-content: space-between;
@@ -292,18 +277,54 @@
 
     .delegado-item {
       background: #020617;
-      border-radius: 999px;
-      padding: 4px 8px;
+      border-radius: 10px;
+      padding: 5px 8px;
+      border: 1px solid #1f2937;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .delegado-item.delegado-activo {
+      border-color: #38bdf8;
+    }
+
+    .delegado-header-line {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       cursor: pointer;
-      border: 1px solid #1f2937;
       font-size: .78rem;
     }
 
-    .delegado-item-bar {
+    .delegado-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      flex-shrink: 0;
+    }
+
+    .delegado-nombre {
       flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .delegado-count {
+      font-size: .7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .delegado-chevron {
+      font-size: .7rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .delegado-item-bar {
+      width: 100%;
       height: 4px;
       border-radius: 999px;
       background: #111827;
@@ -315,14 +336,28 @@
       border-radius: 999px;
     }
 
-    .delegado-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
+    .delegado-centros {
+      font-size: .7rem;
+      color: var(--text-muted);
+      padding-left: 14px;
+    }
+
+    .delegado-centros ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      max-height: 80px;
+      overflow-y: auto;
+    }
+
+    .delegado-centros li {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
 
     .delegado-resumen {
-      font-size: .7rem;
+      font-size: .74rem;
       color: var(--text-muted);
       margin-top: 4px;
       flex-shrink: 0;
@@ -336,7 +371,7 @@
       flex-wrap: wrap;
     }
 
-    /* CALENDARIO (CENTRO) */
+    /* CALENDARIO */
     .calendar-header {
       display: flex;
       justify-content: space-between;
@@ -378,23 +413,18 @@
     .calendar-cell {
       border-radius: 10px;
       border: 1px solid var(--border-soft);
-      padding: 4px 6px;
+      padding: 3px 5px;
       cursor: pointer;
       background: #020617;
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
       font-size: .7rem;
     }
 
-    .calendar-cell:hover {
-      border-color: #38bdf8;
-    }
+    .calendar-cell:hover { border-color: #38bdf8; }
 
-    .calendar-day-number {
-      font-weight: 500;
-      margin-bottom: 2px;
-    }
+    .calendar-day-number { font-weight: 500; }
 
     .calendar-dots {
       display: flex;
@@ -415,23 +445,21 @@
       flex-shrink: 0;
     }
 
-    /* VISITAS AGENDADAS (DERECHA) */
-    .visitas-header {
-      flex-shrink: 0;
-    }
+    /* VISITAS (compactas) */
+    .visitas-header { flex-shrink: 0; }
 
     .visitas-list {
       flex: 1;
       overflow-y: auto;
       min-height: 0;
       margin-top: 4px;
-      font-size: .78rem;
+      font-size: .76rem;
     }
 
     .visita-item {
       border-radius: 10px;
       border: 1px solid #111827;
-      padding: 6px 8px;
+      padding: 4px 6px;
       margin-bottom: 4px;
       background: #020617;
       display: flex;
@@ -443,22 +471,22 @@
       display: flex;
       justify-content: space-between;
       gap: 6px;
-      font-size: .78rem;
+      font-size: .76rem;
     }
 
     .visita-bottom-line {
       display: flex;
       justify-content: space-between;
       gap: 6px;
-      font-size: .72rem;
+      font-size: .7rem;
       align-items: center;
       flex-wrap: wrap;
     }
 
     .pill {
       border-radius: 999px;
-      padding: 2px 6px;
-      font-size: .7rem;
+      padding: 1px 6px;
+      font-size: .68rem;
       border: 1px solid var(--border-soft);
       display: inline-flex;
       align-items: center;
@@ -503,16 +531,16 @@
     }
 
     .btn-mini {
-      padding: 3px 8px;
+      padding: 2px 6px;
       border-radius: 999px;
       border: 1px solid var(--border-soft);
       background: #020617;
       color: var(--accent-blue);
-      font-size: .7rem;
+      font-size: .68rem;
       cursor: pointer;
     }
 
-    /* TABLA CENTROS: ocupa el resto de la pantalla, con scroll interno */
+    /* TABLA CENTROS */
     .table-wrapper {
       margin-top: 10px;
       background: var(--bg-card);
@@ -520,8 +548,8 @@
       border: 1px solid var(--border-soft);
       display: flex;
       flex-direction: column;
-      flex: 1;        /* ocupa todo el espacio vertical restante */
-      min-height: 0;  /* clave para que el scroll interno funcione */
+      flex: 1;
+      min-height: 0;
     }
 
     .table-header {
@@ -532,19 +560,13 @@
       flex-shrink: 0;
     }
 
-    .table-header h3 {
-      font-size: .9rem;
-    }
-
-    .table-header span {
-      font-size: .72rem;
-      color: var(--text-muted);
-    }
+    .table-header h3 { font-size: .9rem; }
+    .table-header span { font-size: .72rem; color: var(--text-muted); }
 
     .table-scroll {
       flex: 1;
       min-height: 0;
-      overflow: auto;        /* SOLO aquí hay scroll grande de centros */
+      overflow: auto;
       border-top: 1px solid var(--border-soft);
     }
 
@@ -552,7 +574,7 @@
       width: 100%;
       border-collapse: collapse;
       font-size: .78rem;
-      min-width: 700px; /* evita roturas de layout, con scroll horizontal interno si hace falta */
+      min-width: 700px;
     }
 
     thead {
@@ -569,19 +591,10 @@
       white-space: nowrap;
     }
 
-    th {
-      font-weight: 600;
-      font-size: .75rem;
-      color: var(--text-muted);
-    }
+    th { font-weight: 600; font-size: .75rem; color: var(--text-muted); }
 
-    tbody tr:nth-child(even) {
-      background: #020617;
-    }
-
-    tbody tr:hover {
-      background: rgba(15,23,42,0.9);
-    }
+    tbody tr:nth-child(even) { background: #020617; }
+    tbody tr:hover { background: rgba(15,23,42,0.9); }
 
     .tag {
       border-radius: 999px;
@@ -658,15 +671,8 @@
       margin-bottom: 8px;
     }
 
-    .modal-header h3 {
-      font-size: .95rem;
-    }
-
-    .modal-close {
-      cursor: pointer;
-      font-size: 1rem;
-      color: var(--text-muted);
-    }
+    .modal-header h3 { font-size: .95rem; }
+    .modal-close { cursor: pointer; font-size: 1rem; color: var(--text-muted); }
 
     .modal-body {
       display: flex;
@@ -675,11 +681,7 @@
       font-size: .78rem;
     }
 
-    .modal-field {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
+    .modal-field { display: flex; flex-direction: column; gap: 2px; }
 
     .modal-field label {
       font-size: .74rem;
@@ -713,7 +715,6 @@
     }
   </style>
 
-  <!-- Librería para leer Excel en el navegador -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
@@ -737,7 +738,7 @@
           <span class="icon">🏢</span> Centros
         </div>
         <div class="nav-item">
-          <span class="icon">👣</span> Visitas
+          <span class="icon">📄</span> Informe de la visita
         </div>
         <div class="nav-item">
           <span class="icon">🛠</span> Servicios
@@ -763,11 +764,14 @@
       <button class="btn" id="themeToggle">
         <span class="icon">🌓</span> Oscuro / Claro
       </button>
-      <button class="btn">
+      <button class="btn btn-colored-blue">
         <span class="icon">💾</span> Guardar vista
       </button>
-      <button class="btn">
+      <button class="btn btn-colored-purple">
         <span class="icon">⬇️</span> Exportar HTML
+      </button>
+      <button class="btn btn-colored-teal" id="printBtn">
+        <span class="icon">🖨️</span> Imprimir
       </button>
       <button class="btn btn-cta">
         <span class="icon">☁️</span> Actualizar datos nube
@@ -791,7 +795,8 @@
           <div>
             <h3>Centros y delegados</h3>
             <p class="card-sub">
-              Cada barra muestra un delegado, su color y el número de centros. Haz clic para filtrar la tabla inferior.
+              Cada barra muestra un delegado, su color y el número de centros. Haz
+              clic para desplegar sus centros y filtrar la tabla inferior.
             </p>
           </div>
           <span class="badge-small" id="delegadosResumenBadge">0 delegados</span>
@@ -825,9 +830,7 @@
           </div>
           <button class="calendar-nav-btn" id="nextMonthBtn">›</button>
         </div>
-        <div class="calendar-weekdays">
-          <div class="calendar-grid" id="calendarGrid"></div>
-        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
         <div class="calendar-footnote">
           Clic en un día para agendar una visita con Responsable de Audio y centro.
         </div>
@@ -921,7 +924,7 @@
     </div>
   </div>
 
-  <!-- MODAL VISITA NUEVA -->
+  <!-- MODAL VISITA -->
   <div class="modal-backdrop" id="modalVisita">
     <div class="modal">
       <div class="modal-header">
@@ -957,7 +960,7 @@
     </div>
   </div>
 
-  <!-- MODAL INFORMES (CENTROS) -->
+  <!-- MODAL INFORMES CENTRO -->
   <div class="modal-backdrop" id="modalInformes">
     <div class="modal">
       <div class="modal-header">
@@ -972,12 +975,17 @@
   </div>
 
   <script>
-    // --- Tema oscuro/claro simple ---
+    // Tema
     document.getElementById('themeToggle').addEventListener('click', () => {
       document.body.classList.toggle('light');
     });
 
-    // --- Colores delegados (incluyendo Laura Ramos / Laura Plazas diferenciadas) ---
+    // Imprimir
+    document.getElementById('printBtn').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Colores de delegados (para los que ya conocemos; otros usarán gris claro)
     const delegadosColores = {
       "ENERITZ ARANGUREN": "#22c55e",
       "LAURA PLAZAS": "#2563eb",
@@ -994,12 +1002,11 @@
       "Sergio Perán": "#fb7185"
     };
 
-    // --- Datos base ---
-    const centros = [];          // se rellenará desde Excel o demo
+    const centros = [];
     const informesPorCentro = {};
     const aarPorCentro = {};
 
-    // 8 centros exclusivos definitivos
+    // Exclusivos (8 definitivos)
     const exclusivosNombres = new Set([
       "CC LOS VALLES",
       "FUENLABRADA Calle Leganes",
@@ -1010,19 +1017,6 @@
       "TORRELAVEGA CARREFOUR CC",
       "ZARAGOZA CALLE DELICIAS"
     ]);
-
-    // --- Utilidades ---
-    function normaliza(txt) {
-      return (txt || "").toString().trim().toUpperCase();
-    }
-
-    // --- TABLA CENTROS ---
-    const tablaBody = document.getElementById('tablaCentrosBody');
-    const totalCentrosLabel = document.getElementById('totalCentrosLabel');
-    const summaryCentros = document.getElementById('summaryCentros');
-
-    let filtroDelegadoActual = null;
-    let filtroTextoActual = "";
 
     function tipoCentro(nombreCentro) {
       return exclusivosNombres.has(nombreCentro) ? "Exclusivo" : "Corner";
@@ -1035,6 +1029,14 @@
     function getAarEstado(nombreCentro) {
       return aarPorCentro[nombreCentro] || "No";
     }
+
+    // TABLA
+    const tablaBody = document.getElementById('tablaCentrosBody');
+    const totalCentrosLabel = document.getElementById('totalCentrosLabel');
+    const summaryCentros = document.getElementById('summaryCentros');
+
+    let filtroDelegadoActual = null;
+    let filtroTextoActual = "";
 
     function renderTabla() {
       const texto = (filtroTextoActual || "").toLowerCase();
@@ -1085,83 +1087,27 @@
       actualizarDatalistCentros();
     }
 
-    // --- LEYENDA DELEGADOS (barras) ---
-    const delegadosLegend = document.getElementById('delegadosLegend');
-    const delegadosResumenBadge = document.getElementById('delegadosResumenBadge');
-
-    function actualizarDelegados() {
-      const mapa = new Map();
-      centros.forEach(c => {
-        mapa.set(c.delegado, (mapa.get(c.delegado) || 0) + 1);
-      });
-
-      delegadosLegend.innerHTML = "";
-      const delegados = Array.from(mapa.entries()).sort((a, b) =>
-        a[0].localeCompare(b[0])
-      );
-
-      delegadosResumenBadge.textContent = `${delegados.length} delegados`;
-
-      delegados.forEach(([nombre, cuenta]) => {
-        const color = delegadosColores[nombre] || "#e5e7eb";
-        const max = delegados.reduce((m, [, n]) => Math.max(m, n), 1);
-        const ancho = (cuenta / max) * 100;
-
-        const item = document.createElement('div');
-        item.className = 'delegado-item';
-        item.innerHTML = `
-          <span class="delegado-dot" style="background:${color}"></span>
-          <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-            ${nombre}
-          </span>
-          <span style="font-size:.7rem;">${cuenta} centro${cuenta !== 1 ? 's' : ''}</span>
-        `;
-
-        const barra = document.createElement('div');
-        barra.className = 'delegado-item-bar';
-        barra.innerHTML =
-          `<div class="delegado-item-bar-fill" style="background:${color}; width:${ancho}%;"></div>`;
-
-        item.appendChild(barra);
-
-        item.addEventListener('click', () => {
-          if (filtroDelegadoActual === nombre) {
-            filtroDelegadoActual = null;
-          } else {
-            filtroDelegadoActual = nombre;
-          }
-          renderTabla();
-        });
-
-        delegadosLegend.appendChild(item);
-      });
-    }
-
-    // --- BUSCADOR ---
+    // BUSCADOR
     document.getElementById('buscadorCentros').addEventListener('input', e => {
       filtroTextoActual = e.target.value || "";
       renderTabla();
     });
 
-    // --- MODALES COMUNES ---
-    function abrirModal(id) {
-      document.getElementById(id).style.display = 'flex';
-    }
-
-    function cerrarModal(id) {
-      document.getElementById(id).style.display = 'none';
-    }
+    // MODALES comunes
+    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
 
     document.querySelectorAll('[data-close]').forEach(el => {
       el.addEventListener('click', () => cerrarModal(el.dataset.close));
     });
 
-    // --- MODAL NUEVO CENTRO ---
+    // NUEVO CENTRO
     document.getElementById('btnAddCentro').addEventListener('click', () => {
       const sel = document.getElementById('nuevoDelegado');
       sel.innerHTML = "";
-      const nombres = new Set([...Object.keys(delegadosColores), ...centros.map(c => c.delegado)]);
+      const nombres = new Set([...centros.map(c => c.delegado), ...Object.keys(delegadosColores)]);
       nombres.forEach(nombre => {
+        if (!nombre) return;
         const opt = document.createElement('option');
         opt.value = nombre;
         opt.textContent = nombre;
@@ -1185,7 +1131,7 @@
       renderTabla();
     });
 
-    // --- INFORMES DE CENTRO (placeholder) ---
+    // INFORMES CENTRO
     document.addEventListener('click', e => {
       if (e.target.matches('.btn-link[data-centro]')) {
         const nombreCentro = e.target.dataset.centro;
@@ -1208,7 +1154,94 @@
       }
     });
 
-    // --- ADJUNTAR CENTROS (EXCEL) ---
+    // DELEGADOS (barras + desplegable)
+    const delegadosLegend = document.getElementById('delegadosLegend');
+    const delegadosResumenBadge = document.getElementById('delegadosResumenBadge');
+    const expandedDelegados = new Set();
+
+    function actualizarDelegados() {
+      const mapa = new Map();
+      centros.forEach(c => {
+        if (!c.delegado) return;
+        mapa.set(c.delegado, (mapa.get(c.delegado) || 0) + 1);
+      });
+
+      delegadosLegend.innerHTML = "";
+      const delegados = Array.from(mapa.entries()).sort((a, b) =>
+        a[0].localeCompare(b[0])
+      );
+
+      delegadosResumenBadge.textContent = `${delegados.length} delegados`;
+
+      // máximo para escalar barras
+      const max = delegados.reduce((m, [, n]) => Math.max(m, n), 1);
+
+      delegados.forEach(([nombre, cuenta]) => {
+        const color = delegadosColores[nombre] || "#e5e7eb";
+        const ancho = (cuenta / max) * 100;
+
+        const item = document.createElement('div');
+        item.className = 'delegado-item';
+        if (filtroDelegadoActual === nombre) item.classList.add('delegado-activo');
+
+        const header = document.createElement('div');
+        header.className = 'delegado-header-line';
+        header.innerHTML = `
+          <span class="delegado-dot" style="background:${color}"></span>
+          <span class="delegado-nombre">${nombre}</span>
+          <span class="delegado-count">${cuenta} centro${cuenta !== 1 ? 's' : ''}</span>
+          <span class="delegado-chevron">${expandedDelegados.has(nombre) ? '▾' : '▸'}</span>
+        `;
+
+        header.addEventListener('click', () => {
+          // filtro de tabla
+          filtroDelegadoActual = (filtroDelegadoActual === nombre) ? null : nombre;
+
+          // expandir/contraer tarjeta
+          if (expandedDelegados.has(nombre)) {
+            expandedDelegados.delete(nombre);
+          } else {
+            expandedDelegados.add(nombre);
+          }
+          renderTabla(); // re-render para actualizar estilos y filtro
+        });
+
+        const barra = document.createElement('div');
+        barra.className = 'delegado-item-bar';
+        barra.innerHTML =
+          `<div class="delegado-item-bar-fill" style="background:${color}; width:${ancho}%;"></div>`;
+
+        const centrosDiv = document.createElement('div');
+        centrosDiv.className = 'delegado-centros';
+
+        if (expandedDelegados.has(nombre)) {
+          const ul = document.createElement('ul');
+          const listaCentros = centros
+            .filter(c => c.delegado === nombre)
+            .map(c => c.centro)
+            .sort();
+
+          listaCentros.forEach(ct => {
+            const li = document.createElement('li');
+            li.textContent = ct;
+            ul.appendChild(li);
+          });
+
+          centrosDiv.innerHTML = `<span>Centros de ${nombre}:</span>`;
+          centrosDiv.appendChild(ul);
+        } else {
+          centrosDiv.style.display = 'none';
+        }
+
+        item.appendChild(header);
+        item.appendChild(barra);
+        if (expandedDelegados.has(nombre)) item.appendChild(centrosDiv);
+
+        delegadosLegend.appendChild(item);
+      });
+    }
+
+    // ADJUNTAR EXCEL (AÑADIR, NO SUSTITUIR)
     const inputExcel = document.getElementById('inputExcel');
     document.getElementById('btnAdjuntarExcel').addEventListener('click', () => {
       inputExcel.click();
@@ -1226,18 +1259,23 @@
         const sheet = workbook.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        centros.length = 0; // limpiamos
+        // añadimos sin sustituir, evitando duplicar códigos
+        const existingCodes = new Set(centros.map(c => c.codigo));
+
         rows.slice(1).forEach(row => {
           if (!row || row.length < 5) return;
           const [codigo, propietario, centro, provincia, delegado] = row;
-          if (!centro) return;
+          const cod = (codigo || "").toString().trim();
+          if (!cod || existingCodes.has(cod)) return;
+
           centros.push({
-            codigo: (codigo || "").toString().trim(),
+            codigo: cod,
             propietario: (propietario || "").toString().trim(),
             centro: (centro || "").toString().trim(),
             provincia: (provincia || "").toString().trim(),
             delegado: (delegado || "").toString().trim()
           });
+          existingCodes.add(cod);
         });
 
         filtroDelegadoActual = null;
@@ -1249,25 +1287,7 @@
       reader.readAsArrayBuffer(file);
     });
 
-    // --- DATOS DEMO INICIALES (los 10 que teníamos) ---
-    (function cargaDemoInicial() {
-      const demo = [
-        { codigo:"4ABB", propietario:"MAZA Oriol", centro:"PAMPLONA C. Exclusivo", provincia:"NAVARRA", delegado:"Sonia Godino" },
-        { codigo:"4AFH", propietario:"MAZA Oriol", centro:"PAMPLONA Calle Sancho el Mayor", provincia:"NAVARRA", delegado:"Sonia Godino" },
-        { codigo:"4AWQ", propietario:"MAZA Oriol", centro:"PAMPLONA Carlos III", provincia:"NAVARRA", delegado:"Sonia Godino" },
-        { codigo:"4MRM", propietario:"AAO", centro:"REINA DE MERCEDES", provincia:"Madrid", delegado:"Sergio Perán" },
-        { codigo:"4PEC", propietario:"AAO", centro:"SANTANDER CC PEÑACASTILLO", provincia:"Santander", delegado:"Sergio Perán" },
-        { codigo:"4AXF", propietario:"URRUTIA Esteban", centro:"SANTIAGO DE COMPOSTELA RUA DA ROSA", provincia:"A Coruña", delegado:"Daniel Chazo" },
-        { codigo:"4TOL", propietario:"AAO", centro:"TORRELAVEGA CARREFOUR CC", provincia:"Santander", delegado:"Sergio Perán" },
-        { codigo:"4ZDE", propietario:"AAO", centro:"ZARAGOZA CALLE DELICIAS", provincia:"ZARAGOZA", delegado:"ENERITZ ARANGUREN" },
-        { codigo:"4AKI", propietario:"PIEDRAFITA Rocio", centro:"CC LOS VALLES", provincia:"MADRID", delegado:"Blanca Fdez. de la Pradilla" },
-        { codigo:"4MLG", propietario:"AAO", centro:"FUENLABRADA Calle Leganes", provincia:"MADRID", delegado:"Marisa Carmona" }
-      ];
-      demo.forEach(c => centros.push(c));
-      renderTabla();
-    })();
-
-    // --- DATALIST CENTROS PARA EL CALENDARIO ---
+    // DATALIST para modal de visitas
     function actualizarDatalistCentros() {
       const datalist = document.getElementById('listaCentros');
       datalist.innerHTML = "";
@@ -1285,11 +1305,10 @@
       document.getElementById('visitaDelegado').value = centro ? centro.delegado : "";
     });
 
-    // --- CALENDARIO Y VISITAS ---
+    // CALENDARIO + VISITAS
     const calendarGrid = document.getElementById('calendarGrid');
     const calendarMonthLabel = document.getElementById('calendarMonthLabel');
-
-    const visitas = []; // {id, fecha (YYYY-MM-DD), centro, delegado, responsable, estado, informeEstado}
+    const visitas = [];
 
     let currentYear, currentMonth;
     const hoy = new Date();
@@ -1301,13 +1320,21 @@
       renderVisitas();
     }
 
+    function getEstadoColor(estado) {
+      switch (estado) {
+        case "pendiente": return "#facc15";
+        case "anulada": return "#ef4444";
+        case "realizada": return "#22c55e";
+        default: return "#9ca3af";
+      }
+    }
+
     function renderCalendar() {
       calendarGrid.innerHTML = "";
 
       const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
       calendarMonthLabel.textContent = `${meses[currentMonth]} ${currentYear}`;
 
-      // cabecera días
       const dias = ["L","M","X","J","V","S","D"];
       dias.forEach(d => {
         const span = document.createElement('div');
@@ -1320,7 +1347,6 @@
       const startWeekday = (firstDay.getDay() + 6) % 7; // lunes=0
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
-      // celdas vacías antes del 1
       for (let i = 0; i < startWeekday; i++) {
         const cell = document.createElement('div');
         cell.className = 'calendar-cell';
@@ -1328,7 +1354,6 @@
         calendarGrid.appendChild(cell);
       }
 
-      // días del mes
       for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('div');
         cell.className = 'calendar-cell';
@@ -1346,8 +1371,7 @@
         visitasDia.forEach(v => {
           const dot = document.createElement('div');
           dot.className = 'calendar-dot';
-          let color = getEstadoColor(v.estado);
-          dot.style.background = color;
+          dot.style.background = getEstadoColor(v.estado);
           dotsContainer.appendChild(dot);
         });
 
@@ -1357,15 +1381,6 @@
         cell.addEventListener('click', () => abrirModalVisitaParaFecha(fechaISO));
 
         calendarGrid.appendChild(cell);
-      }
-    }
-
-    function getEstadoColor(estado) {
-      switch (estado) {
-        case "pendiente": return "#facc15";
-        case "anulada": return "#ef4444";
-        case "realizada": return "#22c55e";
-        default: return "#9ca3af";
       }
     }
 
@@ -1394,8 +1409,8 @@
         centro: centroNombre,
         delegado,
         responsable,
-        estado: "pendiente",      // ámbar
-        informeEstado: "ninguno"  // sin informe
+        estado: "pendiente",
+        informeEstado: "ninguno"
       });
 
       cerrarModal('modalVisita');
@@ -1409,6 +1424,7 @@
 
       const inicioMes = new Date(currentYear, currentMonth, 1);
       const finMes = new Date(currentYear, currentMonth + 1, 0);
+      const hoyISO = hoy.toISOString().slice(0,10);
 
       const lista = visitas.filter(v => {
         const d = new Date(v.fecha);
@@ -1421,8 +1437,6 @@
         return;
       }
 
-      const hoyISO = hoy.toISOString().slice(0,10);
-
       lista.forEach(v => {
         const item = document.createElement('div');
         item.className = 'visita-item';
@@ -1431,16 +1445,22 @@
         topLine.className = 'visita-top-line';
         topLine.innerHTML = `
           <span>${v.fecha}</span>
-          <span style="color:var(--text-muted);">${v.centro}</span>
+          <span style="color:var(--text-muted); flex:1; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+            ${v.centro}
+          </span>
         `;
 
         const bottomLine = document.createElement('div');
         bottomLine.className = 'visita-bottom-line';
 
         const izquierda = document.createElement('div');
+        izquierda.style.flex = '1';
+        izquierda.style.overflow = 'hidden';
+        izquierda.style.textOverflow = 'ellipsis';
+        izquierda.style.whiteSpace = 'nowrap';
         izquierda.innerHTML =
-          `<span style="color:var(--text-muted);">Delegado:</span> ${v.delegado || 'N/D'} · 
-           <span style="color:var(--text-muted);">Resp. Audio:</span> ${v.responsable}`;
+          `<span style="color:var(--text-muted);">Del.:</span> ${v.delegado} · 
+           <span style="color:var(--text-muted);">Audio:</span> ${v.responsable}`;
 
         const derecha = document.createElement('div');
         derecha.style.display = 'flex';
@@ -1473,18 +1493,18 @@
         btnInforme.textContent = 'Informe';
         btnInforme.addEventListener('click', () => {
           if (v.informeEstado === 'ninguno') {
-            v.informeEstado = 'en-proceso';      // verde claro
+            v.informeEstado = 'en-proceso';
           } else if (v.informeEstado === 'en-proceso') {
-            v.informeEstado = 'finalizado';      // verde más oscuro
+            v.informeEstado = 'finalizado';
           } else {
-            v.informeEstado = 'en-proceso';      // reabrir
+            v.informeEstado = 'en-proceso';
           }
           renderVisitas();
         });
 
         const btnEstado = document.createElement('button');
         btnEstado.className = 'btn-mini';
-        btnEstado.textContent = 'Cambiar estado';
+        btnEstado.textContent = 'Estado';
         btnEstado.addEventListener('click', () => {
           if (v.estado === 'pendiente') {
             v.estado = 'realizada';
@@ -1502,7 +1522,6 @@
         derecha.appendChild(btnInforme);
         derecha.appendChild(btnEstado);
 
-        // aviso si ya pasó la fecha y sigue pendiente y sin informe
         if (v.fecha < hoyISO && v.estado === 'pendiente' && v.informeEstado === 'ninguno') {
           const aviso = document.createElement('span');
           aviso.className = 'pill pill-aviso';
@@ -1527,8 +1546,24 @@
       setCurrentMonth(new Date(currentYear, currentMonth + 1, 1));
     });
 
-    // Inicializar calendario con el mes actual
-    setCurrentMonth(new Date());
+    // DEMO inicial
+    (function cargaDemoInicial() {
+      const demo = [
+        { codigo:"4ABB", propietario:"MAZA Oriol", centro:"PAMPLONA C. Exclusivo", provincia:"NAVARRA", delegado:"Sonia Godino" },
+        { codigo:"4AFH", propietario:"MAZA Oriol", centro:"PAMPLONA Calle Sancho el Mayor", provincia:"NAVARRA", delegado:"Sonia Godino" },
+        { codigo:"4AWQ", propietario:"MAZA Oriol", centro:"PAMPLONA Carlos III", provincia:"NAVARRA", delegado:"Sonia Godino" },
+        { codigo:"4MRM", propietario:"AAO", centro:"REINA DE MERCEDES", provincia:"Madrid", delegado:"Sergio Perán" },
+        { codigo:"4PEC", propietario:"AAO", centro:"SANTANDER CC PEÑACASTILLO", provincia:"Santander", delegado:"Sergio Perán" },
+        { codigo:"4AXF", propietario:"URRUTIA Esteban", centro:"SANTIAGO DE COMPOSTELA RUA DA ROSA", provincia:"A Coruña", delegado:"Daniel Chazo" },
+        { codigo:"4TOL", propietario:"AAO", centro:"TORRELAVEGA CARREFOUR CC", provincia:"Santander", delegado:"Sergio Perán" },
+        { codigo:"4ZDE", propietario:"AAO", centro:"ZARAGOZA CALLE DELICIAS", provincia:"ZARAGOZA", delegado:"ENERITZ ARANGUREN" },
+        { codigo:"4AKI", propietario:"PIEDRAFITA Rocio", centro:"CC LOS VALLES", provincia:"MADRID", delegado:"Blanca Fdez. de la Pradilla" },
+        { codigo:"4MLG", propietario:"AAO", centro:"FUENLABRADA Calle Leganes", provincia:"MADRID", delegado:"Marisa Carmona" }
+      ];
+      demo.forEach(c => centros.push(c));
+      renderTabla();
+      setCurrentMonth(new Date());
+    })();
   </script>
 </body>
 </html>
