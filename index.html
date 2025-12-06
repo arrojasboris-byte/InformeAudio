@@ -2,17 +2,34 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Control Center Audio - Centros</title>
+  <title>Control Center Audio - Centros e informes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
     :root {
+      --bg-body: radial-gradient(circle at top left, #111827, #020617 55%);
+      --bg-card: #020617;
+      --bg-card-soft: #0b1120;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-soft: #1f2937;
       --accent-red: #ff2440;
-      --accent-red-soft: #fed7e2;
+      --accent-red-soft: #fecaca;
       --accent-blue: #38bdf8;
       --accent-green: #22c55e;
       --accent-orange: #f97316;
-      --accent-yellow: #facc15;
+      --accent-yellow: #eab308;
+      --radius-lg: 14px;
+      --radius-xl: 18px;
+    }
+
+    body.light {
+      --bg-body: #f3f4f6;
+      --bg-card: #ffffff;
+      --bg-card-soft: #e5e7eb;
+      --text-main: #0f172a;
+      --text-muted: #6b7280;
+      --border-soft: #d1d5db;
     }
 
     * {
@@ -28,41 +45,13 @@
       overflow: hidden;
     }
 
-    /* Tema por defecto (oscuro) mediante variables */
     body {
-      --bg-body: radial-gradient(circle at top left, #111827, #020617 55%);
-      --bg-main: #020617;
-      --bg-card: #020617;
-      --bg-card-soft: #0b1120;
-      --bg-input: #020617;
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --border-soft: #1f2937;
-      --chip-bg: #020617;
-      --shadow-soft: 0 14px 30px rgba(0,0,0,.5);
-
       background: var(--bg-body);
       color: var(--text-main);
       display: flex;
     }
 
-    /* Tema claro: solo cambiamos variables, el sidebar se fuerza abajo */
-    body.light {
-      --bg-body: #f3f4f6;
-      --bg-main: #f3f4f6;
-      --bg-card: #ffffff;
-      --bg-card-soft: #f9fafb;
-      --bg-input: #ffffff;
-      --text-main: #111827;
-      --text-muted: #6b7280;
-      --border-soft: #e5e7eb;
-      --chip-bg: #ffffff;
-      --shadow-soft: 0 10px 20px rgba(15,23,42,.1);
-
-      background: var(--bg-body);
-    }
-
-    /* SIDEBAR (siempre oscuro en ambos temas) */
+    /* SIDEBAR SIEMPRE NEGRA */
     .sidebar {
       width: 250px;
       background: #020617;
@@ -86,7 +75,6 @@
       height: 34px;
       border-radius: 999px;
       background: radial-gradient(circle at 30% 20%, #fee2e2, var(--accent-red));
-      box-shadow: 0 0 18px rgba(248,113,113,.9);
     }
 
     .logo-text {
@@ -151,46 +139,42 @@
       background: rgba(15,23,42,.2);
     }
 
-    .nav-item:hover:not(.active) {
-      background: rgba(31,41,55,0.8);
-      color: #e5e7eb;
-    }
-
     .sidebar-footer {
       margin-top: auto;
       font-size: .78rem;
       color: #9ca3af;
     }
 
-    /* MAIN LAYOUT */
+    /* MAIN */
     .main {
       flex: 1;
-      background: var(--bg-main);
-      padding: 12px 18px 14px;
+      padding: 10px 18px 12px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
       max-height: 100vh;
       overflow: hidden;
     }
 
     .topbar {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       margin-bottom: 4px;
     }
 
     .search-wrapper {
-      flex: 1;
       position: relative;
+      flex: 1;
+      max-width: 620px;
     }
 
     .search-input {
       width: 100%;
-      background: var(--bg-card-soft);
+      background: var(--bg-card);
       border-radius: 999px;
-      padding: 9px 12px 9px 34px;
+      padding: 8px 12px 8px 30px;
       border: 1px solid var(--border-soft);
       color: var(--text-main);
       font-size: .86rem;
@@ -210,36 +194,45 @@
       color: var(--text-muted);
     }
 
+    .toolbar-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
     .btn {
       border-radius: 999px;
-      padding: 7px 13px;
+      padding: 6px 12px;
       border: 1px solid var(--border-soft);
       font-size: .8rem;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--bg-card-soft);
+      background: var(--bg-card);
       color: var(--text-main);
       white-space: nowrap;
       box-shadow: none;
     }
 
-    .btn span.icon {
-      font-size: .85rem;
-    }
-
     .btn-cta-red {
       background: linear-gradient(90deg, #ff2440, #fb7185);
-      color: #111827;
       border-color: transparent;
+      color: #111827;
       font-weight: 600;
     }
 
     .btn-cta-blue {
-      background: linear-gradient(90deg, #38bdf8, #22c55e);
-      color: #022c22;
+      background: linear-gradient(90deg, #38bdf8, #0ea5e9);
       border-color: transparent;
+      color: #0f172a;
+      font-weight: 600;
+    }
+
+    .btn-cta-green {
+      background: linear-gradient(90deg, #22c55e, #16a34a);
+      border-color: transparent;
+      color: #052e16;
       font-weight: 600;
     }
 
@@ -247,179 +240,190 @@
       background: transparent;
     }
 
-    #themeToggle {
-      min-width: 120px;
-      justify-content: center;
+    .btn span.icon {
+      font-size: .85rem;
     }
 
-    /* TOP GRID: delegados + calendario + visitas */
-    .top-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.5fr) minmax(0, 2fr) minmax(0, 1.6fr);
+    /* VISTAS */
+    .view {
+      flex: 1;
+      display: none;
+      flex-direction: column;
       gap: 10px;
-      min-height: 220px;
-      flex-shrink: 0;
+      min-height: 0;
+    }
+
+    .view.active {
+      display: flex;
     }
 
     .card {
       background: var(--bg-card);
-      border-radius: 16px;
+      border-radius: var(--radius-lg);
       padding: 10px;
       border: 1px solid var(--border-soft);
-      box-shadow: var(--shadow-soft);
       display: flex;
       flex-direction: column;
       min-width: 0;
     }
 
-    .card h3 {
-      font-size: .9rem;
-      margin-bottom: 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .view-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.4fr) minmax(0, 1.1fr);
+      gap: 8px;
+      min-height: 220px;
     }
 
-    .badge-pill {
-      font-size: .7rem;
-      padding: 2px 8px;
-      border-radius: 999px;
-      background: var(--bg-card-soft);
-      border: 1px solid var(--border-soft);
-      color: var(--text-muted);
+    .section-title-main {
+      font-size: .95rem;
+      font-weight: 600;
+      margin-bottom: 4px;
     }
 
     /* DELEGADOS */
+    .delegados-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+
+    .badge-count {
+      font-size: .7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border-soft);
+      background: var(--bg-card-soft);
+      color: var(--text-muted);
+    }
+
     .delegados-list {
       display: flex;
       flex-direction: column;
       gap: 4px;
-      margin-top: 4px;
-      max-height: 170px;
-      overflow: auto;
+      overflow-y: auto;
+      max-height: 210px;
+      padding-right: 2px;
     }
 
     .delegado-row {
+      border-radius: 10px;
+      padding: 4px 8px 4px 6px;
       background: var(--bg-card-soft);
-      border-radius: 999px;
-      padding: 5px 10px;
       display: flex;
-      align-items: center;
-      gap: 8px;
+      flex-direction: column;
+      gap: 3px;
       cursor: pointer;
       border: 1px solid transparent;
-      transition: border-color .15s ease, background .15s ease;
-    }
-
-    .delegado-row:hover {
-      border-color: var(--accent-blue);
     }
 
     .delegado-row.active {
-      border-color: var(--accent-red);
+      border-color: var(--accent-blue);
+    }
+
+    .delegado-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: .78rem;
+    }
+
+    .delegado-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .delegado-dot {
       width: 8px;
       height: 8px;
       border-radius: 999px;
-      flex-shrink: 0;
     }
 
-    .delegado-name {
-      font-size: .8rem;
-      flex: 1;
+    .delegado-centros {
+      font-size: .7rem;
+      color: var(--text-muted);
     }
 
     .delegado-bar {
-      height: 4px;
+      height: 3px;
       border-radius: 999px;
-      background: rgba(148,163,184,0.3);
-      flex: 0 0 40%;
-      position: relative;
+      background: rgba(148,163,184,.4);
       overflow: hidden;
     }
 
-    .delegado-bar-fill {
-      position: absolute;
-      inset: 0;
-      border-radius: 999px;
-    }
-
-    .delegado-count {
-      font-size: .74rem;
-      color: var(--text-muted);
-      flex-shrink: 0;
+    .delegado-bar-inner {
+      height: 100%;
+      width: 100%;
     }
 
     .delegados-actions {
       display: flex;
-      gap: 8px;
-      margin-top: 8px;
-      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
     }
 
     /* CALENDARIO */
     .calendar-card {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      gap: 6px;
+      align-items: stretch;
     }
 
     .calendar-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      font-size: .9rem;
-      margin-bottom: 2px;
+      align-items: center;
+      margin-bottom: 6px;
     }
 
-    .cal-nav-btn {
+    .calendar-title {
+      font-size: 1.05rem;
+      font-weight: 700;   /* mes en negrita con notoriedad */
+    }
+
+    .calendar-nav {
+      display: flex;
+      gap: 6px;
+    }
+
+    .calendar-nav-btn {
       width: 26px;
       height: 26px;
       border-radius: 999px;
       border: 1px solid var(--border-soft);
-      background: var(--bg-card-soft);
+      background: transparent;
       color: var(--text-main);
-      display: inline-flex;
+      font-size: .8rem;
+      cursor: pointer;
+      display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      font-size: .8rem;
     }
 
     .calendar-weekdays {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      font-size: .75rem;
+      font-size: .72rem;
       color: var(--text-muted);
-      text-align: center;
       margin-bottom: 4px;
-    }
-
-    .calendar-weekdays span {
-      padding-bottom: 2px;
+      text-align: center;
     }
 
     .calendar-grid {
-      flex: 1;
       display: grid;
       grid-template-columns: repeat(7, 1fr);
-      grid-auto-rows: 64px;
-      gap: 6px;
+      gap: 5px;
+      grid-auto-rows: 58px; /* más compacto para que quepa entero */
     }
 
     .calendar-day {
       border-radius: 14px;
       border: 1px solid var(--border-soft);
-      background: var(--bg-card-soft);
-      padding: 4px 6px;
+      padding: 4px 5px;
+      font-size: .78rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       cursor: pointer;
-      font-size: .8rem;
     }
 
     .calendar-day.empty {
@@ -430,58 +434,59 @@
 
     .calendar-day-number {
       align-self: flex-start;
-      font-size: .8rem;
     }
 
-    .calendar-day-marker {
-      font-size: .7rem;
+    .calendar-day-badge {
       display: flex;
       align-items: center;
-      justify-content: flex-end;
       gap: 4px;
+      font-size: .7rem;
     }
 
-    .marker-initial {
+    .calendar-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent-yellow);
+    }
+
+    .calendar-resp {
       font-weight: 600;
     }
 
-    .marker-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      border: 1px solid rgba(0,0,0,.25);
-    }
-
-    .marker-pendiente { background: var(--accent-yellow); }
-    .marker-proceso   { background: var(--accent-green); }
-    .marker-finalizada{ background: #16a34a; }
-    .marker-anulada   { background: #ef4444; }
-
-    /* VISITAS AGENDADAS */
+    /* VISITAS AGENDADAS (UNA LÍNEA) */
     .visitas-list {
-      margin-top: 4px;
       display: flex;
       flex-direction: column;
       gap: 4px;
-      overflow: auto;
-      max-height: 190px;
+      overflow-y: auto;
+      max-height: 210px;
+      padding-right: 2px;
     }
 
     .visita-row {
-      border-radius: 10px;
-      background: var(--bg-card-soft);
-      border: 1px solid var(--border-soft);
-      padding: 6px 8px;
       display: flex;
-      flex-direction: column;
-      gap: 2px;
-      font-size: .76rem;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      border-radius: 10px;
+      padding: 4px 6px;
+      background: var(--bg-card-soft);
+      font-size: .75rem;
     }
 
     .visita-main {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .visita-top {
+      display: flex;
       gap: 6px;
+      align-items: center;
+      white-space: nowrap;
     }
 
     .visita-centro {
@@ -489,75 +494,78 @@
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      max-width: 220px;
     }
 
     .visita-meta {
       display: flex;
-      flex-wrap: wrap;
       gap: 6px;
-      font-size: .72rem;
       color: var(--text-muted);
+      font-size: .7rem;
+      flex-wrap: wrap;
+    }
+
+    .visita-actions {
+      display: flex;
+      gap: 4px;
+      flex-wrap: nowrap;
     }
 
     .chip {
       border-radius: 999px;
-      padding: 2px 7px;
+      padding: 2px 6px;
       font-size: .7rem;
-      background: var(--chip-bg);
       border: 1px solid var(--border-soft);
+      background: #0b1120;
+      white-space: nowrap;
     }
 
-    .chip-estado-pendiente {
-      background: rgba(250,204,21,0.15);
-      border-color: rgba(250,204,21,0.8);
-      color: var(--accent-yellow);
+    .chip-pendiente {
+      background: rgba(234,179,8,.14);
+      border-color: rgba(234,179,8,.7);
+      color: #eab308;
+    }
+
+    .chip-sininforme {
+      background: rgba(148,163,184,.18);
+      border-color: rgba(148,163,184,.7);
+      color: var(--text-muted);
     }
 
     .chip-estado-proceso {
-      background: rgba(52,211,153,0.15);
-      border-color: rgba(34,197,94,0.8);
-      color: var(--accent-green);
-    }
-
-    .chip-estado-finalizada {
-      background: rgba(22,163,74,0.2);
-      border-color: rgba(22,163,74,0.9);
+      background: rgba(34,197,94,.2);
+      border-color: rgba(34,197,94,.8);
       color: #16a34a;
     }
 
-    .chip-estado-anulada {
-      background: rgba(248,113,113,0.15);
-      border-color: rgba(248,113,113,0.9);
-      color: #f97373;
+    .chip-estado-finalizado {
+      background: rgba(22,163,74,1);
+      border-color: rgba(22,163,74,1);
+      color: #ecfdf3;
     }
 
-    .visita-acciones {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-      margin-top: 4px;
+    .chip-estado-anulada {
+      background: rgba(248,113,113,.25);
+      border-color: rgba(248,113,113,.9);
+      color: #fecaca;
     }
 
     .btn-mini {
       border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: transparent;
+      padding: 2px 6px;
       font-size: .7rem;
-      padding: 2px 7px;
-      cursor: pointer;
-      color: var(--text-main);
+      border-width: 1px;
     }
 
     /* TABLA CENTROS */
     .table-wrapper {
-      margin-top: 8px;
+      flex: 1;
       background: var(--bg-card);
-      border-radius: 16px;
+      border-radius: var(--radius-lg);
       border: 1px solid var(--border-soft);
       display: flex;
       flex-direction: column;
       min-height: 0;
-      box-shadow: var(--shadow-soft);
     }
 
     .table-header {
@@ -578,7 +586,6 @@
 
     .table-scroll {
       flex: 1;
-      max-height: 260px;
       overflow: auto;
       border-top: 1px solid var(--border-soft);
     }
@@ -597,7 +604,7 @@
     }
 
     th, td {
-      padding: 5px 8px;
+      padding: 6px 8px;
       border-bottom: 1px solid #0b1120;
       text-align: left;
       white-space: nowrap;
@@ -610,11 +617,19 @@
     }
 
     tbody tr:nth-child(even) {
-      background: var(--bg-card-soft);
+      background: #020617;
+    }
+
+    body.light tbody tr:nth-child(even) {
+      background: #f3f4f6;
     }
 
     tbody tr:hover {
       background: rgba(15,23,42,0.9);
+    }
+
+    body.light tbody tr:hover {
+      background: #e5e7eb;
     }
 
     .tag {
@@ -623,13 +638,7 @@
       font-size: .7rem;
       border: 1px solid var(--border-soft);
       background: #0b1120;
-    }
-
-    body.light tbody tr:nth-child(even) {
-      background: #f3f4f6;
-    }
-    body.light tbody tr:hover {
-      background: #e5e7eb;
+      white-space: nowrap;
     }
 
     .tag.exclusivo {
@@ -671,12 +680,14 @@
       text-decoration: underline;
     }
 
-    .centros-resumen {
+    .table-footer {
+      padding: 4px 10px 6px;
       font-size: .72rem;
       color: var(--text-muted);
+      text-align: right;
     }
 
-    /* MODALES */
+    /* MODALES GENERALES */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -689,12 +700,11 @@
 
     .modal {
       background: var(--bg-card);
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 14px;
-      width: 420px;
+      width: 440px;
       max-width: 95%;
       border: 1px solid var(--border-soft);
-      box-shadow: var(--shadow-soft);
     }
 
     .modal-header {
@@ -733,11 +743,12 @@
     }
 
     .modal-field input,
-    .modal-field select {
+    .modal-field select,
+    .modal-field textarea {
       padding: 5px 7px;
       border-radius: 8px;
       border: 1px solid var(--border-soft);
-      background: var(--bg-input);
+      background: var(--bg-card-soft);
       color: var(--text-main);
       font-size: .78rem;
       outline: none;
@@ -750,42 +761,139 @@
       margin-top: 10px;
     }
 
-    /* RESPONSIVE sencillo */
-    @media (max-width: 1120px) {
-      .top-layout {
-        grid-template-columns: 1.5fr 1.5fr;
-        grid-template-rows: auto auto;
-        grid-template-areas:
-          "delegados calendario"
-          "visitas visitas";
-      }
-      .card-delegados { grid-area: delegados; }
-      .card-calendario{ grid-area: calendario; }
-      .card-visitas   { grid-area: visitas; }
+    /* -------- VISTA INFORME DE LA VISITA -------- */
+    .informe-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
+      gap: 10px;
+      min-height: 0;
     }
 
-    @media (max-width: 880px) {
-      .sidebar {
-        display: none;
+    .informe-top {
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .78rem;
+    }
+
+    .info-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .info-label {
+      color: var(--text-muted);
+      width: 32%;
+      white-space: nowrap;
+    }
+
+    .small-input-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .small-input-row .modal-field {
+      flex: 1;
+    }
+
+    .checklist-column {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: .78rem;
+      max-height: 260px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .check-item input {
+      width: 14px;
+      height: 14px;
+    }
+
+    .chart-column {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+    }
+
+    .chart-card {
+      flex: 1;
+      min-height: 120px;
+    }
+
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 160px;
+    }
+
+    /* Adjuntar imágenes */
+    .imagenes-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .imagen-slot {
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-align: center;
+      font-size: .78rem;
+    }
+
+    .imagen-slot input {
+      font-size: .7rem;
+    }
+
+    .observaciones-card textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .informe-header-actions {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    @media (max-width: 1100px) {
+      .view-row {
+        grid-template-columns: 1.3fr 1.3fr;
+        grid-auto-rows: auto;
+        grid-template-rows: auto auto;
       }
-      body {
-        overflow: auto;
+      .view-row > :last-child {
+        grid-column: 1 / -1;
       }
-      .main {
-        max-height: none;
-        padding: 10px;
-      }
-      .top-layout {
+      .informe-layout {
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
       }
-      .table-scroll {
-        max-height: none;
+      .informe-top {
+        grid-template-columns: 1fr;
       }
     }
   </style>
 
-  <!-- Librería para Excel -->
+  <!-- Librerías -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
@@ -802,14 +910,11 @@
     <div>
       <div class="section-title">Secciones</div>
       <nav class="nav-list">
-        <div class="nav-item">
-          <span class="icon">🏠</span> Dashboard
-        </div>
-        <div class="nav-item active">
+        <div class="nav-item active" data-view-target="view-centros">
           <span class="icon">🏢</span> Centros
         </div>
-        <div class="nav-item">
-          <span class="icon">📄</span> Informe de la visita
+        <div class="nav-item" data-view-target="view-informe">
+          <span class="icon">📋</span> Informe de la visita
         </div>
         <div class="nav-item">
           <span class="icon">🛠</span> Servicios
@@ -836,93 +941,236 @@
         <span class="search-icon">🔍</span>
         <input id="buscadorGlobal" class="search-input" placeholder="Buscar por centro, propietario o delegado..." />
       </div>
-
-      <button class="btn" id="themeToggle">
-        <span class="icon">🌓</span> Oscuro / Claro
-      </button>
-      <button class="btn btn-ghost" id="btnGuardarVista">
-        <span class="icon">💾</span> Guardar vista
-      </button>
-      <button class="btn btn-ghost" id="btnExportarHtml">
-        <span class="icon">⬇️</span> Exportar HTML
-      </button>
-      <button class="btn btn-ghost" id="btnImprimir">
-        <span class="icon">🖨</span> Imprimir
-      </button>
-      <button class="btn btn-cta-red" id="btnActualizar">
-        <span class="icon">☁️</span> Actualizar datos nube
-      </button>
+      <div class="toolbar-buttons">
+        <button class="btn" id="themeToggle">
+          <span class="icon">🌓</span> Oscuro / Claro
+        </button>
+        <button class="btn btn-ghost" id="btnGuardarVista">
+          <span class="icon">💾</span> Guardar vista
+        </button>
+        <button class="btn btn-cta-blue" id="btnExportHtml">
+          <span class="icon">⬇️</span> Exportar HTML
+        </button>
+        <button class="btn btn-ghost" id="btnImprimir">
+          <span class="icon">🖨</span> Imprimir
+        </button>
+        <button class="btn btn-cta-red">
+          <span class="icon">☁️</span> Actualizar datos nube
+        </button>
+      </div>
     </div>
 
-    <!-- TOP LAYOUT -->
-    <section class="top-layout">
-      <!-- DELEGADOS -->
-      <article class="card card-delegados">
-        <h3>
-          <span>Centros y delegados</span>
-          <span class="badge-pill" id="delegadosCount">0 delegados</span>
-        </h3>
+    <!-- VISTA CENTROS -->
+    <section class="view active" id="view-centros">
+      <section class="view-row">
+        <!-- Delegados -->
+        <article class="card">
+          <div class="delegados-header">
+            <span class="section-title-main">Centros y delegados</span>
+            <span class="badge-count" id="delegadosCount"></span>
+          </div>
+          <div id="delegadosList" class="delegados-list"></div>
+          <div class="delegados-actions">
+            <button class="btn btn-cta-red" id="btnAddCentro">
+              <span class="icon">➕</span> Añadir centro
+            </button>
+            <button class="btn" id="btnAdjuntarExcel">
+              <span class="icon">📤</span> Adjuntar centros (Excel)
+            </button>
+            <input type="file" id="inputExcel" accept=".xlsx,.xls" style="display:none" />
+          </div>
+        </article>
 
-        <div class="delegados-list" id="delegadosList"></div>
-
-        <div class="delegados-actions">
-          <button class="btn btn-cta-red" id="btnAddCentro">
-            <span class="icon">➕</span> Añadir centro
-          </button>
-          <button class="btn" id="btnAdjuntarExcel">
-            <span class="icon">📤</span> Adjuntar centros (Excel)
-          </button>
-          <input type="file" id="inputExcel" accept=".xlsx,.xls" style="display:none" />
-        </div>
-      </article>
-
-      <!-- CALENDARIO -->
-      <article class="card card-calendario">
-        <div class="calendar-card">
+        <!-- Calendario -->
+        <article class="card calendar-card">
           <div class="calendar-header">
-            <button class="cal-nav-btn" id="calPrev">‹</button>
-            <span id="calTitle">Mes Año</span>
-            <button class="cal-nav-btn" id="calNext">›</button>
+            <div class="calendar-nav">
+              <button class="calendar-nav-btn" id="calPrev">&lt;</button>
+            </div>
+            <div class="calendar-title" id="calendarTitle">Diciembre 2025</div>
+            <div class="calendar-nav">
+              <button class="calendar-nav-btn" id="calNext">&gt;</button>
+            </div>
           </div>
           <div class="calendar-weekdays">
-            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+            <div>L</div><div>M</div><div>X</div><div>J</div><div>V</div><div>S</div><div>D</div>
           </div>
           <div class="calendar-grid" id="calendarGrid"></div>
-        </div>
-      </article>
+        </article>
 
-      <!-- VISITAS -->
-      <article class="card card-visitas">
-        <h3>
-          <span>Visitas agendadas</span>
-        </h3>
-        <div class="visitas-list" id="visitasList"></div>
-      </article>
+        <!-- Visitas agendadas -->
+        <article class="card">
+          <div class="delegados-header">
+            <span class="section-title-main">Visitas agendadas</span>
+            <div class="informe-header-actions">
+              <button class="btn btn-mini" id="btnPrintVisitas">🖨</button>
+              <button class="btn btn-mini" id="btnSaveVisitas">💾</button>
+            </div>
+          </div>
+          <div id="visitasList" class="visitas-list"></div>
+        </article>
+      </section>
+
+      <!-- TABLA CENTROS -->
+      <section class="table-wrapper">
+        <div class="table-header">
+          <div>
+            <h3>Listado de centros</h3>
+          </div>
+          <span id="centrosCounter"></span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Propietario</th>
+                <th>Centro</th>
+                <th>Provincia</th>
+                <th>Delegado</th>
+                <th>Tipo</th>
+                <th>Informes</th>
+                <th>Centro AAR</th>
+              </tr>
+            </thead>
+            <tbody id="tablaCentrosBody"></tbody>
+          </table>
+        </div>
+        <div class="table-footer" id="tableFooter"></div>
+      </section>
     </section>
 
-    <!-- TABLA CENTROS -->
-    <section class="table-wrapper">
-      <div class="table-header">
-        <h3>Listado de centros</h3>
-        <span class="centros-resumen" id="centrosResumen"></span>
+    <!-- VISTA INFORME DE LA VISITA -->
+    <section class="view" id="view-informe">
+      <div class="delegados-header">
+        <span class="section-title-main">Informe de la visita</span>
+        <div class="informe-header-actions">
+          <button class="btn btn-mini" id="btnPrintInforme">🖨</button>
+          <button class="btn btn-mini" id="btnGuardarInforme">💾</button>
+        </div>
       </div>
-      <div class="table-scroll">
-        <table>
-          <thead>
-          <tr>
-            <th>Código</th>
-            <th>Propietario</th>
-            <th>Centro</th>
-            <th>Provincia</th>
-            <th>Delegado</th>
-            <th>Tipo</th>
-            <th>Informes</th>
-            <th>Centro AAR</th>
-          </tr>
-          </thead>
-          <tbody id="tablaCentrosBody"></tbody>
-        </table>
-      </div>
+
+      <!-- PANEL SUPERIOR -->
+      <section class="informe-top">
+        <!-- Info centro y responsable -->
+        <article class="card">
+          <table class="info-table">
+            <tbody>
+              <tr>
+                <td class="info-label">Centro</td>
+                <td id="infCentro">-</td>
+              </tr>
+              <tr>
+                <td class="info-label">Provincia</td>
+                <td id="infProvincia">-</td>
+              </tr>
+              <tr>
+                <td class="info-label">Delegado</td>
+                <td id="infDelegado">-</td>
+              </tr>
+              <tr>
+                <td class="info-label">Tipo</td>
+                <td id="infTipo">-</td>
+              </tr>
+              <tr>
+                <td class="info-label">Responsable audio</td>
+                <td id="infRespAudio">-</td>
+              </tr>
+              <tr>
+                <td class="info-label">Fecha visita</td>
+                <td id="infFecha">-</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="small-input-row">
+            <div class="modal-field">
+              <label>Audiólogo</label>
+              <input id="infAudiologo" />
+            </div>
+            <div class="modal-field">
+              <label>Horas de servicio</label>
+              <input id="infHoras" type="number" min="0" step="0.5" />
+            </div>
+          </div>
+
+          <div style="margin-top:6px;">
+            <button class="btn btn-cta-green" id="btnAdjuntarChecklist">
+              <span class="icon">✅</span> Adjuntar checklist
+            </button>
+            <span id="checklistEstado" style="font-size:.75rem; margin-left:6px; color:var(--text-muted);"></span>
+          </div>
+        </article>
+
+        <!-- Checklist + gráficas -->
+        <article class="card">
+          <div class="informe-layout">
+            <!-- Checklist lateral -->
+            <div class="checklist-column">
+              <div class="check-item"><input type="checkbox" id="chkFormaciones" /> <label for="chkFormaciones">Formaciones y habilidades</label></div>
+              <div class="check-item"><input type="checkbox" id="chkWSA" /> <label for="chkWSA">WSA</label></div>
+              <div class="check-item"><input type="checkbox" id="chkStarkey" /> <label for="chkStarkey">Starkey</label></div>
+              <div class="check-item"><input type="checkbox" id="chkHVentas" /> <label for="chkHVentas">Habilidades comerciales / Neuroventas</label></div>
+              <div class="check-item"><input type="checkbox" id="chkHIT" /> <label for="chkHIT">HIT</label></div>
+              <div class="check-item"><input type="checkbox" id="chkTelecare" /> <label for="chkTelecare">Telecare</label></div>
+              <div class="check-item"><input type="checkbox" id="chkPIA" /> <label for="chkPIA">PIA</label></div>
+              <div class="check-item"><input type="checkbox" id="chkTelehear" /> <label for="chkTelehear">Telehear</label></div>
+              <div class="check-item"><input type="checkbox" id="chkFinanciacion" /> <label for="chkFinanciacion">Financiación Infinity</label></div>
+              <div class="check-item"><input type="checkbox" id="chkSeguro" /> <label for="chkSeguro">Venta de seguro</label></div>
+              <div class="check-item"><input type="checkbox" id="chkPrimerosAux" /> <label for="chkPrimerosAux">Primeros auxilios (equipo)</label></div>
+              <div class="check-item"><input type="checkbox" id="chkImplPV" /> <label for="chkImplPV">Implementación en punto de venta</label></div>
+              <div class="check-item"><input type="checkbox" id="chkAudioRT" /> <label for="chkAudioRT">Audiometría RT</label></div>
+              <div class="check-item"><input type="checkbox" id="chkTestLectura" /> <label for="chkTestLectura">Test de lectura audio</label></div>
+              <div class="check-item"><input type="checkbox" id="chkScreening" /> <label for="chkScreening">Screening audio</label></div>
+              <div class="check-item"><input type="checkbox" id="chkManteleta" /> <label for="chkManteleta">Manteleta audio</label></div>
+              <div class="check-item"><input type="checkbox" id="chkEscaparate" /> <label for="chkEscaparate">Escaparate visible audio</label></div>
+              <div class="check-item"><input type="checkbox" id="chkSaludPDV" /> <label for="chkSaludPDV">Salud auditiva en PDV</label></div>
+              <div class="check-item"><input type="checkbox" id="chkRenove" /> <label for="chkRenove">Elementos Renove</label></div>
+              <div class="check-item"><input type="checkbox" id="chkMGM" /> <label for="chkMGM">Elementos MGM</label></div>
+              <div class="check-item"><input type="checkbox" id="chkStock" /> <label for="chkStock">Stock</label></div>
+              <div class="check-item"><input type="checkbox" id="chkTchin" /> <label for="chkTchin">Tchin Tchin</label></div>
+            </div>
+
+            <!-- Gráficas -->
+            <div class="chart-column">
+              <div class="card chart-card">
+                <span class="section-title-main" style="margin-bottom:4px;">KPIs del centro</span>
+                <div class="chart-container">
+                  <canvas id="chartInformeRadar"></canvas>
+                </div>
+              </div>
+              <div class="card chart-card" id="cardInformeAAR">
+                <span class="section-title-main" style="margin-bottom:4px;">AAR / Procesos</span>
+                <div class="chart-container">
+                  <canvas id="chartInformeDonut"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <!-- IMÁGENES + OBSERVACIONES -->
+      <section class="card" style="margin-top:6px;">
+        <div class="imagenes-row">
+          <div class="card imagen-slot">
+            <strong>Centro exterior</strong>
+            <input type="file" accept="image/*" />
+          </div>
+          <div class="card imagen-slot">
+            <strong>Centro interior</strong>
+            <input type="file" accept="image/*" />
+          </div>
+          <div class="card imagen-slot">
+            <strong>Gabinete</strong>
+            <input type="file" accept="image/*" />
+          </div>
+        </div>
+        <div class="card observaciones-card" style="margin-top:8px;">
+          <strong style="font-size:.85rem; margin-bottom:4px;">Observaciones · Recomendaciones · Compromisos</strong>
+          <textarea id="infObservaciones"></textarea>
+        </div>
+      </section>
     </section>
   </main>
 
@@ -934,22 +1182,10 @@
         <span class="modal-close" data-close="modalCentro">✕</span>
       </div>
       <div class="modal-body">
-        <div class="modal-field">
-          <label>Código</label>
-          <input id="nuevoCodigo" />
-        </div>
-        <div class="modal-field">
-          <label>Propietario</label>
-          <input id="nuevoPropietario" />
-        </div>
-        <div class="modal-field">
-          <label>Centro</label>
-          <input id="nuevoCentro" />
-        </div>
-        <div class="modal-field">
-          <label>Provincia</label>
-          <input id="nuevoProvincia" />
-        </div>
+        <div class="modal-field"><label>Código</label><input id="nuevoCodigo" /></div>
+        <div class="modal-field"><label>Propietario</label><input id="nuevoPropietario" /></div>
+        <div class="modal-field"><label>Centro</label><input id="nuevoCentro" /></div>
+        <div class="modal-field"><label>Provincia</label><input id="nuevoProvincia" /></div>
         <div class="modal-field">
           <label>Delegado</label>
           <select id="nuevoDelegado"></select>
@@ -964,12 +1200,12 @@
       </div>
       <div class="modal-footer">
         <button class="btn" data-close="modalCentro">Cancelar</button>
-        <button class="btn btn-cta-blue" id="guardarCentro">Guardar centro</button>
+        <button class="btn btn-cta-red" id="guardarCentro">Guardar centro</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL AGENDA VISITA -->
+  <!-- MODAL NUEVA VISITA (CALENDARIO) -->
   <div class="modal-backdrop" id="modalVisita">
     <div class="modal">
       <div class="modal-header">
@@ -979,82 +1215,69 @@
       <div class="modal-body">
         <div class="modal-field">
           <label>Fecha</label>
-          <input id="visitaFecha" disabled />
+          <input id="visFecha" readonly />
         </div>
         <div class="modal-field">
-          <label>Responsable de Audio</label>
-          <select id="visitaResponsable">
+          <label>Centro</label>
+          <select id="visCentro"></select>
+        </div>
+        <div class="modal-field">
+          <label>Responsable de audio</label>
+          <select id="visRespAudio">
             <option value="Ariannys Rojas">Ariannys Rojas</option>
             <option value="Sonia Guasque">Sonia Guasque</option>
           </select>
         </div>
-        <div class="modal-field">
-          <label>Centro</label>
-          <select id="visitaCentro"></select>
-        </div>
       </div>
       <div class="modal-footer">
         <button class="btn" data-close="modalVisita">Cancelar</button>
-        <button class="btn btn-cta-blue" id="guardarVisita">Guardar visita</button>
+        <button class="btn btn-cta-green" id="guardarVisita">Guardar visita</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL INFORMES (placeholder) -->
-  <div class="modal-backdrop" id="modalInformes">
+  <!-- MODAL INFORMES (tabla de centros) -->
+  <div class="modal-backdrop" id="modalInformesCentro">
     <div class="modal">
       <div class="modal-header">
         <h3>Informes del centro</h3>
-        <span class="modal-close" data-close="modalInformes">✕</span>
+        <span class="modal-close" data-close="modalInformesCentro">✕</span>
       </div>
-      <div class="modal-body" id="informesBody">
-      </div>
+      <div class="modal-body" id="informesCentroBody"></div>
       <div class="modal-footer">
-        <button class="btn" data-close="modalInformes">Cerrar</button>
+        <button class="btn" data-close="modalInformesCentro">Cerrar</button>
       </div>
     </div>
   </div>
 
   <script>
-    // THEME
+    // ------------- THEME -------------
+    const body = document.body;
     const themeToggle = document.getElementById('themeToggle');
-    function applySavedTheme() {
+
+    function aplicarTemaDesdeStorage() {
       const saved = localStorage.getItem('cca_theme');
-      if (saved === 'light') document.body.classList.add('light');
+      if (saved === 'light') body.classList.add('light');
     }
-    applySavedTheme();
+    aplicarTemaDesdeStorage();
+
     themeToggle.addEventListener('click', () => {
-      const isLight = document.body.classList.toggle('light');
-      localStorage.setItem('cca_theme', isLight ? 'light' : 'dark');
+      body.classList.toggle('light');
+      localStorage.setItem('cca_theme', body.classList.contains('light') ? 'light' : 'dark');
     });
 
-    // BOTONES SUPERIORES
-    document.getElementById('btnGuardarVista').addEventListener('click', () => {
-      alert('Vista guardada localmente (demostración).');
+    // ------------- NAV VISTAS -------------
+    document.querySelectorAll('.nav-item[data-view-target]').forEach(nav => {
+      nav.addEventListener('click', () => {
+        const target = nav.dataset.viewTarget;
+        document.querySelectorAll('.nav-item[data-view-target]').forEach(n => n.classList.remove('active'));
+        nav.classList.add('active');
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(target).classList.add('active');
+      });
     });
 
-    document.getElementById('btnExportarHtml').addEventListener('click', () => {
-      const blob = new Blob(['<!DOCTYPE html>\n' + document.documentElement.outerHTML], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      const today = new Date().toISOString().slice(0,10);
-      a.href = url;
-      a.download = 'centros_dashboard_' + today + '.html';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    });
-
-    document.getElementById('btnImprimir').addEventListener('click', () => {
-      window.print();
-    });
-
-    document.getElementById('btnActualizar').addEventListener('click', () => {
-      alert('Sincronización con nube simulada (demostración).');
-    });
-
-    // COLORES DELEGADOS
+    // ------------- DATOS BÁSICOS -------------
     const delegadosColores = {
       "ENERITZ ARANGUREN": "#22c55e",
       "LAURA PLAZAS": "#2563eb",
@@ -1071,7 +1294,6 @@
       "Sergio Perán": "#fb7185"
     };
 
-    // DATOS CENTROS
     const centros = [];
     const exclusivosNombres = new Set([
       "CC LOS VALLES",
@@ -1087,29 +1309,35 @@
     ]);
 
     const informesPorCentro = {};
-    const aarPorCentro = {};
+    const aarPorCentro = {}; // demo, por ahora No en todos
 
-    // UTILIDADES
-    const tablaBody = document.getElementById('tablaCentrosBody');
-    const centrosResumen = document.getElementById('centrosResumen');
     let filtroDelegadoActual = null;
-    let filtroTextoActual = '';
+    let filtroTextoActual = "";
+    let visitas = [];
+    let nextVisitaId = 1;
+    let visitaEnEdicion = null;
 
+    // ------------- UTILIDADES -------------
     function tipoCentro(nombreCentro) {
       return exclusivosNombres.has(nombreCentro) ? "Exclusivo" : "Corner";
-    }
-
-    function getInformes(nombreCentro) {
-      return informesPorCentro[nombreCentro] || [];
     }
 
     function getAarEstado(nombreCentro) {
       return aarPorCentro[nombreCentro] || "No";
     }
 
-    function renderTabla() {
-      tablaBody.innerHTML = "";
+    function getInformesCentro(nombreCentro) {
+      return informesPorCentro[nombreCentro] || [];
+    }
+
+    // ------------- RENDER TABLA CENTROS -------------
+    const tablaBody = document.getElementById('tablaCentrosBody');
+    const centrosCounter = document.getElementById('centrosCounter');
+    const tableFooter = document.getElementById('tableFooter');
+
+    function renderTablaCentros() {
       const texto = filtroTextoActual.toLowerCase();
+      tablaBody.innerHTML = "";
 
       const filtrados = centros.filter(c => {
         const cad = (c.centro + " " + c.propietario + " " + c.delegado).toLowerCase();
@@ -1122,8 +1350,16 @@
       filtrados.forEach(c => {
         const tr = document.createElement('tr');
         const t = tipoCentro(c.centro);
-        const informes = getInformes(c.centro);
+        const informes = getInformesCentro(c.centro);
         const aarEstado = getAarEstado(c.centro);
+
+        const visitasCentro = visitas.filter(v => v.centro === c.centro);
+        const visitaPendienteInforme = visitasCentro.find(v => v.estadoInforme !== 'finalizado');
+
+        let textoBtn;
+        if (visitaPendienteInforme) textoBtn = 'Informe';
+        else if (visitasCentro.length) textoBtn = 'Ver visitas';
+        else textoBtn = informes.length ? `Ver (${informes.length})` : "Añadir informe";
 
         tr.innerHTML = `
           <td>${c.codigo}</td>
@@ -1132,70 +1368,64 @@
           <td>${c.provincia}</td>
           <td>${c.delegado}</td>
           <td><span class="tag ${t === 'Exclusivo' ? 'exclusivo' : 'corner'}">${t}</span></td>
-          <td>
-            <button class="btn-link" data-centro="${c.centro}">
-              ${informes.length ? `Ver (${informes.length})` : "Añadir informe"}
-            </button>
-          </td>
-          <td>
-            <span class="tag tag-aar ${
-              aarEstado === 'Sí' ? 'si' :
-              aarEstado === 'En formación' ? 'formacion' : ''
-            }">${aarEstado}</span>
-          </td>
+          <td><button class="btn-link btn-informe-centro" data-centro="${c.centro}">${textoBtn}</button></td>
+          <td><span class="tag tag-aar ${aarEstado === 'Sí' ? 'si' : (aarEstado === 'En formación' ? 'formacion' : '')}">${aarEstado}</span></td>
         `;
         tablaBody.appendChild(tr);
       });
 
-      centrosResumen.textContent = `Centros mostrados: ${filtrados.length} / ${centros.length}`;
+      centrosCounter.textContent = `Centros: ${filtrados.length} / ${centros.length}`;
+      tableFooter.textContent = `Centros mostrados: ${filtrados.length}`;
     }
 
-    // BUSCADOR GLOBAL
-    document.getElementById('buscadorGlobal').addEventListener('input', e => {
-      filtroTextoActual = e.target.value || "";
-      renderTabla();
-    });
-
-    // DELEGADOS LIST
+    // ------------- RENDER DELEGADOS -------------
     const delegadosList = document.getElementById('delegadosList');
     const delegadosCount = document.getElementById('delegadosCount');
 
     function renderDelegados() {
+      delegadosList.innerHTML = "";
       const mapa = new Map();
       centros.forEach(c => {
-        mapa.set(c.delegado, (mapa.get(c.delegado) || 0) + 1);
+        if (!mapa.has(c.delegado)) mapa.set(c.delegado, []);
+        mapa.get(c.delegado).push(c);
       });
 
-      delegadosList.innerHTML = "";
-      const delegadosOrdenados = Array.from(mapa.entries()).sort((a,b) =>
-        a[0].localeCompare(b[0], 'es'));
+      delegadosCount.textContent = `${mapa.size} delegados`;
 
-      delegadosOrdenados.forEach(([nombre, cuenta]) => {
-        const color = delegadosColores[nombre] || "#e5e7eb";
+      Array.from(mapa.entries()).sort().forEach(([nombre, lista]) => {
+        const color = delegadosColores[nombre] || '#e5e7eb';
         const row = document.createElement('div');
         row.className = 'delegado-row';
         if (filtroDelegadoActual === nombre) row.classList.add('active');
 
         row.innerHTML = `
-          <span class="delegado-dot" style="background:${color}"></span>
-          <span class="delegado-name">${nombre}</span>
-          <div class="delegado-bar">
-            <div class="delegado-bar-fill" style="background:${color}"></div>
+          <div class="delegado-main">
+            <div class="delegado-name">
+              <span class="delegado-dot" style="background:${color}"></span>
+              <span>${nombre}</span>
+            </div>
+            <span class="delegado-centros">${lista.length} centros</span>
           </div>
-          <span class="delegado-count">${cuenta} centro${cuenta !== 1 ? 's' : ''}</span>
+          <div class="delegado-bar"><div class="delegado-bar-inner" style="background:${color}"></div></div>
         `;
         row.addEventListener('click', () => {
-          filtroDelegadoActual = (filtroDelegadoActual === nombre) ? null : nombre;
-          renderTabla();
-          renderDelegados(); // para refrescar estado active
+          filtroDelegadoActual = filtroDelegadoActual === nombre ? null : nombre;
+          renderDelegados();
+          renderTablaCentros();
+          renderVisitas();
         });
         delegadosList.appendChild(row);
       });
-
-      delegadosCount.textContent = `${delegadosOrdenados.length} delegados`;
     }
 
-    // MODALES
+    // ------------- BUSCADORES -------------
+    document.getElementById('buscadorGlobal').addEventListener('input', e => {
+      filtroTextoActual = e.target.value || "";
+      renderTablaCentros();
+      renderVisitas();
+    });
+
+    // ------------- MODALES GENERALES -------------
     function abrirModal(id) {
       document.getElementById(id).style.display = 'flex';
     }
@@ -1206,12 +1436,15 @@
       el.addEventListener('click', () => cerrarModal(el.dataset.close));
     });
 
-    // NUEVO CENTRO (manual)
-    document.getElementById('btnAddCentro').addEventListener('click', () => {
+    // ------------- ALTA CENTROS -------------
+    const btnAddCentro = document.getElementById('btnAddCentro');
+    const guardarCentroBtn = document.getElementById('guardarCentro');
+
+    btnAddCentro.addEventListener('click', () => {
       const sel = document.getElementById('nuevoDelegado');
       sel.innerHTML = "";
       const nombres = new Set([...Object.keys(delegadosColores), ...centros.map(c => c.delegado)]);
-      Array.from(nombres).sort((a,b)=>a.localeCompare(b,'es')).forEach(nombre => {
+      nombres.forEach(nombre => {
         const opt = document.createElement('option');
         opt.value = nombre;
         opt.textContent = nombre;
@@ -1220,7 +1453,7 @@
       abrirModal('modalCentro');
     });
 
-    document.getElementById('guardarCentro').addEventListener('click', () => {
+    guardarCentroBtn.addEventListener('click', () => {
       const nuevo = {
         codigo: document.getElementById('nuevoCodigo').value || "NEW",
         propietario: document.getElementById('nuevoPropietario').value || "N/D",
@@ -1232,12 +1465,10 @@
       if (tipo === "Exclusivo") exclusivosNombres.add(nuevo.centro);
       centros.push(nuevo);
       cerrarModal('modalCentro');
-      renderTabla();
-      renderDelegados();
-      rellenarSelectCentros();
+      actualizarTodo();
     });
 
-    // ADJUNTAR EXCEL
+    // ------------- EXCEL CENTROS -------------
     const inputExcel = document.getElementById('inputExcel');
     document.getElementById('btnAdjuntarExcel').addEventListener('click', () => {
       inputExcel.click();
@@ -1253,8 +1484,6 @@
         const sheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-        // Esperado: CODIGO | PROPIETARIO | CENTRO | PROVINCIA | DELEGADO
         rows.slice(1).forEach(row => {
           if (!row || row.length < 5) return;
           const [codigo, propietario, centro, provincia, delegado] = row;
@@ -1267,200 +1496,89 @@
             delegado: (delegado || "").toString().trim()
           });
         });
-
-        renderTabla();
-        renderDelegados();
-        rellenarSelectCentros();
+        actualizarTodo();
       };
       reader.readAsArrayBuffer(file);
     });
 
-    // INFORMES CENTRO (demo)
-    document.addEventListener('click', e => {
-      if (e.target.matches('.btn-link[data-centro]')) {
-        const nombreCentro = e.target.dataset.centro;
-        const informes = getInformes(nombreCentro);
-        const cont = document.getElementById('informesBody');
-        cont.innerHTML = "";
-        if (!informes.length) {
-          cont.innerHTML = "<p style='font-size:.8rem;'>Este centro aún no tiene informes guardados. Desde el módulo de informes podrás adjuntarlos.</p>";
-        } else {
-          informes.forEach((inf, idx) => {
-            const div = document.createElement('div');
-            div.className = 'modal-field';
-            div.innerHTML = `<label>Informe ${idx + 1}</label><div>${inf}</div>`;
-            cont.appendChild(div);
-          });
-        }
-        abrirModal('modalInformes');
-      }
-    });
-
-    // CALENDARIO Y VISITAS
-    let currentYear, currentMonth; // month 0-11
-    const calTitle = document.getElementById('calTitle');
+    // ------------- CALENDARIO -------------
+    const calendarTitle = document.getElementById('calendarTitle');
     const calendarGrid = document.getElementById('calendarGrid');
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
 
-    const visitas = []; // {id, dateStr, centro, delegado, responsable, estado}
-
-    function formatoFechaISO(y,m,d) {
-      const mm = String(m+1).padStart(2,'0');
-      const dd = String(d).padStart(2,'0');
-      return `${y}-${mm}-${dd}`;
-    }
-
-    function getVisitsForDate(dateStr) {
-      return visitas.filter(v => v.dateStr === dateStr);
+    function nombreMesES(m) {
+      return [
+        "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+        "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
+      ][m];
     }
 
     function renderCalendar() {
-      calendarGrid.innerHTML = '';
-      const firstDayDate = new Date(currentYear, currentMonth, 1);
+      calendarTitle.textContent = `${nombreMesES(currentMonth)} ${currentYear}`;
+      calendarGrid.innerHTML = "";
+      const firstDay = new Date(currentYear, currentMonth, 1);
+      const startingDay = (firstDay.getDay() + 6) % 7; // lunes=0
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const weekday = (firstDayDate.getDay() + 6) % 7; // 0 = lunes
+      const totalCells = startingDay + daysInMonth;
+      const rows = Math.ceil(totalCells / 7);
+      const cells = rows * 7;
 
-      calTitle.textContent = firstDayDate.toLocaleDateString('es-ES', {
-        month: 'long',
-        year: 'numeric'
-      }).replace(/^\w/, c => c.toUpperCase());
+      for (let i = 0; i < cells; i++) {
+        const dayNum = i - startingDay + 1;
+        const div = document.createElement('div');
+        div.className = 'calendar-day';
+        if (dayNum < 1 || dayNum > daysInMonth) {
+          div.classList.add('empty');
+          calendarGrid.appendChild(div);
+          continue;
+        }
+        div.dataset.date = new Date(currentYear, currentMonth, dayNum).toISOString().slice(0,10);
+        const numSpan = document.createElement('div');
+        numSpan.className = 'calendar-day-number';
+        numSpan.textContent = dayNum;
+        div.appendChild(numSpan);
 
-      // celdas vacías antes del día 1
-      for (let i = 0; i < weekday; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'calendar-day empty';
-        calendarGrid.appendChild(cell);
-      }
+        const content = document.createElement('div');
+        content.className = 'calendar-day-badge';
 
-      for (let day = 1; day <= daysInMonth; day++) {
-        const cell = document.createElement('div');
-        cell.className = 'calendar-day';
-        const dateStr = formatoFechaISO(currentYear, currentMonth, day);
-        cell.dataset.date = dateStr;
-
-        const visitasDia = getVisitsForDate(dateStr);
-        let markerHtml = '';
-        if (visitasDia.length > 0) {
+        const visitasDia = visitas.filter(v => v.fecha === div.dataset.date);
+        if (visitasDia.length) {
           const v = visitasDia[0];
-          const initial = v.responsable.startsWith('A') ? 'A' : 'S';
-          let estadoClass = 'marker-pendiente';
-          if (v.estado === 'en_proceso') estadoClass = 'marker-proceso';
-          else if (v.estado === 'finalizada') estadoClass = 'marker-finalizada';
-          else if (v.estado === 'anulada') estadoClass = 'marker-anulada';
+          const dot = document.createElement('div');
+          dot.className = 'calendar-dot';
+          if (v.estado === 'anulada') dot.style.background = '#ef4444';
+          else if (v.estado === 'realizada') dot.style.background = '#22c55e';
+          else dot.style.background = '#eab308';
 
-          markerHtml = `
-            <div class="calendar-day-marker">
-              <span class="marker-initial">${initial}</span>
-              <span class="marker-dot ${estadoClass}"></span>
-            </div>
-          `;
+          const respLetter = v.respAudio && v.respAudio.startsWith('A') ? 'A' : 'S';
+          const respSpan = document.createElement('span');
+          respSpan.className = 'calendar-resp';
+          respSpan.textContent = respLetter;
+
+          content.appendChild(respSpan);
+          content.appendChild(dot);
+          div.appendChild(content);
         }
 
-        cell.innerHTML = `
-          <div class="calendar-day-number">${day}</div>
-          ${markerHtml}
-        `;
-
-        cell.addEventListener('click', () => abrirAgendaParaDia(dateStr));
-        calendarGrid.appendChild(cell);
-      }
-    }
-
-    function abrirAgendaParaDia(dateStr) {
-      document.getElementById('visitaFecha').value = dateStr;
-      rellenarSelectCentros();
-      abrirModal('modalVisita');
-    }
-
-    function rellenarSelectCentros() {
-      const sel = document.getElementById('visitaCentro');
-      if (!sel) return;
-      sel.innerHTML = "";
-      centros
-        .slice()
-        .sort((a,b)=>a.centro.localeCompare(b.centro,'es'))
-        .forEach(c => {
-          const opt = document.createElement('option');
-          opt.value = c.centro;
-          opt.textContent = `${c.centro} (${c.delegado})`;
-          sel.appendChild(opt);
+        div.addEventListener('click', () => {
+          document.getElementById('visFecha').value = div.dataset.date;
+          // centros disponibles
+          const sel = document.getElementById('visCentro');
+          sel.innerHTML = "";
+          centros.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.centro;
+            opt.textContent = c.centro;
+            sel.appendChild(opt);
+          });
+          abrirModal('modalVisita');
         });
+
+        calendarGrid.appendChild(div);
+      }
     }
 
-    document.getElementById('guardarVisita').addEventListener('click', () => {
-      const fecha = document.getElementById('visitaFecha').value;
-      const responsable = document.getElementById('visitaResponsable').value;
-      const centroNombre = document.getElementById('visitaCentro').value;
-      const centro = centros.find(c => c.centro === centroNombre);
-      if (!centro) {
-        alert('Selecciona un centro válido.');
-        return;
-      }
-      visitas.push({
-        id: Date.now(),
-        dateStr: fecha,
-        centro: centro.centro,
-        delegado: centro.delegado,
-        responsable,
-        estado: 'pendiente'
-      });
-      cerrarModal('modalVisita');
-      renderCalendar();
-      renderVisitas();
-    });
-
-    const visitasList = document.getElementById('visitasList');
-
-    function renderVisitas() {
-      visitasList.innerHTML = "";
-      const ordenadas = visitas.slice().sort((a,b) => a.dateStr.localeCompare(b.dateStr));
-      ordenadas.forEach(v => {
-        const row = document.createElement('div');
-        row.className = 'visita-row';
-
-        let chipEstadoClass = 'chip-estado-pendiente';
-        let estadoLabel = 'Pendiente';
-        if (v.estado === 'en_proceso') { chipEstadoClass='chip-estado-proceso'; estadoLabel='En proceso'; }
-        else if (v.estado === 'finalizada') { chipEstadoClass='chip-estado-finalizada'; estadoLabel='Finalizada'; }
-        else if (v.estado === 'anulada') { chipEstadoClass='chip-estado-anulada'; estadoLabel='Anulada'; }
-
-        row.innerHTML = `
-          <div class="visita-main">
-            <span class="visita-centro">${v.dateStr} · ${v.centro}</span>
-            <span class="chip ${chipEstadoClass}">${estadoLabel}</span>
-          </div>
-          <div class="visita-meta">
-            <span>Delegado: ${v.delegado}</span>
-            <span>Resp. Audio: ${v.responsable}</span>
-          </div>
-          <div class="visita-acciones">
-            <button class="btn-mini" data-accion="estado" data-id="${v.id}">Cambiar estado</button>
-            <button class="btn-mini" data-accion="informe" data-id="${v.id}">Informe</button>
-          </div>
-        `;
-        visitasList.appendChild(row);
-      });
-    }
-
-    visitasList.addEventListener('click', e => {
-      if (!e.target.matches('.btn-mini')) return;
-      const id = Number(e.target.dataset.id);
-      const accion = e.target.dataset.accion;
-      const v = visitas.find(x => x.id === id);
-      if (!v) return;
-
-      if (accion === 'estado') {
-        if (v.estado === 'pendiente') v.estado = 'anulada';
-        else if (v.estado === 'anulada') v.estado = 'pendiente';
-      } else if (accion === 'informe') {
-        if (v.estado === 'pendiente') v.estado = 'en_proceso';
-        else if (v.estado === 'en_proceso') v.estado = 'finalizada';
-        else if (v.estado === 'finalizada') v.estado = 'en_proceso';
-      }
-      renderVisitas();
-      renderCalendar();
-    });
-
-    // Navegación calendario
     document.getElementById('calPrev').addEventListener('click', () => {
       currentMonth--;
       if (currentMonth < 0) { currentMonth = 11; currentYear--; }
@@ -1472,8 +1590,294 @@
       renderCalendar();
     });
 
-    // DEMO INICIAL: algunos centros y una visita para ver el punto
-    function cargaDemoInicial() {
+    // ------------- VISITAS -------------
+    const visitasList = document.getElementById('visitasList');
+
+    document.getElementById('guardarVisita').addEventListener('click', () => {
+      const fecha = document.getElementById('visFecha').value;
+      const centro = document.getElementById('visCentro').value;
+      const respAudio = document.getElementById('visRespAudio').value;
+      const centroObj = centros.find(c => c.centro === centro) || {};
+      const visita = {
+        id: nextVisitaId++,
+        fecha,
+        centro,
+        provincia: centroObj.provincia || "",
+        delegado: centroObj.delegado || "",
+        respAudio,
+        estado: 'pendiente',
+        estadoInforme: 'ninguno'
+      };
+      visitas.push(visita);
+      cerrarModal('modalVisita');
+      actualizarTodo();
+    });
+
+    function renderVisitas() {
+      visitasList.innerHTML = "";
+      const texto = filtroTextoActual.toLowerCase();
+      const filtradas = visitas.filter(v => {
+        const cad = (v.centro + " " + v.delegado + " " + v.respAudio).toLowerCase();
+        const pasaTexto = cad.includes(texto);
+        const pasaDelegado = !filtroDelegadoActual ||
+          (v.delegado || "").toLowerCase().includes(filtroDelegadoActual.toLowerCase());
+        return pasaTexto && pasaDelegado;
+      });
+
+      filtradas.sort((a,b) => a.fecha.localeCompare(b.fecha));
+
+      filtradas.forEach(v => {
+        const row = document.createElement('div');
+        row.className = 'visita-row';
+        row.dataset.id = v.id;
+
+        const main = document.createElement('div');
+        main.className = 'visita-main';
+
+        const top = document.createElement('div');
+        top.className = 'visita-top';
+        top.innerHTML = `
+          <span>${v.fecha}</span>
+          <span class="visita-centro">${v.centro}</span>
+        `;
+
+        const meta = document.createElement('div');
+        meta.className = 'visita-meta';
+        meta.innerHTML = `
+          <span>${v.delegado || "-"}</span>
+          <span>${v.respAudio}</span>
+        `;
+
+        main.appendChild(top);
+        main.appendChild(meta);
+        row.appendChild(main);
+
+        const actions = document.createElement('div');
+        actions.className = 'visita-actions';
+
+        const chipEstado = document.createElement('span');
+        chipEstado.className = 'chip';
+        if (v.estado === 'pendiente') chipEstado.classList.add('chip-pendiente');
+        else if (v.estado === 'anulada') chipEstado.classList.add('chip-estado-anulada');
+        else chipEstado.classList.add('chip-estado-proceso');
+        chipEstado.textContent = v.estado === 'pendiente' ? 'Pendiente' :
+                                 v.estado === 'anulada' ? 'Anulada' : 'Realizada';
+        actions.appendChild(chipEstado);
+
+        const chipInf = document.createElement('span');
+        chipInf.className = 'chip';
+        if (v.estadoInforme === 'none' || v.estadoInforme === 'ninguno') chipInf.classList.add('chip-sininforme');
+        else if (v.estadoInforme === 'proceso') chipInf.classList.add('chip-estado-proceso');
+        else chipInf.classList.add('chip-estado-finalizado');
+        chipInf.textContent = v.estadoInforme === 'finalizado' ? 'Informe finalizado' :
+                              v.estadoInforme === 'proceso' ? 'Informe en proceso' :
+                              'Sin informe';
+        actions.appendChild(chipInf);
+
+        const btnEstado = document.createElement('button');
+        btnEstado.className = 'btn btn-mini';
+        btnEstado.textContent = 'Estado';
+        btnEstado.addEventListener('click', () => {
+          if (v.estado === 'pendiente') v.estado = 'anulada';
+          else if (v.estado === 'anulada') v.estado = 'realizada';
+          else v.estado = 'pendiente';
+          actualizarTodo();
+        });
+        actions.appendChild(btnEstado);
+
+        const btnInf = document.createElement('button');
+        btnInf.className = 'btn btn-mini';
+        btnInf.textContent = 'Informe';
+        btnInf.addEventListener('click', () => {
+          abrirInformeParaVisita(v);
+        });
+        actions.appendChild(btnInf);
+
+        row.appendChild(actions);
+        visitasList.appendChild(row);
+      });
+    }
+
+    function abrirInformeParaVisita(v) {
+      visitaEnEdicion = v;
+      v.estadoInforme = 'proceso';
+      // activar vista informe
+      document.querySelectorAll('.nav-item[data-view-target]').forEach(n => n.classList.remove('active'));
+      document.querySelector('.nav-item[data-view-target="view-informe"]').classList.add('active');
+      document.querySelectorAll('.view').forEach(vw => vw.classList.remove('active'));
+      document.getElementById('view-informe').classList.add('active');
+
+      // rellenar datos
+      document.getElementById('infCentro').textContent = v.centro;
+      document.getElementById('infProvincia').textContent = v.provincia || "-";
+      document.getElementById('infDelegado').textContent = v.delegado || "-";
+      const tipo = tipoCentro(v.centro);
+      document.getElementById('infTipo').textContent = tipo;
+      document.getElementById('infRespAudio').textContent = v.respAudio;
+      document.getElementById('infFecha').textContent = v.fecha;
+      document.getElementById('infAudiologo').value = v.audiologo || "";
+      document.getElementById('infHoras').value = v.horas || "";
+      document.getElementById('infObservaciones').value = v.observaciones || "";
+      document.getElementById('checklistEstado').textContent = v.checklistAdjunto ? "Checklist adjunto" : "";
+
+      // AAR
+      const aarEstado = getAarEstado(v.centro);
+      document.getElementById('cardInformeAAR').style.display = aarEstado === 'No' ? 'none' : 'flex';
+
+      actualizarGraficasInforme(v.centro, tipo, aarEstado);
+      actualizarTodo();
+    }
+
+    // ------------- INFORMES DESDE TABLA CENTROS -------------
+    document.addEventListener('click', e => {
+      if (e.target.matches('.btn-informe-centro')) {
+        const centro = e.target.dataset.centro;
+        const visitasCentro = visitas.filter(v => v.centro === centro);
+        if (visitasCentro.length) {
+          abrirInformeParaVisita(visitasCentro[0]);
+        } else {
+          // si no hay visitas, solo mostramos lista de informes guardados
+          const cont = document.getElementById('informesCentroBody');
+          const informes = getInformesCentro(centro);
+          cont.innerHTML = "";
+          const titulo = document.createElement('p');
+          titulo.textContent = centro;
+          cont.appendChild(titulo);
+          if (!informes.length) {
+            const p = document.createElement('p');
+            p.style.fontSize = '.8rem';
+            p.textContent = "No hay informes guardados para este centro.";
+            cont.appendChild(p);
+          } else {
+            informes.forEach((inf, idx) => {
+              const div = document.createElement('div');
+              div.className = 'modal-field';
+              div.innerHTML = `<label>Informe ${idx + 1}</label><div>${inf}</div>`;
+              cont.appendChild(div);
+            });
+          }
+          abrirModal('modalInformesCentro');
+        }
+      }
+    });
+
+    // ------------- GRÁFICAS INFORME -------------
+    let chartInformeRadar = null;
+    let chartInformeDonut = null;
+
+    function actualizarGraficasInforme(centro, tipo, aarEstado) {
+      const ctxRadar = document.getElementById('chartInformeRadar').getContext('2d');
+      const ctxDonut = document.getElementById('chartInformeDonut').getContext('2d');
+      if (chartInformeRadar) chartInformeRadar.destroy();
+      if (chartInformeDonut) chartInformeDonut.destroy();
+
+      // datos demo por centro
+      const seed = centro.length;
+      const procesos = 70 + (seed % 20);
+      const convPrueba = 60 + (seed % 25);
+      const convCierre = 55 + (seed % 30);
+      const hit = 80 + (seed % 15);
+      const ayudas = 50 + (seed % 20);
+      const aar = aarEstado === 'No' ? 0 : 60 + (seed % 25);
+      const formaciones = 40 + (seed % 35);
+
+      chartInformeRadar = new Chart(ctxRadar, {
+        type: 'radar',
+        data: {
+          labels: ['Procesos','Conv. prueba','Conv. cierre','HIT','Ayudas','AAR','Formaciones'],
+          datasets: [{
+            label: centro,
+            data: [procesos, convPrueba, convCierre, hit, ayudas, aar, formaciones],
+            borderWidth: 2,
+            pointRadius: 3
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display:false } },
+          scales: {
+            r: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { display:false },
+              grid: { color: 'rgba(148,163,184,.35)' },
+              angleLines: { color: 'rgba(148,163,184,.35)' },
+              pointLabels: { color: body.classList.contains('light') ? '#374151' : '#e5e7eb', font:{size:9} }
+            }
+          }
+        }
+      });
+
+      if (aarEstado !== 'No') {
+        chartInformeDonut = new Chart(ctxDonut, {
+          type: 'doughnut',
+          data: {
+            labels: ['Aplicado','No aplicado'],
+            datasets: [{
+              data: [aar, 100-aar],
+              borderWidth:0
+            }]
+          },
+          options: {
+            responsive:true,
+            plugins:{ legend:{position:'bottom', labels:{font:{size:10}} } },
+            cutout:'60%'
+          }
+        });
+      }
+    }
+
+    // ------------- GUARDAR INFORME -------------
+    document.getElementById('btnAdjuntarChecklist').addEventListener('click', () => {
+      if (!visitaEnEdicion) return;
+      visitaEnEdicion.checklistAdjunto = true;
+      document.getElementById('checklistEstado').textContent = "Checklist adjunto";
+    });
+
+    document.getElementById('btnGuardarInforme').addEventListener('click', () => {
+      if (!visitaEnEdicion) return;
+      visitaEnEdicion.audiologo = document.getElementById('infAudiologo').value;
+      visitaEnEdicion.horas = document.getElementById('infHoras').value;
+      visitaEnEdicion.observaciones = document.getElementById('infObservaciones').value;
+      visitaEnEdicion.estadoInforme = 'finalizado';
+
+      if (!informesPorCentro[visitaEnEdicion.centro]) informesPorCentro[visitaEnEdicion.centro] = [];
+      informesPorCentro[visitaEnEdicion.centro].push(`Informe guardado ${visitaEnEdicion.fecha}`);
+
+      actualizarTodo();
+      alert('Informe guardado (demo).');
+    });
+
+    // ------------- BOTONES GUARDAR/EXPORTAR/IMPRIMIR -------------
+    document.getElementById('btnGuardarVista').addEventListener('click', () => {
+      alert('Guardado de vista (demo).');
+    });
+
+    document.getElementById('btnExportHtml').addEventListener('click', () => {
+      const blob = new Blob([document.documentElement.outerHTML], {type:"text/html"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'control_center_audio.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('btnImprimir').addEventListener('click', () => window.print());
+    document.getElementById('btnPrintVisitas').addEventListener('click', () => window.print());
+    document.getElementById('btnSaveVisitas').addEventListener('click', () => alert('Visitas guardadas (demo).'));
+    document.getElementById('btnPrintInforme').addEventListener('click', () => window.print());
+
+    // ------------- ACTUALIZAR TODO -------------
+    function actualizarTodo() {
+      renderDelegados();
+      renderTablaCentros();
+      renderCalendar();
+      renderVisitas();
+    }
+
+    // ------------- DEMO INICIAL -------------
+    (function cargaDemoInicial() {
       const demo = [
         { codigo:"4ABB", propietario:"MAZA Oriol", centro:"PAMPLONA C. Exclusivo", provincia:"NAVARRA", delegado:"Sonia Godino" },
         { codigo:"4AFH", propietario:"MAZA Oriol", centro:"PAMPLONA Calle Sancho el Mayor", provincia:"NAVARRA", delegado:"Sonia Godino" },
@@ -1489,28 +1893,19 @@
       demo.forEach(c => centros.push(c));
 
       // demo visita
-      const hoy = new Date();
-      const fechaDemo = formatoFechaISO(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
       visitas.push({
-        id: Date.now(),
-        dateStr: fechaDemo,
+        id: nextVisitaId++,
+        fecha: new Date().toISOString().slice(0,10),
         centro: "SANTIAGO DE COMPOSTELA RUA DA ROSA",
+        provincia: "A Coruña",
         delegado: "Daniel Chazo",
-        responsable: "Ariannys Rojas",
-        estado: 'pendiente'
+        respAudio: "Ariannys Rojas",
+        estado: "pendiente",
+        estadoInforme: "ninguno"
       });
 
-      currentYear = hoy.getFullYear();
-      currentMonth = hoy.getMonth();
-
-      renderTabla();
-      renderDelegados();
-      rellenarSelectCentros();
-      renderCalendar();
-      renderVisitas();
-    }
-
-    cargaDemoInicial();
+      actualizarTodo();
+    })();
   </script>
 </body>
 </html>
