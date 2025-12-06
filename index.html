@@ -45,8 +45,8 @@
 
     html, body {
       width: 100%;
-      height: 100%;
-      overflow: hidden;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     body {
@@ -58,7 +58,7 @@
     /* SIDEBAR */
     .sidebar {
       width: 250px;
-      background: #020617; /* SIEMPRE oscuro, incluso en modo claro */
+      background: #020617; /* fijo oscuro */
       border-right: 1px solid #020617;
       padding: 18px 18px 24px;
       display: flex;
@@ -236,6 +236,34 @@
       justify-content: center;
     }
 
+    /* Botones de colores */
+    #btnGuardarVista {
+      background: linear-gradient(90deg, #3b82f6, #22c55e);
+      color: #0b1120;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    #btnExportarHTML {
+      background: linear-gradient(90deg, #8b5cf6, #ec4899);
+      color: #0b1120;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    #btnImprimir {
+      background: linear-gradient(90deg, #14b8a6, #0ea5e9);
+      color: #0b1120;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    body.light #btnGuardarVista,
+    body.light #btnExportarHTML,
+    body.light #btnImprimir {
+      color:#111827;
+    }
+
     /* PAGES */
     .pages {
       flex: 1;
@@ -248,7 +276,7 @@
     .page {
       flex: 1;
       display: none;
-      overflow: hidden;
+      overflow: auto;
     }
 
     .page.active {
@@ -797,7 +825,7 @@
 
     .panel-inferior {
       display: grid;
-      grid-template-columns: 1.2fr 1.8fr;
+      grid-template-columns: 1.1fr 1.9fr;
       gap: 10px;
     }
 
@@ -1069,6 +1097,21 @@
                 <div class="kpi-value" id="kpiHIT">–</div>
                 <div class="kpi-caption">Objetivo 85–100%</div>
               </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Formaciones %</div>
+                <div class="kpi-value" id="kpiFormaciones">–</div>
+                <div class="kpi-caption">Media de módulos formativos</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">Ayuda</div>
+                <div class="kpi-value" id="kpiAyuda">–</div>
+                <div class="kpi-caption">Telecare / PIA / Telehear</div>
+              </div>
+              <div class="kpi-card">
+                <div class="kpi-label">AAR</div>
+                <div class="kpi-value" id="kpiAar">–</div>
+                <div class="kpi-caption">Centros con AAR</div>
+              </div>
             </div>
 
             <div class="dashboard-charts">
@@ -1082,7 +1125,7 @@
               </div>
               <div class="card">
                 <div class="card-header-row">
-                  <span class="card-title">Procesos por mes</span>
+                  <span class="card-title">Procesos y áreas de mejora por mes</span>
                 </div>
                 <div class="chart-container">
                   <canvas id="chartProcesosMes"></canvas>
@@ -1269,7 +1312,7 @@
               </div>
             </article>
 
-            <!-- Formaciones + KPIs del centro -->
+            <!-- KPIs del centro -->
             <article class="card">
               <div class="card-header-row">
                 <span class="card-title">KPIs del centro</span>
@@ -1280,7 +1323,7 @@
                 <div>Conv. a cierre: <strong id="kpiCentroVenta">–</strong></div>
                 <div>Aplicación HIT: <strong id="kpiCentroHit">–</strong></div>
               </div>
-              <div class="chart-container" style="margin-top:6px;">
+              <div class="chart-container" style="margin-top:6px; max-height:180px;">
                 <canvas id="chartCentroRadar"></canvas>
               </div>
             </article>
@@ -1308,7 +1351,7 @@
 
             <article class="card">
               <div class="card-header-row">
-                <span class="card-title">Procesos por mes (centro)</span>
+                <span class="card-title">Procesos y áreas de mejora (centro)</span>
               </div>
               <div class="chart-container">
                 <canvas id="chartCentroProcesosMes"></canvas>
@@ -1360,7 +1403,7 @@
                 <label><input type="checkbox" data-kpi="infinity" /> Financiación Infinity</label>
                 <label><input type="checkbox" data-kpi="seguros" /> Venta de seguro</label>
                 <label><input type="checkbox" data-kpi="primeros" /> Primeros auxilios (equipo)</label>
-                <label><input type="checkbox" data-kpi="implementacion" /> Implementación en punto de venta</label>
+                <label><input type="checkbox" data-kpi="producto" /> Producto y comunicación</label>
                 <label><input type="checkbox" data-kpi="rt" /> Audiometría RT</label>
                 <label><input type="checkbox" data-kpi="audio_test" /> Test de lectura audio</label>
                 <label><input type="checkbox" data-kpi="audio_screening" /> Screening audio</label>
@@ -1488,7 +1531,7 @@
     </div>
   </div>
 
-  <!-- MODAL NUEVO CENTRO (simple) -->
+  <!-- MODAL NUEVO CENTRO -->
   <div class="modal-backdrop" id="modalCentro">
     <div class="modal">
       <div class="modal-header">
@@ -1525,7 +1568,6 @@
   </div>
 
   <script>
-    /* ========= UTIL ========= */
     const $ = sel => document.querySelector(sel);
     const $$ = sel => Array.from(document.querySelectorAll(sel));
 
@@ -1551,10 +1593,9 @@
       });
     });
 
-    /* ========= TEMA OSCURO/CLARO ========= */
+    /* ========= TEMA ========= */
     $("#themeToggle").addEventListener("click", () => {
       document.body.classList.toggle("light");
-      // Forzar re-dibujo de charts si hiciera falta
       Object.values(globalCharts).forEach(ch => ch && ch.resize());
       if (centroChartsCreated) {
         Object.values(centroCharts).forEach(ch => ch && ch.resize());
@@ -1587,7 +1628,7 @@
       URL.revokeObjectURL(url);
     });
 
-    /* ========= DATOS DEMO INICIALES (CENTROS) ========= */
+    /* ========= DATOS DEMO ========= */
     const exclusivosSet = new Set([
       "CC LOS VALLES",
       "FUENLABRADA Calle Leganes",
@@ -1618,7 +1659,7 @@
       return delegadosColores[nombre];
     }
 
-    /* ========= RENDER CENTROS ========= */
+    /* ========= TABLA CENTROS ========= */
     const tablaBody = $("#tablaCentrosBody");
     const totalCentrosLabel = $("#totalCentrosLabel");
     const centrosMostradosSpan = $("#centrosMostrados");
@@ -1683,7 +1724,7 @@
       centrosTotalSpan.textContent = centros.length;
     }
 
-    /* ========= DELEGADOS (BARRAS) ========= */
+    /* ========= DELEGADOS ========= */
     const delegadosList = $("#delegadosList");
     const numDelegadosSpan = $("#numDelegados");
 
@@ -1732,13 +1773,12 @@
       renderRankingDelegados(map);
     }
 
-    /* ========= RANKING DELEGADOS (DASHBOARD) ========= */
+    /* ========= RANKING ========= */
     const rankingDelegadosDiv = $("#rankingDelegados");
 
     function renderRankingDelegados(map) {
       rankingDelegadosDiv.innerHTML = "";
       const arr = Array.from(map.entries()).map(([nombre, lista]) => {
-        // demo: rating inventado
         const procesos = 80 + Math.floor(Math.random()*15);
         const hit = 75 + Math.floor(Math.random()*15);
         const score = Math.round((procesos+hit)/2);
@@ -1764,13 +1804,13 @@
       });
     }
 
-    /* ========= BUSCADOR GLOBAL (CENTROS) ========= */
+    /* ========= BUSCADOR ========= */
     $("#searchGlobal").addEventListener("input", e => {
       filtroTextoActual = e.target.value || "";
       renderTablaCentros();
     });
 
-    /* ========= ADJUNTAR EXCEL CENTROS ========= */
+    /* ========= EXCEL CENTROS ========= */
     const inputExcel = $("#inputExcel");
     $("#btnAdjuntarExcel").addEventListener("click", () => inputExcel.click());
 
@@ -1800,7 +1840,6 @@
           });
         });
 
-        // Actualizar datalist de centros para el calendario
         actualizarListaCentrosDatalist();
         renderTablaCentros();
         renderDelegados();
@@ -1862,7 +1901,7 @@
     function drawCalendar() {
       calendarGrid.innerHTML = "";
       const first = new Date(calYear, calMonth, 1);
-      const dow = (first.getDay()+6)%7; // lunes=0
+      const dow = (first.getDay()+6)%7;
       const last = new Date(calYear, calMonth+1, 0).getDate();
 
       const formatter = new Intl.DateTimeFormat("es-ES", {month:"long", year:"numeric"});
@@ -1961,7 +2000,7 @@
       });
     }
 
-    /* ========= MODALES GENÉRICOS ========= */
+    /* ========= MODALES ========= */
     function abrirModal(id) {
       document.getElementById(id).style.display = "flex";
     }
@@ -1977,7 +2016,7 @@
       });
     });
 
-    /* ========= INFORME DE LA VISITA ========= */
+    /* ========= INFORME VISITA ========= */
     let centroChartsCreated = false;
     const centroCharts = {};
     let centroMetricsActual = null;
@@ -1988,7 +2027,10 @@
       convPrueba: 0,
       convVenta: 0,
       hit: 0,
+      formaciones: 0,
+      ayuda: 0,
       aar: 0,
+      areas: 0,
       n: 0
     };
 
@@ -1999,13 +2041,18 @@
       const avgPrue = Math.round(dashboardAcum.convPrueba / n);
       const avgVent = Math.round(dashboardAcum.convVenta / n);
       const avgHit  = Math.round(dashboardAcum.hit / n);
+      const avgForm = Math.round(dashboardAcum.formaciones / n);
+      const ayudaPct = Math.round(100 * dashboardAcum.ayuda / n);
+      const aarPct   = Math.round(100 * dashboardAcum.aar / n);
 
       $("#kpiProcesos").textContent   = avgProc + "%";
       $("#kpiConvPrueba").textContent = avgPrue + "%";
       $("#kpiConvVenta").textContent  = avgVent + "%";
       $("#kpiHIT").textContent        = avgHit + "%";
+      $("#kpiFormaciones").textContent = avgForm + "%";
+      $("#kpiAyuda").textContent = ayudaPct === 0 ? "No" : `Sí ${ayudaPct}%`;
+      $("#kpiAar").textContent   = aarPct === 0 ? "No" : `Sí ${aarPct}%`;
 
-      // Actualizar radar general
       globalCharts.radarGeneral.data.datasets[0].data = [
         avgProc, avgPrue, avgVent, avgHit
       ];
@@ -2024,6 +2071,7 @@
       const elemAudio = audioCount >= 3;
 
       const aar = centroActual ? (centroActual.aar === "Sí") : false;
+      const ayuda = isChecked("telecare") || isChecked("pia") || isChecked("telehear");
 
       return {
         aar,
@@ -2034,12 +2082,13 @@
         tchin: isChecked("tchin"),
         rt: isChecked("rt"),
         elemAudio,
-        mgm: isChecked("mgm")
+        mgm: isChecked("mgm"),
+        ayuda
       };
     }
 
     function calcularFormacionesYScreening() {
-      const formKeys = ["wsa","starkey","neuroventas","telecare","pia","telehear"];
+      const formKeys = ["wsa","starkey","neuroventas","telecare","pia","telehear","producto","rt"];
       const totalForm = formKeys.length;
       const checkedForm = formKeys.reduce((acc,k)=>{
         const el = document.querySelector(`input[data-kpi="${k}"]`);
@@ -2130,22 +2179,33 @@
 
       const procMCtx = document.getElementById("chartCentroProcesosMes").getContext("2d");
       centroCharts.procMes = new Chart(procMCtx, {
-        type:"line",
+        type:"bar",
         data:{
           labels:["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
-          datasets:[{
-            label:"Procesos",
-            data:[78,80,82,85,87,88,89,90,91,92,92,93],
-            borderWidth:2,
-            tension:.35,
-            borderColor:"#3b82f6",
-            pointRadius:2
-          }]
+          datasets:[
+            {
+              type:"line",
+              label:"Procesos %",
+              data:[78,80,82,85,87,88,89,90,91,92,92,93],
+              borderWidth:2,
+              tension:.35,
+              borderColor:"#3b82f6",
+              pointRadius:2,
+              yAxisID:"y"
+            },
+            {
+              type:"bar",
+              label:"Áreas de mejora",
+              data:[6,6,5,5,4,4,3,3,3,2,2,2],
+              backgroundColor:"rgba(239,68,68,0.5)",
+              yAxisID:"y"
+            }
+          ]
         },
         options:{
           responsive:true,
           maintainAspectRatio:false,
-          plugins:{ legend:{ display:false } },
+          plugins:{ legend:{ labels:{ color:getComputedStyle(document.body).getPropertyValue("--text-main"), font:{size:10} } } },
           scales:{
             x:{ ticks:{ color:getComputedStyle(document.body).getPropertyValue("--text-muted"), font:{size:10} },
                 grid:{ color:"rgba(31,41,55,0.3)" } },
@@ -2236,8 +2296,9 @@
       const convPrueba = 82;
       const convVenta = 78;
       const hitVal = getChecklistFlags().hit ? 90 : 70;
+      const areasMejora = 4; // demo, se sustituirá por cálculo real
 
-      centroMetricsActual = { procesos, convPrueba, convVenta, hit: hitVal, formaciones, screening };
+      centroMetricsActual = { procesos, convPrueba, convVenta, hit: hitVal, formaciones, screening, areasMejora };
 
       $("#kpiCentroProcesos").textContent = procesos + "%";
       $("#kpiCentroPrueba").textContent   = convPrueba + "%";
@@ -2298,7 +2359,6 @@
       actualizarChartsCentro();
     }
 
-    // Desde visitas -> informe
     document.addEventListener("click", e => {
       if (e.target.matches(".btn-ir-informe")) {
         const idx = parseInt(e.target.dataset.idx, 10);
@@ -2311,23 +2371,18 @@
       }
       if (e.target.matches(".btn-informe-centro")) {
         const centroNombre = e.target.dataset.centro;
-        visitaActual = null; // informe sin visita asociada
+        visitaActual = null;
         irAInforme(centroNombre, formatDateISO(new Date()));
       }
     });
 
-    // Adjuntar checklist
     $("#btnAdjuntarChecklist").addEventListener("click", ()=> $("#inputChecklist").click());
     $("#inputChecklist").addEventListener("change", e => {
       const file = e.target.files[0];
-      if (file) {
-        $("#nombreChecklist").textContent = file.name;
-      } else {
-        $("#nombreChecklist").textContent = "";
-      }
+      if (file) $("#nombreChecklist").textContent = file.name;
+      else $("#nombreChecklist").textContent = "";
     });
 
-    // Adjuntar imágenes
     $$(".imagen-preview").forEach(div => {
       div.addEventListener("click", () => {
         const target = div.dataset.target;
@@ -2351,7 +2406,6 @@
       });
     });
 
-    // Guardar informe
     $("#btnGuardarInforme").addEventListener("click", () => {
       actualizarChartsCentro();
 
@@ -2361,7 +2415,10 @@
         dashboardAcum.convPrueba += centroMetricsActual.convPrueba;
         dashboardAcum.convVenta  += centroMetricsActual.convVenta;
         dashboardAcum.hit        += centroMetricsActual.hit;
+        dashboardAcum.formaciones+= centroMetricsActual.formaciones;
+        dashboardAcum.ayuda      += flags.ayuda ? 1 : 0;
         dashboardAcum.aar        += flags.aar ? 1 : 0;
+        dashboardAcum.areas      += centroMetricsActual.areasMejora || 0;
         dashboardAcum.n += 1;
         actualizarDashboardDesdeAcum();
 
@@ -2378,7 +2435,7 @@
       alert("Informe guardado (demo). Se han actualizado los KPIs del dashboard.");
     });
 
-    /* ========= DASHBOARD CHARTS GENERALES ========= */
+    /* ========= DASHBOARD CHARTS ========= */
     const globalCharts = {};
 
     function initDashboardCharts() {
@@ -2411,21 +2468,32 @@
 
       const procCtx = document.getElementById("chartProcesosMes").getContext("2d");
       globalCharts.procMes = new Chart(procCtx, {
-        type:"line",
+        type:"bar",
         data:{
           labels:["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"],
-          datasets:[{
-            label:"Procesos %",
-            data:[80,82,83,84,85,86,87,88,88,89,89,90],
-            borderColor:"#38bdf8",
-            backgroundColor:"rgba(56,189,248,0.2)",
-            tension:.35,
-            borderWidth:2,
-            pointRadius:2
-          }]
+          datasets:[
+            {
+              type:"line",
+              label:"Procesos %",
+              data:[80,82,83,84,85,86,87,88,88,89,89,90],
+              borderColor:"#38bdf8",
+              backgroundColor:"rgba(56,189,248,0.2)",
+              tension:.35,
+              borderWidth:2,
+              pointRadius:2,
+              yAxisID:"y"
+            },
+            {
+              type:"bar",
+              label:"Áreas de mejora",
+              data:[7,7,6,6,5,5,4,4,3,3,3,2],
+              backgroundColor:"rgba(239,68,68,0.5)",
+              yAxisID:"y"
+            }
+          ]
         },
         options:{
-          plugins:{ legend:{ display:false } },
+          plugins:{ legend:{ labels:{ color:getComputedStyle(document.body).getPropertyValue("--text-main"), font:{size:10} } } },
           responsive:true,
           maintainAspectRatio:false,
           scales:{
@@ -2530,7 +2598,7 @@
       });
     }
 
-    /* ========= INIT DEMO ========= */
+    /* ========= DEMO CENTROS ========= */
     function cargarCentrosDemo() {
       const demo = [
         { codigo:"4ABB", propietario:"MAZA Oriol", centro:"PAMPLONA C. Exclusivo", provincia:"NAVARRA", delegado:"Sonia Godino" },
@@ -2554,7 +2622,7 @@
       cargarCentrosDemo();
       initCalendar();
       initDashboardCharts();
-      actualizarDashboardDesdeAcum(); // inicia KPIs en blanco
+      actualizarDashboardDesdeAcum();
     });
   </script>
 </body>
