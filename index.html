@@ -7,20 +7,12 @@
 
   <style>
     :root {
-      --bg-main: radial-gradient(circle at top left, #111827, #020617 55%);
-      --bg-card: #020617;
-      --bg-card-soft: #0b1120;
-      --text-main: #f9fafb;
-      --text-muted: #9ca3af;
-      --border-soft: #1f2937;
       --accent-red: #ff2440;
+      --accent-red-soft: #fed7e2;
       --accent-blue: #38bdf8;
       --accent-green: #22c55e;
       --accent-orange: #f97316;
-      --estado-ambar: #facc15;
-      --estado-rojo: #ef4444;
-      --estado-verde: #22c55e;
-      --estado-verde-soft: #4ade80;
+      --accent-yellow: #facc15;
     }
 
     * {
@@ -33,38 +25,44 @@
     html, body {
       width: 100%;
       height: 100%;
-    }
-
-    body {
-      background: var(--bg-main);
-      color: var(--text-main);
-      display: flex;
       overflow: hidden;
     }
 
-    /* Tema claro: re-definimos variables para todo el árbol */
+    /* Tema por defecto (oscuro) mediante variables */
+    body {
+      --bg-body: radial-gradient(circle at top left, #111827, #020617 55%);
+      --bg-main: #020617;
+      --bg-card: #020617;
+      --bg-card-soft: #0b1120;
+      --bg-input: #020617;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-soft: #1f2937;
+      --chip-bg: #020617;
+      --shadow-soft: 0 14px 30px rgba(0,0,0,.5);
+
+      background: var(--bg-body);
+      color: var(--text-main);
+      display: flex;
+    }
+
+    /* Tema claro: solo cambiamos variables, el sidebar se fuerza abajo */
     body.light {
-      --bg-main: radial-gradient(circle at top left, #e5e7eb, #f3f4f6 55%);
+      --bg-body: #f3f4f6;
+      --bg-main: #f3f4f6;
       --bg-card: #ffffff;
       --bg-card-soft: #f9fafb;
-      --text-main: #020617;
+      --bg-input: #ffffff;
+      --text-main: #111827;
       --text-muted: #6b7280;
-      --border-soft: #d1d5db;
+      --border-soft: #e5e7eb;
+      --chip-bg: #ffffff;
+      --shadow-soft: 0 10px 20px rgba(15,23,42,.1);
+
+      background: var(--bg-body);
     }
 
-    body.light .sidebar {
-      background: #ffffff;
-      border-right: 1px solid #e5e7eb;
-      color: #111827;
-    }
-
-    body.light .logo-subtitle { color: #6b7280; }
-
-    body.light .nav-item span.icon {
-      background: #f3f4f6;
-    }
-
-    /* SIDEBAR */
+    /* SIDEBAR (siempre oscuro en ambos temas) */
     .sidebar {
       width: 250px;
       background: #020617;
@@ -74,8 +72,7 @@
       flex-direction: column;
       gap: 24px;
       color: #e5e7eb;
-      height: 100vh;
-      overflow-y: auto;
+      flex-shrink: 0;
     }
 
     .logo {
@@ -89,11 +86,23 @@
       height: 34px;
       border-radius: 999px;
       background: radial-gradient(circle at 30% 20%, #fee2e2, var(--accent-red));
+      box-shadow: 0 0 18px rgba(248,113,113,.9);
     }
 
-    .logo-text { display: flex; flex-direction: column; }
-    .logo-title { font-weight: 700; font-size: 1.05rem; }
-    .logo-subtitle { font-size: .7rem; color: #9ca3af; }
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .logo-subtitle {
+      font-size: .7rem;
+      color: #9ca3af;
+    }
 
     .section-title {
       font-size: .75rem;
@@ -103,7 +112,11 @@
       margin-bottom: 8px;
     }
 
-    .nav-list { display: flex; flex-direction: column; gap: 4px; }
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
 
     .nav-item {
       display: flex;
@@ -134,10 +147,12 @@
       font-weight: 600;
     }
 
-    .nav-item.active span.icon { background: rgba(15,23,42,.2); }
+    .nav-item.active span.icon {
+      background: rgba(15,23,42,.2);
+    }
 
     .nav-item:hover:not(.active) {
-      background: rgba(31,41,55,0.9);
+      background: rgba(31,41,55,0.8);
       color: #e5e7eb;
     }
 
@@ -147,97 +162,46 @@
       color: #9ca3af;
     }
 
-    /* MAIN */
+    /* MAIN LAYOUT */
     .main {
       flex: 1;
-      padding: 10px 18px 12px;
+      background: var(--bg-main);
+      padding: 12px 18px 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      height: 100vh;
-      max-width: calc(100vw - 250px);
+      gap: 10px;
+      max-height: 100vh;
       overflow: hidden;
     }
 
     .topbar {
       display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-bottom: 4px;
-      flex-shrink: 0;
-    }
-
-    .btn {
-      border-radius: 999px;
-      padding: 6px 12px;
-      border: 1px solid var(--border-soft);
-      font-size: .8rem;
-      cursor: pointer;
-      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: #020617;
-      color: #e5e7eb;
-      white-space: nowrap;
-      box-shadow: none;
+      gap: 12px;
+      margin-bottom: 4px;
     }
 
-    body.light .btn {
-      background: #ffffff;
-      color: #111827;
+    .search-wrapper {
+      flex: 1;
+      position: relative;
     }
 
-    .btn span.icon { font-size: .85rem; }
-
-    .btn-cta {
-      background: linear-gradient(90deg, #ff2440, #fb7185);
-      color: #111827;
-      font-weight: 600;
-      border-color: transparent;
-    }
-
-    .btn-colored-blue {
-      background: linear-gradient(90deg, #0ea5e9, #38bdf8);
-      color: #020617;
-      border-color: transparent;
-      font-weight: 500;
-    }
-
-    .btn-colored-purple {
-      background: linear-gradient(90deg, #a855f7, #ec4899);
-      color: #020617;
-      border-color: transparent;
-      font-weight: 500;
-    }
-
-    .btn-colored-teal {
-      background: linear-gradient(90deg, #22c55e, #14b8a6);
-      color: #020617;
-      border-color: transparent;
-      font-weight: 500;
-    }
-
-    #themeToggle { min-width: 110px; justify-content: center; }
-
-    /* BUSCADOR */
-    .centros-search-row { flex-shrink: 0; }
-
-    .centros-search-wrapper { position: relative; }
-
-    .centros-search-input {
+    .search-input {
       width: 100%;
-      background: var(--bg-card);
+      background: var(--bg-card-soft);
       border-radius: 999px;
-      padding: 8px 12px 8px 32px;
+      padding: 9px 12px 9px 34px;
       border: 1px solid var(--border-soft);
       color: var(--text-main);
       font-size: .86rem;
       outline: none;
     }
 
-    .centros-search-input::placeholder { color: var(--text-muted); }
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
 
-    .centros-search-wrapper .search-icon {
+    .search-wrapper .search-icon {
       position: absolute;
       left: 10px;
       top: 50%;
@@ -246,86 +210,113 @@
       color: var(--text-muted);
     }
 
-    /* BLOQUE SUPERIOR */
+    .btn {
+      border-radius: 999px;
+      padding: 7px 13px;
+      border: 1px solid var(--border-soft);
+      font-size: .8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card-soft);
+      color: var(--text-main);
+      white-space: nowrap;
+      box-shadow: none;
+    }
+
+    .btn span.icon {
+      font-size: .85rem;
+    }
+
+    .btn-cta-red {
+      background: linear-gradient(90deg, #ff2440, #fb7185);
+      color: #111827;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .btn-cta-blue {
+      background: linear-gradient(90deg, #38bdf8, #22c55e);
+      color: #022c22;
+      border-color: transparent;
+      font-weight: 600;
+    }
+
+    .btn-ghost {
+      background: transparent;
+    }
+
+    #themeToggle {
+      min-width: 120px;
+      justify-content: center;
+    }
+
+    /* TOP GRID: delegados + calendario + visitas */
     .top-layout {
       display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.5fr) minmax(0, 1.2fr);
-      gap: 12px;
-      margin-top: 8px;
-      flex: 0 0 290px;
-      max-height: 310px;
-      min-height: 260px;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 2fr) minmax(0, 1.6fr);
+      gap: 10px;
+      min-height: 220px;
+      flex-shrink: 0;
     }
 
     .card {
       background: var(--bg-card);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 10px;
       border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
       display: flex;
       flex-direction: column;
       min-width: 0;
-      min-height: 0;
     }
 
-    .card h3 { font-size: .9rem; margin-bottom: 4px; }
+    .card h3 {
+      font-size: .9rem;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
 
-    .badge-small {
+    .badge-pill {
       font-size: .7rem;
-      padding: 2px 6px;
+      padding: 2px 8px;
       border-radius: 999px;
-      background: #111827;
-      color: var(--text-muted);
+      background: var(--bg-card-soft);
       border: 1px solid var(--border-soft);
-    }
-
-    body.light .badge-small {
-      background: #e5e7eb;
-      color: #4b5563;
+      color: var(--text-muted);
     }
 
     /* DELEGADOS */
-    .delegados-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .delegados-scroll {
-      margin-top: 6px;
-      flex: 1;
-      overflow-y: auto;
-      min-height: 0;
-    }
-
     .delegados-list {
       display: flex;
       flex-direction: column;
       gap: 4px;
+      margin-top: 4px;
+      max-height: 170px;
+      overflow: auto;
     }
 
-    .delegado-item {
+    .delegado-row {
       background: var(--bg-card-soft);
-      border-radius: 10px;
-      padding: 5px 8px;
-      border: 1px solid var(--border-soft);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .delegado-item.delegado-activo {
-      border-color: #38bdf8;
-    }
-
-    .delegado-header-line {
+      border-radius: 999px;
+      padding: 5px 10px;
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       cursor: pointer;
-      font-size: .78rem;
+      border: 1px solid transparent;
+      transition: border-color .15s ease, background .15s ease;
+    }
+
+    .delegado-row:hover {
+      border-color: var(--accent-blue);
+    }
+
+    .delegado-row.active {
+      border-color: var(--accent-red);
     }
 
     .delegado-dot {
@@ -335,255 +326,238 @@
       flex-shrink: 0;
     }
 
-    .delegado-nombre {
+    .delegado-name {
+      font-size: .8rem;
       flex: 1;
+    }
+
+    .delegado-bar {
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.3);
+      flex: 0 0 40%;
+      position: relative;
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    }
+
+    .delegado-bar-fill {
+      position: absolute;
+      inset: 0;
+      border-radius: 999px;
     }
 
     .delegado-count {
-      font-size: .7rem;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    .delegado-chevron {
-      font-size: .7rem;
+      font-size: .74rem;
       color: var(--text-muted);
       flex-shrink: 0;
     }
 
-    .delegado-item-bar {
-      width: 100%;
-      height: 4px;
-      border-radius: 999px;
-      background: #111827;
-      overflow: hidden;
-    }
-
-    body.light .delegado-item-bar {
-      background: #e5e7eb;
-    }
-
-    .delegado-item-bar-fill {
-      height: 100%;
-      border-radius: 999px;
-      width: 100%;
-    }
-
-    .delegado-centros {
-      font-size: .7rem;
-      color: var(--text-muted);
-      padding-left: 14px;
-    }
-
-    .delegado-centros ul {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      max-height: 80px;
-      overflow-y: auto;
-    }
-
-    .delegado-centros li {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
-
-    .delegado-resumen {
-      display: none; /* eliminamos texto inferior */
-    }
-
-    .actions-row {
+    .delegados-actions {
       display: flex;
       gap: 8px;
-      margin-top: 6px;
-      flex-shrink: 0;
+      margin-top: 8px;
       flex-wrap: wrap;
     }
 
     /* CALENDARIO */
-    .calendar-header {
+    .calendar-card {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: .86rem;
-      margin-bottom: 6px;
+      flex-direction: column;
+      height: 100%;
+      gap: 6px;
     }
 
-    .calendar-nav-btn {
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: .9rem;
+      margin-bottom: 2px;
+    }
+
+    .cal-nav-btn {
+      width: 26px;
+      height: 26px;
       border-radius: 999px;
       border: 1px solid var(--border-soft);
-      background: var(--bg-card);
-      color: var(--text-muted);
-      width: 24px;
-      height: 24px;
+      background: var(--bg-card-soft);
+      color: var(--text-main);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: .9rem;
+      font-size: .8rem;
     }
 
-    .calendar-grid {
-      flex: 1;
+    .calendar-weekdays {
       display: grid;
-      grid-template-columns: repeat(7, minmax(0, 1fr));
-      grid-auto-rows: minmax(60px, 1fr);
-      gap: 6px;
-      min-height: 0;
-    }
-
-    .calendar-weekday {
-      font-size: .7rem;
+      grid-template-columns: repeat(7, 1fr);
+      font-size: .75rem;
       color: var(--text-muted);
       text-align: center;
       margin-bottom: 4px;
     }
 
-    .calendar-cell {
-      border-radius: 10px;
-      border: 1px solid var(--border-soft);
-      padding: 3px 5px;
-      cursor: pointer;
-      background: var(--bg-card-soft);
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      font-size: .7rem;
+    .calendar-weekdays span {
+      padding-bottom: 2px;
     }
 
-    .calendar-cell:hover { border-color: #38bdf8; }
-
-    .calendar-day-number { font-weight: 500; }
-
-    .calendar-dots {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2px;
-    }
-
-    .calendar-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-    }
-
-    .calendar-footnote {
-      display: none; /* eliminamos texto explicativo */
-    }
-
-    /* VISITAS (compactas) */
-    .visitas-header { flex-shrink: 0; }
-
-    .visitas-list {
+    .calendar-grid {
       flex: 1;
-      overflow-y: auto;
-      min-height: 0;
-      margin-top: 4px;
-      font-size: .76rem;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-auto-rows: 64px;
+      gap: 6px;
     }
 
-    .visita-item {
-      border-radius: 10px;
-      border: 1px solid #111827;
-      padding: 4px 6px;
-      margin-bottom: 4px;
+    .calendar-day {
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
       background: var(--bg-card-soft);
+      padding: 4px 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      font-size: .8rem;
+    }
+
+    .calendar-day.empty {
+      background: transparent;
+      border-style: dashed;
+      cursor: default;
+    }
+
+    .calendar-day-number {
+      align-self: flex-start;
+      font-size: .8rem;
+    }
+
+    .calendar-day-marker {
+      font-size: .7rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+
+    .marker-initial {
+      font-weight: 600;
+    }
+
+    .marker-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.25);
+    }
+
+    .marker-pendiente { background: var(--accent-yellow); }
+    .marker-proceso   { background: var(--accent-green); }
+    .marker-finalizada{ background: #16a34a; }
+    .marker-anulada   { background: #ef4444; }
+
+    /* VISITAS AGENDADAS */
+    .visitas-list {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      overflow: auto;
+      max-height: 190px;
+    }
+
+    .visita-row {
+      border-radius: 10px;
+      background: var(--bg-card-soft);
+      border: 1px solid var(--border-soft);
+      padding: 6px 8px;
       display: flex;
       flex-direction: column;
       gap: 2px;
-    }
-
-    body.light .visita-item {
-      border-color: #e5e7eb;
-    }
-
-    .visita-top-line {
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
       font-size: .76rem;
     }
 
-    .visita-bottom-line {
+    .visita-main {
       display: flex;
       justify-content: space-between;
       gap: 6px;
-      font-size: .7rem;
-      align-items: center;
-      flex-wrap: wrap;
     }
 
-    .pill {
-      border-radius: 999px;
-      padding: 1px 6px;
-      font-size: .68rem;
-      border: 1px solid var(--border-soft);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
+    .visita-centro {
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
     }
 
-    .pill-estado-pendiente {
-      background: rgba(250, 204, 21, 0.12);
-      border-color: rgba(250, 204, 21, 0.6);
-      color: var(--estado-ambar);
+    .visita-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: .72rem;
+      color: var(--text-muted);
     }
 
-    .pill-estado-anulada {
-      background: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.6);
-      color: var(--estado-rojo);
+    .chip {
+      border-radius: 999px;
+      padding: 2px 7px;
+      font-size: .7rem;
+      background: var(--chip-bg);
+      border: 1px solid var(--border-soft);
     }
 
-    .pill-estado-realizada {
-      background: rgba(34, 197, 94, 0.12);
-      border-color: rgba(34, 197, 94, 0.6);
-      color: var(--estado-verde);
+    .chip-estado-pendiente {
+      background: rgba(250,204,21,0.15);
+      border-color: rgba(250,204,21,0.8);
+      color: var(--accent-yellow);
     }
 
-    .pill-informe-proceso {
-      background: rgba(74, 222, 128, 0.12);
-      border-color: rgba(74, 222, 128, 0.6);
-      color: var(--estado-verde-soft);
+    .chip-estado-proceso {
+      background: rgba(52,211,153,0.15);
+      border-color: rgba(34,197,94,0.8);
+      color: var(--accent-green);
     }
 
-    .pill-informe-finalizado {
-      background: rgba(34, 197, 94, 0.18);
-      border-color: rgba(34, 197, 94, 0.9);
-      color: var(--estado-verde);
+    .chip-estado-finalizada {
+      background: rgba(22,163,74,0.2);
+      border-color: rgba(22,163,74,0.9);
+      color: #16a34a;
     }
 
-    .pill-aviso {
-      background: rgba(248, 113, 113, 0.1);
-      border-color: rgba(248, 113, 113, 0.6);
-      color: #fecaca;
+    .chip-estado-anulada {
+      background: rgba(248,113,113,0.15);
+      border-color: rgba(248,113,113,0.9);
+      color: #f97373;
+    }
+
+    .visita-acciones {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
     }
 
     .btn-mini {
-      padding: 2px 6px;
       border-radius: 999px;
       border: 1px solid var(--border-soft);
-      background: var(--bg-card);
-      color: var(--accent-blue);
-      font-size: .68rem;
+      background: transparent;
+      font-size: .7rem;
+      padding: 2px 7px;
       cursor: pointer;
+      color: var(--text-main);
     }
 
     /* TABLA CENTROS */
     .table-wrapper {
-      margin-top: 10px;
+      margin-top: 8px;
       background: var(--bg-card);
-      border-radius: 14px;
+      border-radius: 16px;
       border: 1px solid var(--border-soft);
       display: flex;
       flex-direction: column;
-      flex: 1;
       min-height: 0;
+      box-shadow: var(--shadow-soft);
     }
 
     .table-header {
@@ -591,15 +565,20 @@
       display: flex;
       justify-content: space-between;
       align-items: baseline;
-      flex-shrink: 0;
     }
 
-    .table-header h3 { font-size: .9rem; }
-    .table-header span { font-size: .72rem; color: var(--text-muted); }
+    .table-header h3 {
+      font-size: .9rem;
+    }
+
+    .table-header span {
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
 
     .table-scroll {
       flex: 1;
-      min-height: 0;
+      max-height: 260px;
       overflow: auto;
       border-top: 1px solid var(--border-soft);
     }
@@ -608,7 +587,6 @@
       width: 100%;
       border-collapse: collapse;
       font-size: .78rem;
-      min-width: 700px;
     }
 
     thead {
@@ -619,22 +597,25 @@
     }
 
     th, td {
-      padding: 6px 8px;
+      padding: 5px 8px;
       border-bottom: 1px solid #0b1120;
       text-align: left;
       white-space: nowrap;
     }
 
-    body.light th, body.light td {
-      border-bottom-color: #e5e7eb;
+    th {
+      font-weight: 600;
+      font-size: .75rem;
+      color: var(--text-muted);
     }
 
-    th { font-weight: 600; font-size: .75rem; color: var(--text-muted); }
+    tbody tr:nth-child(even) {
+      background: var(--bg-card-soft);
+    }
 
-    tbody tr:nth-child(even) { background: var(--bg-card-soft); }
-    tbody tr:hover { background: rgba(15,23,42,0.9); }
-
-    body.light tbody tr:hover { background: #e5e7eb; }
+    tbody tr:hover {
+      background: rgba(15,23,42,0.9);
+    }
 
     .tag {
       border-radius: 999px;
@@ -644,8 +625,11 @@
       background: #0b1120;
     }
 
-    body.light .tag {
-      background: #f9fafb;
+    body.light tbody tr:nth-child(even) {
+      background: #f3f4f6;
+    }
+    body.light tbody tr:hover {
+      background: #e5e7eb;
     }
 
     .tag.exclusivo {
@@ -685,7 +669,11 @@
       cursor: pointer;
       font-size: .74rem;
       text-decoration: underline;
-      padding: 0;
+    }
+
+    .centros-resumen {
+      font-size: .72rem;
+      color: var(--text-muted);
     }
 
     /* MODALES */
@@ -701,11 +689,12 @@
 
     .modal {
       background: var(--bg-card);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 14px;
-      width: 440px;
+      width: 420px;
       max-width: 95%;
       border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
     }
 
     .modal-header {
@@ -715,8 +704,15 @@
       margin-bottom: 8px;
     }
 
-    .modal-header h3 { font-size: .95rem; }
-    .modal-close { cursor: pointer; font-size: 1rem; color: var(--text-muted); }
+    .modal-header h3 {
+      font-size: .95rem;
+    }
+
+    .modal-close {
+      cursor: pointer;
+      font-size: 1rem;
+      color: var(--text-muted);
+    }
 
     .modal-body {
       display: flex;
@@ -725,7 +721,11 @@
       font-size: .78rem;
     }
 
-    .modal-field { display: flex; flex-direction: column; gap: 2px; }
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
     .modal-field label {
       font-size: .74rem;
@@ -737,7 +737,7 @@
       padding: 5px 7px;
       border-radius: 8px;
       border: 1px solid var(--border-soft);
-      background: var(--bg-card-soft);
+      background: var(--bg-input);
       color: var(--text-main);
       font-size: .78rem;
       outline: none;
@@ -750,28 +750,42 @@
       margin-top: 10px;
     }
 
-    @media (max-width: 1200px) {
+    /* RESPONSIVE sencillo */
+    @media (max-width: 1120px) {
       .top-layout {
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr);
+        grid-template-columns: 1.5fr 1.5fr;
         grid-template-rows: auto auto;
-        grid-auto-flow: row;
+        grid-template-areas:
+          "delegados calendario"
+          "visitas visitas";
       }
+      .card-delegados { grid-area: delegados; }
+      .card-calendario{ grid-area: calendario; }
+      .card-visitas   { grid-area: visitas; }
     }
 
-    /* PRINT: solo imprimimos la zona central (sin sidebar) */
-    @media print {
-      body {
-        overflow: visible;
-      }
+    @media (max-width: 880px) {
       .sidebar {
         display: none;
       }
+      body {
+        overflow: auto;
+      }
       .main {
-        max-width: 100vw;
+        max-height: none;
+        padding: 10px;
+      }
+      .top-layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+      .table-scroll {
+        max-height: none;
       }
     }
   </style>
 
+  <!-- Librería para Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
@@ -816,49 +830,43 @@
 
   <!-- MAIN -->
   <main class="main">
-    <!-- Topbar -->
+    <!-- TOPBAR -->
     <div class="topbar">
+      <div class="search-wrapper">
+        <span class="search-icon">🔍</span>
+        <input id="buscadorGlobal" class="search-input" placeholder="Buscar por centro, propietario o delegado..." />
+      </div>
+
       <button class="btn" id="themeToggle">
         <span class="icon">🌓</span> Oscuro / Claro
       </button>
-      <button class="btn btn-colored-blue" id="saveViewBtn">
+      <button class="btn btn-ghost" id="btnGuardarVista">
         <span class="icon">💾</span> Guardar vista
       </button>
-      <button class="btn btn-colored-purple" id="exportHtmlBtn">
+      <button class="btn btn-ghost" id="btnExportarHtml">
         <span class="icon">⬇️</span> Exportar HTML
       </button>
-      <button class="btn btn-colored-teal" id="printBtn">
-        <span class="icon">🖨️</span> Imprimir
+      <button class="btn btn-ghost" id="btnImprimir">
+        <span class="icon">🖨</span> Imprimir
       </button>
-      <button class="btn btn-cta">
+      <button class="btn btn-cta-red" id="btnActualizar">
         <span class="icon">☁️</span> Actualizar datos nube
       </button>
     </div>
 
-    <!-- Buscador -->
-    <div class="centros-search-row">
-      <div class="centros-search-wrapper">
-        <span class="search-icon">🔍</span>
-        <input id="buscadorCentros" class="centros-search-input"
-               placeholder="Buscar por centro, propietario o delegado..." />
-      </div>
-    </div>
-
-    <!-- BLOQUE SUPERIOR -->
+    <!-- TOP LAYOUT -->
     <section class="top-layout">
-      <!-- IZQUIERDA: CENTROS Y DELEGADOS -->
-      <article class="card">
-        <div class="delegados-header">
-          <h3>Centros y delegados</h3>
-          <span class="badge-small" id="delegadosResumenBadge">0 delegados</span>
-        </div>
+      <!-- DELEGADOS -->
+      <article class="card card-delegados">
+        <h3>
+          <span>Centros y delegados</span>
+          <span class="badge-pill" id="delegadosCount">0 delegados</span>
+        </h3>
 
-        <div class="delegados-scroll">
-          <div class="delegados-list" id="delegadosLegend"></div>
-        </div>
+        <div class="delegados-list" id="delegadosList"></div>
 
-        <div class="actions-row">
-          <button class="btn btn-cta" id="btnAddCentro">
+        <div class="delegados-actions">
+          <button class="btn btn-cta-red" id="btnAddCentro">
             <span class="icon">➕</span> Añadir centro
           </button>
           <button class="btn" id="btnAdjuntarExcel">
@@ -866,28 +874,28 @@
           </button>
           <input type="file" id="inputExcel" accept=".xlsx,.xls" style="display:none" />
         </div>
-
-        <p class="delegado-resumen" id="summaryCentros"></p>
       </article>
 
-      <!-- CENTRO: CALENDARIO -->
-      <article class="card">
-        <div class="calendar-header">
-          <button class="calendar-nav-btn" id="prevMonthBtn">‹</button>
-          <div>
-            <h3 id="calendarMonthLabel">Diciembre 2025</h3>
+      <!-- CALENDARIO -->
+      <article class="card card-calendario">
+        <div class="calendar-card">
+          <div class="calendar-header">
+            <button class="cal-nav-btn" id="calPrev">‹</button>
+            <span id="calTitle">Mes Año</span>
+            <button class="cal-nav-btn" id="calNext">›</button>
           </div>
-          <button class="calendar-nav-btn" id="nextMonthBtn">›</button>
+          <div class="calendar-weekdays">
+            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
         </div>
-        <div class="calendar-grid" id="calendarGrid"></div>
-        <div class="calendar-footnote"></div>
       </article>
 
-      <!-- DERECHA: VISITAS AGENDADAS -->
-      <article class="card">
-        <div class="visitas-header">
-          <h3>Visitas agendadas</h3>
-        </div>
+      <!-- VISITAS -->
+      <article class="card card-visitas">
+        <h3>
+          <span>Visitas agendadas</span>
+        </h3>
         <div class="visitas-list" id="visitasList"></div>
       </article>
     </section>
@@ -895,25 +903,22 @@
     <!-- TABLA CENTROS -->
     <section class="table-wrapper">
       <div class="table-header">
-        <div>
-          <h3>Listado de centros</h3>
-          <span>Vista consolidada de centros Corner y Exclusivos · fuente: Excel maestro.</span>
-        </div>
-        <span class="badge-small" id="totalCentrosLabel">Centros mostrados: 0 / 0</span>
+        <h3>Listado de centros</h3>
+        <span class="centros-resumen" id="centrosResumen"></span>
       </div>
       <div class="table-scroll">
         <table>
           <thead>
-            <tr>
-              <th>Código</th>
-              <th>Propietario</th>
-              <th>Centro</th>
-              <th>Provincia</th>
-              <th>Delegado</th>
-              <th>Tipo</th>
-              <th>Informes</th>
-              <th>Centro AAR</th>
-            </tr>
+          <tr>
+            <th>Código</th>
+            <th>Propietario</th>
+            <th>Centro</th>
+            <th>Provincia</th>
+            <th>Delegado</th>
+            <th>Tipo</th>
+            <th>Informes</th>
+            <th>Centro AAR</th>
+          </tr>
           </thead>
           <tbody id="tablaCentrosBody"></tbody>
         </table>
@@ -959,22 +964,22 @@
       </div>
       <div class="modal-footer">
         <button class="btn" data-close="modalCentro">Cancelar</button>
-        <button class="btn btn-cta" id="guardarCentro">Guardar centro</button>
+        <button class="btn btn-cta-blue" id="guardarCentro">Guardar centro</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL VISITA -->
+  <!-- MODAL AGENDA VISITA -->
   <div class="modal-backdrop" id="modalVisita">
     <div class="modal">
       <div class="modal-header">
-        <h3>Nueva visita agendada</h3>
+        <h3>Agendar visita</h3>
         <span class="modal-close" data-close="modalVisita">✕</span>
       </div>
       <div class="modal-body">
         <div class="modal-field">
-          <label>Fecha de visita</label>
-          <input id="visitaFecha" type="date" />
+          <label>Fecha</label>
+          <input id="visitaFecha" disabled />
         </div>
         <div class="modal-field">
           <label>Responsable de Audio</label>
@@ -984,30 +989,26 @@
           </select>
         </div>
         <div class="modal-field">
-          <label>Centro (buscador)</label>
-          <input id="visitaCentro" list="listaCentros" placeholder="Escribe para buscar el centro..." />
-          <datalist id="listaCentros"></datalist>
-        </div>
-        <div class="modal-field">
-          <label>Delegado (se rellena automático si el centro existe)</label>
-          <input id="visitaDelegado" disabled />
+          <label>Centro</label>
+          <select id="visitaCentro"></select>
         </div>
       </div>
       <div class="modal-footer">
         <button class="btn" data-close="modalVisita">Cancelar</button>
-        <button class="btn btn-cta" id="guardarVisita">Guardar visita</button>
+        <button class="btn btn-cta-blue" id="guardarVisita">Guardar visita</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL INFORMES CENTRO -->
+  <!-- MODAL INFORMES (placeholder) -->
   <div class="modal-backdrop" id="modalInformes">
     <div class="modal">
       <div class="modal-header">
         <h3>Informes del centro</h3>
         <span class="modal-close" data-close="modalInformes">✕</span>
       </div>
-      <div class="modal-body" id="informesBody"></div>
+      <div class="modal-body" id="informesBody">
+      </div>
       <div class="modal-footer">
         <button class="btn" data-close="modalInformes">Cerrar</button>
       </div>
@@ -1015,60 +1016,45 @@
   </div>
 
   <script>
-    // ---- Tema oscuro / claro ----
-    const THEME_KEY = "cca_theme";
-    const VIEW_KEY = "cca_vista";
-
-    function aplicarTemaGuardado() {
-      try {
-        const t = localStorage.getItem(THEME_KEY);
-        if (t === "light") document.body.classList.add("light");
-      } catch {}
+    // THEME
+    const themeToggle = document.getElementById('themeToggle');
+    function applySavedTheme() {
+      const saved = localStorage.getItem('cca_theme');
+      if (saved === 'light') document.body.classList.add('light');
     }
-    aplicarTemaGuardado();
-
-    document.getElementById('themeToggle').addEventListener('click', () => {
-      document.body.classList.toggle('light');
-      try {
-        localStorage.setItem(THEME_KEY, document.body.classList.contains('light') ? 'light' : 'dark');
-      } catch {}
+    applySavedTheme();
+    themeToggle.addEventListener('click', () => {
+      const isLight = document.body.classList.toggle('light');
+      localStorage.setItem('cca_theme', isLight ? 'light' : 'dark');
     });
 
-    // ---- Botón imprimir (imprime este módulo Centros) ----
-    document.getElementById('printBtn').addEventListener('click', () => {
-      window.print();
+    // BOTONES SUPERIORES
+    document.getElementById('btnGuardarVista').addEventListener('click', () => {
+      alert('Vista guardada localmente (demostración).');
     });
 
-    // ---- Botón Exportar HTML ----
-    document.getElementById('exportHtmlBtn').addEventListener('click', () => {
-      const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-      const blob = new Blob([html], { type: 'text/html' });
+    document.getElementById('btnExportarHtml').addEventListener('click', () => {
+      const blob = new Blob(['<!DOCTYPE html>\n' + document.documentElement.outerHTML], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
+      const today = new Date().toISOString().slice(0,10);
       a.href = url;
-      a.download = 'control-center-audio-centros.html';
+      a.download = 'centros_dashboard_' + today + '.html';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     });
 
-    // ---- Guardar vista (tema + mes del calendario) ----
-    document.getElementById('saveViewBtn').addEventListener('click', () => {
-      try {
-        const vista = {
-          theme: document.body.classList.contains('light') ? 'light' : 'dark',
-          year: currentYear,
-          month: currentMonth
-        };
-        localStorage.setItem(VIEW_KEY, JSON.stringify(vista));
-        alert("Vista guardada en este navegador.");
-      } catch {
-        alert("No se ha podido guardar la vista (bloqueo de almacenamiento).");
-      }
+    document.getElementById('btnImprimir').addEventListener('click', () => {
+      window.print();
     });
 
-    // ---- Colores delegados ----
+    document.getElementById('btnActualizar').addEventListener('click', () => {
+      alert('Sincronización con nube simulada (demostración).');
+    });
+
+    // COLORES DELEGADOS
     const delegadosColores = {
       "ENERITZ ARANGUREN": "#22c55e",
       "LAURA PLAZAS": "#2563eb",
@@ -1085,20 +1071,29 @@
       "Sergio Perán": "#fb7185"
     };
 
+    // DATOS CENTROS
     const centros = [];
-    const informesPorCentro = {};
-    const aarPorCentro = {};
-
     const exclusivosNombres = new Set([
       "CC LOS VALLES",
       "FUENLABRADA Calle Leganes",
       "PAMPLONA C. Exclusivo",
+      "PAMPLONA Calle Sancho el Mayor",
+      "PAMPLONA Carlos III",
       "REINA DE MERCEDES",
       "SANTANDER CC PEÑACASTILLO",
       "SANTIAGO DE COMPOSTELA RUA DA ROSA",
       "TORRELAVEGA CARREFOUR CC",
       "ZARAGOZA CALLE DELICIAS"
     ]);
+
+    const informesPorCentro = {};
+    const aarPorCentro = {};
+
+    // UTILIDADES
+    const tablaBody = document.getElementById('tablaCentrosBody');
+    const centrosResumen = document.getElementById('centrosResumen');
+    let filtroDelegadoActual = null;
+    let filtroTextoActual = '';
 
     function tipoCentro(nombreCentro) {
       return exclusivosNombres.has(nombreCentro) ? "Exclusivo" : "Corner";
@@ -1112,17 +1107,9 @@
       return aarPorCentro[nombreCentro] || "No";
     }
 
-    // TABLA
-    const tablaBody = document.getElementById('tablaCentrosBody');
-    const totalCentrosLabel = document.getElementById('totalCentrosLabel');
-    const summaryCentros = document.getElementById('summaryCentros');
-
-    let filtroDelegadoActual = null;
-    let filtroTextoActual = "";
-
     function renderTabla() {
-      const texto = (filtroTextoActual || "").toLowerCase();
       tablaBody.innerHTML = "";
+      const texto = filtroTextoActual.toLowerCase();
 
       const filtrados = centros.filter(c => {
         const cad = (c.centro + " " + c.propietario + " " + c.delegado).toLowerCase();
@@ -1160,35 +1147,71 @@
         tablaBody.appendChild(tr);
       });
 
-      totalCentrosLabel.textContent =
-        `Centros mostrados: ${filtrados.length} / ${centros.length}`;
-      summaryCentros.textContent = "";
-
-      actualizarDelegados();
-      actualizarDatalistCentros();
+      centrosResumen.textContent = `Centros mostrados: ${filtrados.length} / ${centros.length}`;
     }
 
-    // BUSCADOR
-    document.getElementById('buscadorCentros').addEventListener('input', e => {
+    // BUSCADOR GLOBAL
+    document.getElementById('buscadorGlobal').addEventListener('input', e => {
       filtroTextoActual = e.target.value || "";
       renderTabla();
     });
 
-    // MODALES
-    function abrirModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function cerrarModal(id) { document.getElementById(id).style.display = 'none'; }
+    // DELEGADOS LIST
+    const delegadosList = document.getElementById('delegadosList');
+    const delegadosCount = document.getElementById('delegadosCount');
 
+    function renderDelegados() {
+      const mapa = new Map();
+      centros.forEach(c => {
+        mapa.set(c.delegado, (mapa.get(c.delegado) || 0) + 1);
+      });
+
+      delegadosList.innerHTML = "";
+      const delegadosOrdenados = Array.from(mapa.entries()).sort((a,b) =>
+        a[0].localeCompare(b[0], 'es'));
+
+      delegadosOrdenados.forEach(([nombre, cuenta]) => {
+        const color = delegadosColores[nombre] || "#e5e7eb";
+        const row = document.createElement('div');
+        row.className = 'delegado-row';
+        if (filtroDelegadoActual === nombre) row.classList.add('active');
+
+        row.innerHTML = `
+          <span class="delegado-dot" style="background:${color}"></span>
+          <span class="delegado-name">${nombre}</span>
+          <div class="delegado-bar">
+            <div class="delegado-bar-fill" style="background:${color}"></div>
+          </div>
+          <span class="delegado-count">${cuenta} centro${cuenta !== 1 ? 's' : ''}</span>
+        `;
+        row.addEventListener('click', () => {
+          filtroDelegadoActual = (filtroDelegadoActual === nombre) ? null : nombre;
+          renderTabla();
+          renderDelegados(); // para refrescar estado active
+        });
+        delegadosList.appendChild(row);
+      });
+
+      delegadosCount.textContent = `${delegadosOrdenados.length} delegados`;
+    }
+
+    // MODALES
+    function abrirModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+    function cerrarModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
     document.querySelectorAll('[data-close]').forEach(el => {
       el.addEventListener('click', () => cerrarModal(el.dataset.close));
     });
 
-    // NUEVO CENTRO
+    // NUEVO CENTRO (manual)
     document.getElementById('btnAddCentro').addEventListener('click', () => {
       const sel = document.getElementById('nuevoDelegado');
       sel.innerHTML = "";
-      const nombres = new Set([...centros.map(c => c.delegado), ...Object.keys(delegadosColores)]);
-      nombres.forEach(nombre => {
-        if (!nombre) return;
+      const nombres = new Set([...Object.keys(delegadosColores), ...centros.map(c => c.delegado)]);
+      Array.from(nombres).sort((a,b)=>a.localeCompare(b,'es')).forEach(nombre => {
         const opt = document.createElement('option');
         opt.value = nombre;
         opt.textContent = nombre;
@@ -1210,19 +1233,57 @@
       centros.push(nuevo);
       cerrarModal('modalCentro');
       renderTabla();
+      renderDelegados();
+      rellenarSelectCentros();
     });
 
-    // INFORMES CENTRO
+    // ADJUNTAR EXCEL
+    const inputExcel = document.getElementById('inputExcel');
+    document.getElementById('btnAdjuntarExcel').addEventListener('click', () => {
+      inputExcel.click();
+    });
+
+    inputExcel.addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = evt => {
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+        // Esperado: CODIGO | PROPIETARIO | CENTRO | PROVINCIA | DELEGADO
+        rows.slice(1).forEach(row => {
+          if (!row || row.length < 5) return;
+          const [codigo, propietario, centro, provincia, delegado] = row;
+          if (!centro) return;
+          centros.push({
+            codigo: (codigo || "").toString().trim(),
+            propietario: (propietario || "").toString().trim(),
+            centro: (centro || "").toString().trim(),
+            provincia: (provincia || "").toString().trim(),
+            delegado: (delegado || "").toString().trim()
+          });
+        });
+
+        renderTabla();
+        renderDelegados();
+        rellenarSelectCentros();
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    // INFORMES CENTRO (demo)
     document.addEventListener('click', e => {
       if (e.target.matches('.btn-link[data-centro]')) {
         const nombreCentro = e.target.dataset.centro;
         const informes = getInformes(nombreCentro);
         const cont = document.getElementById('informesBody');
         cont.innerHTML = "";
-
         if (!informes.length) {
-          cont.innerHTML =
-            "<p style='font-size:.8rem;'>Este centro aún no tiene informes guardados. Desde el módulo de informes podrás adjuntar documentos (visitas, auditorías, etc.).</p>";
+          cont.innerHTML = "<p style='font-size:.8rem;'>Este centro aún no tiene informes guardados. Desde el módulo de informes podrás adjuntarlos.</p>";
         } else {
           informes.forEach((inf, idx) => {
             const div = document.createElement('div');
@@ -1235,392 +1296,184 @@
       }
     });
 
-    // DELEGADOS
-    const delegadosLegend = document.getElementById('delegadosLegend');
-    const delegadosResumenBadge = document.getElementById('delegadosResumenBadge');
-    const expandedDelegados = new Set();
-
-    function actualizarDelegados() {
-      const mapa = new Map();
-      centros.forEach(c => {
-        if (!c.delegado) return;
-        mapa.set(c.delegado, (mapa.get(c.delegado) || 0) + 1);
-      });
-
-      delegadosLegend.innerHTML = "";
-      const delegados = Array.from(mapa.entries()).sort((a, b) =>
-        a[0].localeCompare(b[0])
-      );
-
-      delegadosResumenBadge.textContent = `${delegados.length} delegados`;
-
-      delegados.forEach(([nombre, cuenta]) => {
-        const color = delegadosColores[nombre] || "#e5e7eb";
-
-        const item = document.createElement('div');
-        item.className = 'delegado-item';
-        if (filtroDelegadoActual === nombre) item.classList.add('delegado-activo');
-
-        const header = document.createElement('div');
-        header.className = 'delegado-header-line';
-        header.innerHTML = `
-          <span class="delegado-dot" style="background:${color}"></span>
-          <span class="delegado-nombre">${nombre}</span>
-          <span class="delegado-count">${cuenta} centro${cuenta !== 1 ? 's' : ''}</span>
-          <span class="delegado-chevron">${expandedDelegados.has(nombre) ? '▾' : '▸'}</span>
-        `;
-
-        header.addEventListener('click', () => {
-          filtroDelegadoActual = (filtroDelegadoActual === nombre) ? null : nombre;
-
-          if (expandedDelegados.has(nombre)) {
-            expandedDelegados.delete(nombre);
-          } else {
-            expandedDelegados.add(nombre);
-          }
-          renderTabla();
-        });
-
-        const barra = document.createElement('div');
-        barra.className = 'delegado-item-bar';
-        barra.innerHTML =
-          `<div class="delegado-item-bar-fill" style="background:${color};"></div>`;
-
-        const centrosDiv = document.createElement('div');
-        centrosDiv.className = 'delegado-centros';
-
-        if (expandedDelegados.has(nombre)) {
-          const ul = document.createElement('ul');
-          const listaCentros = centros
-            .filter(c => c.delegado === nombre)
-            .map(c => c.centro)
-            .sort();
-
-          listaCentros.forEach(ct => {
-            const li = document.createElement('li');
-            li.textContent = ct;
-            ul.appendChild(li);
-          });
-
-          centrosDiv.innerHTML = `<span>Centros de ${nombre}:</span>`;
-          centrosDiv.appendChild(ul);
-        } else {
-          centrosDiv.style.display = 'none';
-        }
-
-        item.appendChild(header);
-        item.appendChild(barra);
-        if (expandedDelegados.has(nombre)) item.appendChild(centrosDiv);
-
-        delegadosLegend.appendChild(item);
-      });
-    }
-
-    // ADJUNTAR EXCEL (añade sin sustituir)
-    const inputExcel = document.getElementById('inputExcel');
-    document.getElementById('btnAdjuntarExcel').addEventListener('click', () => {
-      inputExcel.click();
-    });
-
-    inputExcel.addEventListener('change', e => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = evt => {
-        const data = new Uint8Array(evt.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-        const existingCodes = new Set(centros.map(c => c.codigo));
-
-        rows.slice(1).forEach(row => {
-          if (!row || row.length < 5) return;
-          const [codigo, propietario, centro, provincia, delegado] = row;
-          const cod = (codigo || "").toString().trim();
-          if (!cod || existingCodes.has(cod)) return;
-
-          centros.push({
-            codigo: cod,
-            propietario: (propietario || "").toString().trim(),
-            centro: (centro || "").toString().trim(),
-            provincia: (provincia || "").toString().trim(),
-            delegado: (delegado || "").toString().trim()
-          });
-          existingCodes.add(cod);
-        });
-
-        filtroDelegadoActual = null;
-        filtroTextoActual = "";
-        document.getElementById('buscadorCentros').value = "";
-
-        renderTabla();
-      };
-      reader.readAsArrayBuffer(file);
-    });
-
-    // DATALIST para visitas
-    function actualizarDatalistCentros() {
-      const datalist = document.getElementById('listaCentros');
-      datalist.innerHTML = "";
-      centros.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.centro;
-        opt.label = `${c.centro} · ${c.delegado}`;
-        datalist.appendChild(opt);
-      });
-    }
-
-    document.getElementById('visitaCentro').addEventListener('change', e => {
-      const nombre = e.target.value;
-      const centro = centros.find(c => c.centro === nombre);
-      document.getElementById('visitaDelegado').value = centro ? centro.delegado : "";
-    });
-
-    // CALENDARIO + VISITAS
+    // CALENDARIO Y VISITAS
+    let currentYear, currentMonth; // month 0-11
+    const calTitle = document.getElementById('calTitle');
     const calendarGrid = document.getElementById('calendarGrid');
-    const calendarMonthLabel = document.getElementById('calendarMonthLabel');
-    const visitas = [];
 
-    let currentYear, currentMonth;
-    const hoy = new Date();
+    const visitas = []; // {id, dateStr, centro, delegado, responsable, estado}
 
-    function setCurrentMonth(date) {
-      currentYear = date.getFullYear();
-      currentMonth = date.getMonth();
-      renderCalendar();
-      renderVisitas();
+    function formatoFechaISO(y,m,d) {
+      const mm = String(m+1).padStart(2,'0');
+      const dd = String(d).padStart(2,'0');
+      return `${y}-${mm}-${dd}`;
     }
 
-    function getEstadoColor(estado) {
-      switch (estado) {
-        case "pendiente": return "#facc15";
-        case "anulada": return "#ef4444";
-        case "realizada": return "#22c55e";
-        default: return "#9ca3af";
-      }
+    function getVisitsForDate(dateStr) {
+      return visitas.filter(v => v.dateStr === dateStr);
     }
 
     function renderCalendar() {
-      calendarGrid.innerHTML = "";
-
-      const meses = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-      calendarMonthLabel.textContent = `${meses[currentMonth]} ${currentYear}`;
-
-      const dias = ["L","M","X","J","V","S","D"];
-      dias.forEach(d => {
-        const span = document.createElement('div');
-        span.className = 'calendar-weekday';
-        span.textContent = d;
-        calendarGrid.appendChild(span);
-      });
-
-      const firstDay = new Date(currentYear, currentMonth, 1);
-      const startWeekday = (firstDay.getDay() + 6) % 7; // lunes=0
+      calendarGrid.innerHTML = '';
+      const firstDayDate = new Date(currentYear, currentMonth, 1);
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+      const weekday = (firstDayDate.getDay() + 6) % 7; // 0 = lunes
 
-      for (let i = 0; i < startWeekday; i++) {
+      calTitle.textContent = firstDayDate.toLocaleDateString('es-ES', {
+        month: 'long',
+        year: 'numeric'
+      }).replace(/^\w/, c => c.toUpperCase());
+
+      // celdas vacías antes del día 1
+      for (let i = 0; i < weekday; i++) {
         const cell = document.createElement('div');
-        cell.className = 'calendar-cell';
-        cell.style.visibility = 'hidden';
+        cell.className = 'calendar-day empty';
         calendarGrid.appendChild(cell);
       }
 
       for (let day = 1; day <= daysInMonth; day++) {
         const cell = document.createElement('div');
-        cell.className = 'calendar-cell';
+        cell.className = 'calendar-day';
+        const dateStr = formatoFechaISO(currentYear, currentMonth, day);
+        cell.dataset.date = dateStr;
 
-        const span = document.createElement('div');
-        span.className = 'calendar-day-number';
-        span.textContent = day;
+        const visitasDia = getVisitsForDate(dateStr);
+        let markerHtml = '';
+        if (visitasDia.length > 0) {
+          const v = visitasDia[0];
+          const initial = v.responsable.startsWith('A') ? 'A' : 'S';
+          let estadoClass = 'marker-pendiente';
+          if (v.estado === 'en_proceso') estadoClass = 'marker-proceso';
+          else if (v.estado === 'finalizada') estadoClass = 'marker-finalizada';
+          else if (v.estado === 'anulada') estadoClass = 'marker-anulada';
 
-        const dotsContainer = document.createElement('div');
-        dotsContainer.className = 'calendar-dots';
+          markerHtml = `
+            <div class="calendar-day-marker">
+              <span class="marker-initial">${initial}</span>
+              <span class="marker-dot ${estadoClass}"></span>
+            </div>
+          `;
+        }
 
-        const fechaISO = `${currentYear}-${String(currentMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-        const visitasDia = visitas.filter(v => v.fecha === fechaISO);
+        cell.innerHTML = `
+          <div class="calendar-day-number">${day}</div>
+          ${markerHtml}
+        `;
 
-        visitasDia.forEach(v => {
-          const dot = document.createElement('div');
-          dot.className = 'calendar-dot';
-          dot.style.background = getEstadoColor(v.estado);
-          dotsContainer.appendChild(dot);
-        });
-
-        cell.appendChild(span);
-        cell.appendChild(dotsContainer);
-
-        cell.addEventListener('click', () => abrirModalVisitaParaFecha(fechaISO));
-
+        cell.addEventListener('click', () => abrirAgendaParaDia(dateStr));
         calendarGrid.appendChild(cell);
       }
     }
 
-    function abrirModalVisitaParaFecha(fechaISO) {
-      document.getElementById('visitaFecha').value = fechaISO;
-      document.getElementById('visitaResponsable').value = "Ariannys Rojas";
-      document.getElementById('visitaCentro').value = "";
-      document.getElementById('visitaDelegado').value = "";
+    function abrirAgendaParaDia(dateStr) {
+      document.getElementById('visitaFecha').value = dateStr;
+      rellenarSelectCentros();
       abrirModal('modalVisita');
+    }
+
+    function rellenarSelectCentros() {
+      const sel = document.getElementById('visitaCentro');
+      if (!sel) return;
+      sel.innerHTML = "";
+      centros
+        .slice()
+        .sort((a,b)=>a.centro.localeCompare(b.centro,'es'))
+        .forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.centro;
+          opt.textContent = `${c.centro} (${c.delegado})`;
+          sel.appendChild(opt);
+        });
     }
 
     document.getElementById('guardarVisita').addEventListener('click', () => {
       const fecha = document.getElementById('visitaFecha').value;
       const responsable = document.getElementById('visitaResponsable').value;
       const centroNombre = document.getElementById('visitaCentro').value;
-      const delegado = document.getElementById('visitaDelegado').value || "N/D";
-
-      if (!fecha || !centroNombre) {
-        alert("Debes indicar fecha y centro para agendar la visita.");
+      const centro = centros.find(c => c.centro === centroNombre);
+      if (!centro) {
+        alert('Selecciona un centro válido.');
         return;
       }
-
       visitas.push({
         id: Date.now(),
-        fecha,
-        centro: centroNombre,
-        delegado,
+        dateStr: fecha,
+        centro: centro.centro,
+        delegado: centro.delegado,
         responsable,
-        estado: "pendiente",
-        informeEstado: "ninguno"
+        estado: 'pendiente'
       });
-
       cerrarModal('modalVisita');
       renderCalendar();
       renderVisitas();
     });
 
+    const visitasList = document.getElementById('visitasList');
+
     function renderVisitas() {
-      const cont = document.getElementById('visitasList');
-      cont.innerHTML = "";
+      visitasList.innerHTML = "";
+      const ordenadas = visitas.slice().sort((a,b) => a.dateStr.localeCompare(b.dateStr));
+      ordenadas.forEach(v => {
+        const row = document.createElement('div');
+        row.className = 'visita-row';
 
-      const inicioMes = new Date(currentYear, currentMonth, 1);
-      const finMes = new Date(currentYear, currentMonth + 1, 0);
-      const hoyISO = hoy.toISOString().slice(0,10);
+        let chipEstadoClass = 'chip-estado-pendiente';
+        let estadoLabel = 'Pendiente';
+        if (v.estado === 'en_proceso') { chipEstadoClass='chip-estado-proceso'; estadoLabel='En proceso'; }
+        else if (v.estado === 'finalizada') { chipEstadoClass='chip-estado-finalizada'; estadoLabel='Finalizada'; }
+        else if (v.estado === 'anulada') { chipEstadoClass='chip-estado-anulada'; estadoLabel='Anulada'; }
 
-      const lista = visitas.filter(v => {
-        const d = new Date(v.fecha);
-        return d >= inicioMes && d <= finMes;
-      }).sort((a, b) => a.fecha.localeCompare(b.fecha));
-
-      if (!lista.length) {
-        // Sin mensaje: panel limpio
-        return;
-      }
-
-      lista.forEach(v => {
-        const item = document.createElement('div');
-        item.className = 'visita-item';
-
-        const topLine = document.createElement('div');
-        topLine.className = 'visita-top-line';
-        topLine.innerHTML = `
-          <span>${v.fecha}</span>
-          <span style="color:var(--text-muted); flex:1; text-align:right; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
-            ${v.centro}
-          </span>
+        row.innerHTML = `
+          <div class="visita-main">
+            <span class="visita-centro">${v.dateStr} · ${v.centro}</span>
+            <span class="chip ${chipEstadoClass}">${estadoLabel}</span>
+          </div>
+          <div class="visita-meta">
+            <span>Delegado: ${v.delegado}</span>
+            <span>Resp. Audio: ${v.responsable}</span>
+          </div>
+          <div class="visita-acciones">
+            <button class="btn-mini" data-accion="estado" data-id="${v.id}">Cambiar estado</button>
+            <button class="btn-mini" data-accion="informe" data-id="${v.id}">Informe</button>
+          </div>
         `;
-
-        const bottomLine = document.createElement('div');
-        bottomLine.className = 'visita-bottom-line';
-
-        const izquierda = document.createElement('div');
-        izquierda.style.flex = '1';
-        izquierda.style.overflow = 'hidden';
-        izquierda.style.textOverflow = 'ellipsis';
-        izquierda.style.whiteSpace = 'nowrap';
-        izquierda.innerHTML =
-          `<span style="color:var(--text-muted);">Del.:</span> ${v.delegado} · 
-           <span style="color:var(--text-muted);">Audio:</span> ${v.responsable}`;
-
-        const derecha = document.createElement('div');
-        derecha.style.display = 'flex';
-        derecha.style.gap = '4px';
-        derecha.style.alignItems = 'center';
-
-        const pillEstado = document.createElement('span');
-        pillEstado.className = 'pill ' + (
-          v.estado === 'pendiente' ? 'pill-estado-pendiente' :
-          v.estado === 'anulada'   ? 'pill-estado-anulada' :
-          'pill-estado-realizada'
-        );
-        pillEstado.textContent =
-          v.estado === 'pendiente' ? 'Pendiente' :
-          v.estado === 'anulada'   ? 'Anulada'   : 'Realizada';
-
-        const pillInforme = document.createElement('span');
-        pillInforme.className = 'pill ' + (
-          v.informeEstado === 'en-proceso' ? 'pill-informe-proceso' :
-          v.informeEstado === 'finalizado' ? 'pill-informe-finalizado' :
-          ''
-        );
-        pillInforme.textContent =
-          v.informeEstado === 'en-proceso' ? 'Informe en proceso' :
-          v.informeEstado === 'finalizado' ? 'Informe finalizado' :
-          'Sin informe';
-
-        const btnInforme = document.createElement('button');
-        btnInforme.className = 'btn-mini';
-        btnInforme.textContent = 'Informe';
-        btnInforme.addEventListener('click', () => {
-          if (v.informeEstado === 'ninguno') {
-            v.informeEstado = 'en-proceso';
-          } else if (v.informeEstado === 'en-proceso') {
-            v.informeEstado = 'finalizado';
-          } else {
-            v.informeEstado = 'en-proceso';
-          }
-          renderVisitas();
-        });
-
-        const btnEstado = document.createElement('button');
-        btnEstado.className = 'btn-mini';
-        btnEstado.textContent = 'Estado';
-        btnEstado.addEventListener('click', () => {
-          if (v.estado === 'pendiente') {
-            v.estado = 'realizada';
-          } else if (v.estado === 'realizada') {
-            v.estado = 'anulada';
-          } else {
-            v.estado = 'pendiente';
-          }
-          renderCalendar();
-          renderVisitas();
-        });
-
-        derecha.appendChild(pillEstado);
-        derecha.appendChild(pillInforme);
-        derecha.appendChild(btnInforme);
-        derecha.appendChild(btnEstado);
-
-        if (v.fecha < hoyISO && v.estado === 'pendiente' && v.informeEstado === 'ninguno') {
-          const aviso = document.createElement('span');
-          aviso.className = 'pill pill-aviso';
-          aviso.textContent = 'Actualizar estado';
-          derecha.appendChild(aviso);
-        }
-
-        bottomLine.appendChild(izquierda);
-        bottomLine.appendChild(derecha);
-
-        item.appendChild(topLine);
-        item.appendChild(bottomLine);
-        cont.appendChild(item);
+        visitasList.appendChild(row);
       });
     }
 
-    document.getElementById('prevMonthBtn').addEventListener('click', () => {
-      setCurrentMonth(new Date(currentYear, currentMonth - 1, 1));
+    visitasList.addEventListener('click', e => {
+      if (!e.target.matches('.btn-mini')) return;
+      const id = Number(e.target.dataset.id);
+      const accion = e.target.dataset.accion;
+      const v = visitas.find(x => x.id === id);
+      if (!v) return;
+
+      if (accion === 'estado') {
+        if (v.estado === 'pendiente') v.estado = 'anulada';
+        else if (v.estado === 'anulada') v.estado = 'pendiente';
+      } else if (accion === 'informe') {
+        if (v.estado === 'pendiente') v.estado = 'en_proceso';
+        else if (v.estado === 'en_proceso') v.estado = 'finalizada';
+        else if (v.estado === 'finalizada') v.estado = 'en_proceso';
+      }
+      renderVisitas();
+      renderCalendar();
     });
 
-    document.getElementById('nextMonthBtn').addEventListener('click', () => {
-      setCurrentMonth(new Date(currentYear, currentMonth + 1, 1));
+    // Navegación calendario
+    document.getElementById('calPrev').addEventListener('click', () => {
+      currentMonth--;
+      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+      renderCalendar();
+    });
+    document.getElementById('calNext').addEventListener('click', () => {
+      currentMonth++;
+      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+      renderCalendar();
     });
 
-    // DEMO inicial + restaurar vista guardada
-    (function init() {
+    // DEMO INICIAL: algunos centros y una visita para ver el punto
+    function cargaDemoInicial() {
       const demo = [
         { codigo:"4ABB", propietario:"MAZA Oriol", centro:"PAMPLONA C. Exclusivo", provincia:"NAVARRA", delegado:"Sonia Godino" },
         { codigo:"4AFH", propietario:"MAZA Oriol", centro:"PAMPLONA Calle Sancho el Mayor", provincia:"NAVARRA", delegado:"Sonia Godino" },
@@ -1634,21 +1487,30 @@
         { codigo:"4MLG", propietario:"AAO", centro:"FUENLABRADA Calle Leganes", provincia:"MADRID", delegado:"Marisa Carmona" }
       ];
       demo.forEach(c => centros.push(c));
-      renderTabla();
 
-      // restaurar mes/tema guardados
-      try {
-        const raw = localStorage.getItem(VIEW_KEY);
-        if (raw) {
-          const v = JSON.parse(raw);
-          if (v && typeof v.year === "number" && typeof v.month === "number") {
-            setCurrentMonth(new Date(v.year, v.month, 1));
-            return;
-          }
-        }
-      } catch {}
-      setCurrentMonth(new Date());
-    })();
+      // demo visita
+      const hoy = new Date();
+      const fechaDemo = formatoFechaISO(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+      visitas.push({
+        id: Date.now(),
+        dateStr: fechaDemo,
+        centro: "SANTIAGO DE COMPOSTELA RUA DA ROSA",
+        delegado: "Daniel Chazo",
+        responsable: "Ariannys Rojas",
+        estado: 'pendiente'
+      });
+
+      currentYear = hoy.getFullYear();
+      currentMonth = hoy.getMonth();
+
+      renderTabla();
+      renderDelegados();
+      rellenarSelectCentros();
+      renderCalendar();
+      renderVisitas();
+    }
+
+    cargaDemoInicial();
   </script>
 </body>
 </html>
