@@ -277,12 +277,14 @@
       flex: 1;
       display: none;
       overflow: auto;
+      min-height: 0;
     }
 
     .page.active {
       display: flex;
       flex-direction: column;
       gap: 8px;
+      min-height: 0;
     }
 
     .card {
@@ -356,8 +358,9 @@
     /* DASHBOARD PAGE */
     .dashboard-grid {
       display: grid;
-      grid-template-columns: 1.5fr 1fr;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.1fr);
       gap: 10px;
+      align-items: flex-start;
       min-height: 0;
     }
 
@@ -393,6 +396,34 @@
       color: var(--text-muted);
     }
 
+    .dashboard-filtros {
+      display:flex;
+      gap:8px;
+      margin-bottom:6px;
+      font-size:.76rem;
+    }
+
+    .dashboard-filtros > div {
+      flex:1;
+    }
+
+    .dashboard-filtros label {
+      display:block;
+      margin-bottom:2px;
+      color:var(--text-muted);
+    }
+
+    .dashboard-filtros select {
+      width:100%;
+      padding:3px 6px;
+      border-radius:999px;
+      border:1px solid var(--border-soft);
+      background:var(--bg-card-soft);
+      color:var(--text-main);
+      font-size:.75rem;
+      outline:none;
+    }
+
     .dashboard-charts {
       display: grid;
       grid-template-columns: repeat(3, minmax(0,1fr));
@@ -418,6 +449,13 @@
       display: flex;
       flex-direction: column;
       gap: 4px;
+      max-height: 135px;
+      overflow: hidden;
+    }
+
+    .ranking-list.expandido {
+      max-height: 260px;
+      overflow: auto;
     }
 
     .ranking-row {
@@ -464,9 +502,9 @@
     /* CENTROS PAGE */
     .centros-top {
       display: grid;
-      grid-template-columns: 1.2fr 1.2fr 1fr;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.2fr) minmax(0, 1fr);
       gap: 10px;
-      min-height: 210px;
+      min-height: 0;
     }
 
     .delegados-list {
@@ -794,9 +832,9 @@
 
     .informe-top {
       display:grid;
-      grid-template-columns: 1.3fr 1fr;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
       gap:10px;
-      min-height:190px;
+      min-height:0;
     }
 
     .datos-grid {
@@ -810,15 +848,6 @@
     .dato-label {
       font-size:.72rem;
       color:var(--text-muted);
-    }
-
-    .dato-value {
-      font-size:.82rem;
-      font-weight:500;
-    }
-
-    .dato-full {
-      grid-column:1 / -1;
     }
 
     .field-input {
@@ -843,7 +872,7 @@
 
     .panel-inferior {
       display: grid;
-      grid-template-columns: 1.1fr 1.9fr;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.9fr);
       gap: 10px;
     }
 
@@ -900,6 +929,12 @@
       width:100%;
       height:100%;
       object-fit:cover;
+    }
+
+    .resumen-graficos {
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:8px;
     }
 
     .observaciones-grid {
@@ -1117,6 +1152,21 @@
             <div class="card-header-row">
               <span class="card-title">Resumen general</span>
               <span class="badge-small">Demo · Promedios sobre visitas guardadas</span>
+            </div>
+
+            <div class="dashboard-filtros">
+              <div>
+                <label for="filtroDashDelegado">Delegado</label>
+                <select id="filtroDashDelegado">
+                  <option value="__todos">Todos los delegados</option>
+                </select>
+              </div>
+              <div>
+                <label for="filtroDashCentro">Centro</label>
+                <select id="filtroDashCentro">
+                  <option value="__todos">Todos los centros</option>
+                </select>
+              </div>
             </div>
 
             <div class="kpi-grid">
@@ -1356,7 +1406,7 @@
                   <div class="dato-label">Horas de servicio</div>
                   <input id="infHoras" class="field-input" />
                 </div>
-                <div class="dato-full" style="margin-top:4px;">
+                <div style="grid-column:1 / -1; margin-top:4px;">
                   <button class="btn btn-cta" id="btnAdjuntarChecklist">
                     <span class="icon">📎</span> Adjuntar checklist
                   </button>
@@ -1371,13 +1421,7 @@
               <div class="card-header-row">
                 <span class="card-title">KPIs del centro</span>
               </div>
-              <div style="font-size:.78rem; margin-top:4px;">
-                <div>Procesos: <strong id="kpiCentroProcesos">–</strong></div>
-                <div>Conv. a prueba: <strong id="kpiCentroPrueba">–</strong></div>
-                <div>Conv. a cierre: <strong id="kpiCentroVenta">–</strong></div>
-                <div>Aplicación HIT: <strong id="kpiCentroHit">–</strong></div>
-              </div>
-              <div class="chart-container centered" style="margin-top:6px; max-height:180px;">
+              <div class="chart-container centered" style="margin-top:4px; max-height:190px;">
                 <canvas id="chartCentroRadar"></canvas>
               </div>
             </article>
@@ -1478,23 +1522,17 @@
               <div class="imagenes-grid" style="margin-top:4px;">
                 <div>
                   <div class="imagen-item-title">Centro exterior</div>
-                  <div class="imagen-preview" data-target="ext">
-                    Adjuntar imagen
-                  </div>
+                  <div class="imagen-preview" data-target="ext">Adjuntar imagen</div>
                   <input type="file" accept="image/*" data-input-img="ext" style="display:none" />
                 </div>
                 <div>
                   <div class="imagen-item-title">Centro interior</div>
-                  <div class="imagen-preview" data-target="int">
-                    Adjuntar imagen
-                  </div>
+                  <div class="imagen-preview" data-target="int">Adjuntar imagen</div>
                   <input type="file" accept="image/*" data-input-img="int" style="display:none" />
                 </div>
                 <div>
                   <div class="imagen-item-title">Gabinete</div>
-                  <div class="imagen-preview" data-target="gab">
-                    Adjuntar imagen
-                  </div>
+                  <div class="imagen-preview" data-target="gab">Adjuntar imagen</div>
                   <input type="file" accept="image/*" data-input-img="gab" style="display:none" />
                 </div>
               </div>
@@ -1506,7 +1544,7 @@
             <div class="card-header-row">
               <span class="card-title">Resumen de la visita</span>
             </div>
-            <div class="panel-graficos" style="max-height:none;">
+            <div class="resumen-graficos" style="margin-top:4px;">
               <article class="card">
                 <div class="card-header-row">
                   <span class="card-title">Procesos aplicados</span>
@@ -1529,6 +1567,14 @@
                 </div>
                 <div class="chart-container">
                   <canvas id="chartCentroConversionResumen"></canvas>
+                </div>
+              </article>
+              <article class="card">
+                <div class="card-header-row">
+                  <span class="card-title">KPIs del centro (%)</span>
+                </div>
+                <div class="chart-container">
+                  <canvas id="chartCentroKpiBarras"></canvas>
                 </div>
               </article>
             </div>
@@ -1557,6 +1603,17 @@
               <button class="btn btn-cta" id="btnGuardarInforme">
                 <span class="icon">💾</span> Guardar informe
               </button>
+            </div>
+          </article>
+
+          <!-- Anexo checklist -->
+          <article class="card" id="cardAnexoChecklist">
+            <div class="card-header-row">
+              <span class="card-title">Anexo · Checklist</span>
+            </div>
+            <div style="font-size:.78rem; margin-top:4px;">
+              Checklist adjunto: <strong id="anexoChecklistNombre">Sin archivo</strong><br>
+              Este anexo se imprimirá junto con el informe.
             </div>
           </article>
         </div>
@@ -1726,6 +1783,7 @@
       "SANTANDER CC PEÑACASTILLO",
       "SANTIAGO DE COMPOSTELA RUA DA ROSA",
       "TORRELAVEGA CARREFOUR CC",
+      "ZARAGOGA CALLE DELICIAS",
       "ZARAGOZA CALLE DELICIAS"
     ]);
 
@@ -1858,6 +1916,7 @@
 
       numDelegadosSpan.textContent = delegados.length;
       renderRankingDelegados(map);
+      actualizarFiltrosDashboard(delegados);
     }
 
     /* ========= RANKING ========= */
@@ -1902,11 +1961,46 @@
 
     rankingToggle.addEventListener("click", () => {
       rankingExpandido = !rankingExpandido;
+      rankingDelegadosDiv.classList.toggle("expandido", rankingExpandido);
       $$(".ranking-row.extra-hidden").forEach(r => {
         r.style.display = rankingExpandido ? "flex" : "none";
       });
       rankingToggle.textContent = rankingExpandido ? "Ocultar" : "Mostrar todos";
     });
+
+    /* ========= FILTROS DASHBOARD ========= */
+    function actualizarFiltrosDashboard(delegadosPairs) {
+      const filtroDel = $("#filtroDashDelegado");
+      const filtroCen = $("#filtroDashCentro");
+      if (!filtroDel || !filtroCen) return;
+
+      const selectedDel = filtroDel.value || "__todos";
+      const selectedCen = filtroCen.value || "__todos";
+
+      filtroDel.innerHTML = `<option value="__todos">Todos los delegados</option>`;
+      delegadosPairs.forEach(([nombre]) => {
+        const opt = document.createElement("option");
+        opt.value = nombre;
+        opt.textContent = nombre;
+        filtroDel.appendChild(opt);
+      });
+
+      const centrosNames = Array.from(new Set(centros.map(c => c.centro))).sort();
+      filtroCen.innerHTML = `<option value="__todos">Todos los centros</option>`;
+      centrosNames.forEach(n => {
+        const opt = document.createElement("option");
+        opt.value = n;
+        opt.textContent = n;
+        filtroCen.appendChild(opt);
+      });
+
+      // Restaurar selección si es posible
+      if ([...filtroDel.options].some(o=>o.value===selectedDel)) filtroDel.value = selectedDel;
+      if ([...filtroCen.options].some(o=>o.value===selectedCen)) filtroCen.value = selectedCen;
+    }
+
+    $("#filtroDashDelegado").addEventListener("change", () => recalcularDashboard());
+    $("#filtroDashCentro").addEventListener("change", () => recalcularDashboard());
 
     /* ========= BUSCADOR ========= */
     $("#searchGlobal").addEventListener("input", e => {
@@ -2126,45 +2220,7 @@
     let centroMetricsActual = null;
     let centroActual = null;
 
-    const dashboardAcum = {
-      procesos: 0,
-      convPrueba: 0,
-      convVenta: 0,
-      hit: 0,
-      formaciones: 0,
-      ayuda: 0,
-      aar: 0,
-      primeros: 0,
-      areas: 0,
-      n: 0
-    };
-
-    function actualizarDashboardDesdeAcum() {
-      if (!dashboardAcum.n) return;
-      const n = dashboardAcum.n;
-      const avgProc = Math.round(dashboardAcum.procesos / n);
-      const avgPrue = Math.round(dashboardAcum.convPrueba / n);
-      const avgVent = Math.round(dashboardAcum.convVenta / n);
-      const avgHit  = Math.round(dashboardAcum.hit / n);
-      const avgForm = Math.round(dashboardAcum.formaciones / n);
-      const ayudaPct = Math.round(100 * dashboardAcum.ayuda / n);
-      const aarPct   = Math.round(100 * dashboardAcum.aar / n);
-      const primerosPct = Math.round(100 * dashboardAcum.primeros / n);
-
-      $("#kpiProcesos").textContent   = avgProc + "%";
-      $("#kpiConvPrueba").textContent = avgPrue + "%";
-      $("#kpiConvVenta").textContent  = avgVent + "%";
-      $("#kpiHIT").textContent        = avgHit + "%";
-      $("#kpiFormaciones").textContent = avgForm + "%";
-      $("#kpiAyuda").textContent = ayudaPct === 0 ? "No" : `Sí ${ayudaPct}%`;
-      $("#kpiAar").textContent   = aarPct === 0 ? "No" : `Sí ${aarPct}%`;
-      $("#kpiPrimeros").textContent = primerosPct === 0 ? "No" : `Sí ${primerosPct}%`;
-
-      globalCharts.radarGeneral.data.datasets[0].data = [
-        avgProc, avgPrue, avgVent, avgHit
-      ];
-      globalCharts.radarGeneral.update();
-    }
+    const metricsStore = []; // para dashboard filtrable
 
     function getChecklistFlags() {
       const q = sel => document.querySelector(`input[data-kpi="${sel}"]`);
@@ -2459,6 +2515,29 @@
           }
         }
       });
+
+      const kpiBarCtx = document.getElementById("chartCentroKpiBarras").getContext("2d");
+      centroCharts.kpiBarras = new Chart(kpiBarCtx, {
+        type:"bar",
+        data:{
+          labels:["Procesos","Conv. prueba","Conv. cierre","HIT"],
+          datasets:[{
+            data:[90,82,78,70],
+            backgroundColor:["#22c55e","#38bdf8","#6366f1","#f97316"]
+          }]
+        },
+        options:{
+          plugins:{ legend:{ display:false } },
+          responsive:true,
+          maintainAspectRatio:false,
+          scales:{
+            x:{ ticks:{ color:getComputedStyle(document.body).getPropertyValue("--text-muted"), font:{size:10} },
+                grid:{ display:false } },
+            y:{ ticks:{ color:getComputedStyle(document.body).getPropertyValue("--text-muted"), font:{size:10} },
+                grid:{ color:"rgba(31,41,55,0.3)" }, max:100, min:0 }
+          }
+        }
+      });
     }
 
     function actualizarChartsCentro() {
@@ -2472,11 +2551,6 @@
       const areasMejora = 4; // demo
 
       centroMetricsActual = { procesos, convPrueba, convVenta, hit: hitVal, formaciones, screening, areasMejora };
-
-      $("#kpiCentroProcesos").textContent = procesos + "%";
-      $("#kpiCentroPrueba").textContent   = convPrueba + "%";
-      $("#kpiCentroVenta").textContent    = convVenta + "%";
-      $("#kpiCentroHit").textContent      = hitVal + "%";
 
       centroCharts.radar.data.datasets[0].data = [
         formaciones,
@@ -2508,6 +2582,9 @@
 
       centroCharts.convResumen.data.datasets[0].data = [convPrueba, convVenta];
       centroCharts.convResumen.update();
+
+      centroCharts.kpiBarras.data.datasets[0].data = [procesos, convPrueba, convVenta, hitVal];
+      centroCharts.kpiBarras.update();
     }
 
     document.addEventListener("change", e => {
@@ -2561,8 +2638,9 @@
     $("#btnAdjuntarChecklist").addEventListener("click", ()=> $("#inputChecklist").click());
     $("#inputChecklist").addEventListener("change", e => {
       const file = e.target.files[0];
-      if (file) $("#nombreChecklist").textContent = file.name;
-      else $("#nombreChecklist").textContent = "";
+      const name = file ? file.name : "";
+      $("#nombreChecklist").textContent = name;
+      $("#anexoChecklistNombre").textContent = name || "Sin archivo";
     });
 
     $$(".imagen-preview").forEach(div => {
@@ -2593,17 +2671,21 @@
 
       if (centroMetricsActual && centroActual) {
         const flags = getChecklistFlags();
-        dashboardAcum.procesos   += centroMetricsActual.procesos;
-        dashboardAcum.convPrueba += centroMetricsActual.convPrueba;
-        dashboardAcum.convVenta  += centroMetricsActual.convVenta;
-        dashboardAcum.hit        += centroMetricsActual.hit;
-        dashboardAcum.formaciones+= centroMetricsActual.formaciones;
-        dashboardAcum.ayuda      += flags.ayuda ? 1 : 0;
-        dashboardAcum.aar        += flags.aar ? 1 : 0;
-        dashboardAcum.primeros   += flags.primeros ? 1 : 0;
-        dashboardAcum.areas      += centroMetricsActual.areasMejora || 0;
-        dashboardAcum.n += 1;
-        actualizarDashboardDesdeAcum();
+        metricsStore.push({
+          centro: centroActual.centro,
+          delegado: centroActual.delegado,
+          procesos: centroMetricsActual.procesos,
+          convPrueba: centroMetricsActual.convPrueba,
+          convVenta: centroMetricsActual.convVenta,
+          hit: centroMetricsActual.hit,
+          formaciones: centroMetricsActual.formaciones,
+          ayuda: flags.ayuda,
+          aar: flags.aar,
+          primeros: flags.primeros,
+          areas: centroMetricsActual.areasMejora || 0
+        });
+
+        recalcularDashboard();
 
         informesPorCentro[centroActual.centro] = (informesPorCentro[centroActual.centro] || 0) + 1;
         renderTablaCentros();
@@ -2781,6 +2863,58 @@
       });
     }
 
+    function recalcularDashboard() {
+      const delSel = $("#filtroDashDelegado").value || "__todos";
+      const cenSel = $("#filtroDashCentro").value || "__todos";
+
+      let subset = metricsStore;
+      if (delSel !== "__todos") subset = subset.filter(m => m.delegado === delSel);
+      if (cenSel !== "__todos") subset = subset.filter(m => m.centro === cenSel);
+
+      if (!subset.length) {
+        $("#kpiProcesos").textContent   = "–";
+        $("#kpiConvPrueba").textContent = "–";
+        $("#kpiConvVenta").textContent  = "–";
+        $("#kpiHIT").textContent        = "–";
+        $("#kpiFormaciones").textContent= "–";
+        $("#kpiAyuda").textContent      = "–";
+        $("#kpiAar").textContent        = "–";
+        $("#kpiPrimeros").textContent   = "–";
+        return;
+      }
+
+      const n = subset.length;
+      const avgProc = Math.round(subset.reduce((s,m)=>s+m.procesos,0)/n);
+      const avgPrue = Math.round(subset.reduce((s,m)=>s+m.convPrueba,0)/n);
+      const avgVent = Math.round(subset.reduce((s,m)=>s+m.convVenta,0)/n);
+      const avgHit  = Math.round(subset.reduce((s,m)=>s+m.hit,0)/n);
+      const avgForm = Math.round(subset.reduce((s,m)=>s+m.formaciones,0)/n);
+      const ayudaPct    = Math.round(100 * subset.reduce((s,m)=>s+(m.ayuda?1:0),0) / n);
+      const aarCount    = subset.reduce((s,m)=>s+(m.aar?1:0),0);
+      const aarPct      = Math.round(100 * aarCount / n);
+      const primerosPct = Math.round(100 * subset.reduce((s,m)=>s+(m.primeros?1:0),0)/n);
+
+      $("#kpiProcesos").textContent   = avgProc + "%";
+      $("#kpiConvPrueba").textContent = avgPrue + "%";
+      $("#kpiConvVenta").textContent  = avgVent + "%";
+      $("#kpiHIT").textContent        = avgHit + "%";
+      $("#kpiFormaciones").textContent= avgForm + "%";
+      $("#kpiAyuda").textContent      = ayudaPct ? `Sí ${ayudaPct}%` : "No";
+      $("#kpiAar").textContent        = aarPct ? `Sí ${aarPct}%` : "No";
+      $("#kpiPrimeros").textContent   = primerosPct ? `Sí ${primerosPct}%` : "No";
+
+      if (globalCharts.radarGeneral) {
+        globalCharts.radarGeneral.data.datasets[0].data = [avgProc, avgPrue, avgVent, avgHit];
+        globalCharts.radarGeneral.update();
+      }
+
+      if (globalCharts.aarHit) {
+        const noAar = n - aarCount;
+        globalCharts.aarHit.data.datasets[0].data = [aarCount, noAar];
+        globalCharts.aarHit.update();
+      }
+    }
+
     /* ========= DEMO CENTROS ========= */
     function cargarCentrosDemo() {
       const demo = [
@@ -2805,7 +2939,7 @@
       cargarCentrosDemo();
       initCalendar();
       initDashboardCharts();
-      actualizarDashboardDesdeAcum();
+      // KPIs iniciales de demo están en los valores por defecto de los gráficos
     });
   </script>
 </body>
