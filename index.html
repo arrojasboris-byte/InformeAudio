@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Control Center Audio - Centros e informes</title>
+  <title>Control Center Audio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
@@ -14,13 +14,11 @@
       --text-muted: #9ca3af;
       --border-soft: #1f2937;
       --accent-red: #ff2440;
-      --accent-red-soft: #fecaca;
       --accent-blue: #38bdf8;
       --accent-green: #22c55e;
       --accent-orange: #f97316;
       --accent-yellow: #eab308;
       --radius-lg: 14px;
-      --radius-xl: 18px;
     }
 
     body.light {
@@ -51,7 +49,7 @@
       display: flex;
     }
 
-    /* SIDEBAR SIEMPRE NEGRA */
+    /* SIDEBAR SIEMPRE OSCURA */
     .sidebar {
       width: 250px;
       background: #020617;
@@ -244,7 +242,7 @@
       font-size: .85rem;
     }
 
-    /* VISTAS */
+    /* VISTAS GENERALES */
     .view {
       flex: 1;
       display: none;
@@ -252,10 +250,7 @@
       gap: 10px;
       min-height: 0;
     }
-
-    .view.active {
-      display: flex;
-    }
+    .view.active { display:flex; }
 
     .card {
       background: var(--bg-card);
@@ -267,632 +262,387 @@
       min-width: 0;
     }
 
-    .view-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 1.4fr) minmax(0, 1.1fr);
-      gap: 8px;
-      min-height: 220px;
-    }
-
     .section-title-main {
       font-size: .95rem;
       font-weight: 600;
       margin-bottom: 4px;
     }
 
-    /* DELEGADOS */
-    .delegados-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
+    /* DASHBOARD */
+    .dashboard-top {
+      display:grid;
+      grid-template-columns: repeat(4,minmax(0,1fr));
+      gap:8px;
     }
 
-    .badge-count {
-      font-size: .7rem;
-      padding: 2px 7px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: var(--bg-card-soft);
-      color: var(--text-muted);
-    }
-
-    .delegados-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      overflow-y: auto;
-      max-height: 210px;
-      padding-right: 2px;
-    }
-
-    .delegado-row {
-      border-radius: 10px;
-      padding: 4px 8px 4px 6px;
-      background: var(--bg-card-soft);
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      cursor: pointer;
-      border: 1px solid transparent;
-    }
-
-    .delegado-row.active {
-      border-color: var(--accent-blue);
-    }
-
-    .delegado-main {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: .78rem;
-    }
-
-    .delegado-name {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .delegado-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-    }
-
-    .delegado-centros {
-      font-size: .7rem;
-      color: var(--text-muted);
-    }
-
-    .delegado-bar {
-      height: 3px;
-      border-radius: 999px;
-      background: rgba(148,163,184,.4);
-      overflow: hidden;
-    }
-
-    .delegado-bar-inner {
-      height: 100%;
-      width: 100%;
-    }
-
-    .delegados-actions {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-    }
-
-    /* CALENDARIO */
-    .calendar-card {
-      align-items: stretch;
-    }
-
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-
-    .calendar-title {
-      font-size: 1.05rem;
-      font-weight: 700;   /* mes en negrita con notoriedad */
-    }
-
-    .calendar-nav {
-      display: flex;
-      gap: 6px;
-    }
-
-    .calendar-nav-btn {
-      width: 26px;
-      height: 26px;
-      border-radius: 999px;
-      border: 1px solid var(--border-soft);
-      background: transparent;
-      color: var(--text-main);
-      font-size: .8rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .calendar-weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      font-size: .72rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-      text-align: center;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
-      grid-auto-rows: 58px; /* más compacto para que quepa entero */
-    }
-
-    .calendar-day {
-      border-radius: 14px;
-      border: 1px solid var(--border-soft);
-      padding: 4px 5px;
-      font-size: .78rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      cursor: pointer;
-    }
-
-    .calendar-day.empty {
-      background: transparent;
-      border-style: dashed;
-      cursor: default;
-    }
-
-    .calendar-day-number {
-      align-self: flex-start;
-    }
-
-    .calendar-day-badge {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      font-size: .7rem;
-    }
-
-    .calendar-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: var(--accent-yellow);
-    }
-
-    .calendar-resp {
-      font-weight: 600;
-    }
-
-    /* VISITAS AGENDADAS (UNA LÍNEA) */
-    .visitas-list {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      overflow-y: auto;
-      max-height: 210px;
-      padding-right: 2px;
-    }
-
-    .visita-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      border-radius: 10px;
-      padding: 4px 6px;
-      background: var(--bg-card-soft);
-      font-size: .75rem;
-    }
-
-    .visita-main {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-
-    .visita-top {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      white-space: nowrap;
-    }
-
-    .visita-centro {
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      max-width: 220px;
-    }
-
-    .visita-meta {
-      display: flex;
-      gap: 6px;
-      color: var(--text-muted);
-      font-size: .7rem;
-      flex-wrap: wrap;
-    }
-
-    .visita-actions {
-      display: flex;
-      gap: 4px;
-      flex-wrap: nowrap;
-    }
-
-    .chip {
-      border-radius: 999px;
-      padding: 2px 6px;
-      font-size: .7rem;
-      border: 1px solid var(--border-soft);
-      background: #0b1120;
-      white-space: nowrap;
-    }
-
-    .chip-pendiente {
-      background: rgba(234,179,8,.14);
-      border-color: rgba(234,179,8,.7);
-      color: #eab308;
-    }
-
-    .chip-sininforme {
-      background: rgba(148,163,184,.18);
-      border-color: rgba(148,163,184,.7);
-      color: var(--text-muted);
-    }
-
-    .chip-estado-proceso {
-      background: rgba(34,197,94,.2);
-      border-color: rgba(34,197,94,.8);
-      color: #16a34a;
-    }
-
-    .chip-estado-finalizado {
-      background: rgba(22,163,74,1);
-      border-color: rgba(22,163,74,1);
-      color: #ecfdf3;
-    }
-
-    .chip-estado-anulada {
-      background: rgba(248,113,113,.25);
-      border-color: rgba(248,113,113,.9);
-      color: #fecaca;
-    }
-
-    .btn-mini {
-      border-radius: 999px;
-      padding: 2px 6px;
-      font-size: .7rem;
-      border-width: 1px;
-    }
-
-    /* TABLA CENTROS */
-    .table-wrapper {
-      flex: 1;
-      background: var(--bg-card);
+    .kpi-card {
+      padding:8px 10px;
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border-soft);
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-    }
-
-    .table-header {
-      padding: 8px 10px 6px;
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-
-    .table-header h3 {
-      font-size: .9rem;
-    }
-
-    .table-header span {
-      font-size: .72rem;
-      color: var(--text-muted);
-    }
-
-    .table-scroll {
-      flex: 1;
-      overflow: auto;
-      border-top: 1px solid var(--border-soft);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .78rem;
-    }
-
-    thead {
-      position: sticky;
-      top: 0;
       background: var(--bg-card);
-      z-index: 2;
+      border:1px solid var(--border-soft);
+      display:flex;
+      flex-direction:column;
+      gap:4px;
     }
+    .kpi-label {font-size:.75rem;color:var(--text-muted);}
+    .kpi-value {font-size:1.2rem;font-weight:700;}
+    .kpi-sub {font-size:.7rem;color:var(--text-muted);}
 
-    th, td {
-      padding: 6px 8px;
-      border-bottom: 1px solid #0b1120;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    th {
-      font-weight: 600;
-      font-size: .75rem;
-      color: var(--text-muted);
-    }
-
-    tbody tr:nth-child(even) {
-      background: #020617;
-    }
-
-    body.light tbody tr:nth-child(even) {
-      background: #f3f4f6;
-    }
-
-    tbody tr:hover {
-      background: rgba(15,23,42,0.9);
-    }
-
-    body.light tbody tr:hover {
-      background: #e5e7eb;
-    }
-
-    .tag {
-      border-radius: 999px;
-      padding: 2px 6px;
-      font-size: .7rem;
-      border: 1px solid var(--border-soft);
-      background: #0b1120;
-      white-space: nowrap;
-    }
-
-    .tag.exclusivo {
-      background: rgba(22,163,74,0.15);
-      color: var(--accent-green);
-      border-color: rgba(22,163,74,0.7);
-    }
-
-    .tag.corner {
-      background: rgba(37,99,235,0.15);
-      color: var(--accent-blue);
-      border-color: rgba(37,99,235,0.7);
-    }
-
-    .tag-aar {
-      background: rgba(148,163,184,0.15);
-      border-color: rgba(148,163,184,0.7);
-      color: var(--text-muted);
-    }
-
-    .tag-aar.si {
-      background: rgba(34,197,94,0.15);
-      border-color: rgba(34,197,94,0.7);
-      color: var(--accent-green);
-    }
-
-    .tag-aar.formacion {
-      background: rgba(234,179,8,0.15);
-      border-color: rgba(234,179,8,0.7);
-      color: #eab308;
-    }
-
-    .btn-link {
-      border: none;
-      background: transparent;
-      color: var(--accent-blue);
-      cursor: pointer;
-      font-size: .74rem;
-      text-decoration: underline;
-    }
-
-    .table-footer {
-      padding: 4px 10px 6px;
-      font-size: .72rem;
-      color: var(--text-muted);
-      text-align: right;
-    }
-
-    /* MODALES GENERALES */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.75);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 50;
-    }
-
-    .modal {
-      background: var(--bg-card);
-      border-radius: 14px;
-      padding: 14px;
-      width: 440px;
-      max-width: 95%;
-      border: 1px solid var(--border-soft);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .modal-header h3 {
-      font-size: .95rem;
-    }
-
-    .modal-close {
-      cursor: pointer;
-      font-size: 1rem;
-      color: var(--text-muted);
-    }
-
-    .modal-body {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      font-size: .78rem;
-    }
-
-    .modal-field {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .modal-field label {
-      font-size: .74rem;
-      color: var(--text-muted);
-    }
-
-    .modal-field input,
-    .modal-field select,
-    .modal-field textarea {
-      padding: 5px 7px;
-      border-radius: 8px;
-      border: 1px solid var(--border-soft);
-      background: var(--bg-card-soft);
-      color: var(--text-main);
-      font-size: .78rem;
-      outline: none;
-    }
-
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    /* -------- VISTA INFORME DE LA VISITA -------- */
-    .informe-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
-      gap: 10px;
-      min-height: 0;
-    }
-
-    .informe-top {
-      display: grid;
-      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.6fr);
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .info-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .78rem;
-    }
-
-    .info-table td {
-      padding: 4px 6px;
-      border-bottom: 1px solid var(--border-soft);
-    }
-
-    .info-label {
-      color: var(--text-muted);
-      width: 32%;
-      white-space: nowrap;
-    }
-
-    .small-input-row {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .small-input-row .modal-field {
-      flex: 1;
-    }
-
-    .checklist-column {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: .78rem;
-      max-height: 260px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .check-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .check-item input {
-      width: 14px;
-      height: 14px;
-    }
-
-    .chart-column {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: 0;
-    }
-
-    .chart-card {
-      flex: 1;
-      min-height: 120px;
+    .dashboard-charts {
+      display:grid;
+      grid-template-columns: minmax(0,1.2fr) minmax(0,1.2fr) minmax(0,0.9fr);
+      gap:8px;
+      min-height:0;
     }
 
     .chart-container {
-      position: relative;
-      width: 100%;
-      height: 160px;
+      position:relative;
+      width:100%;
+      height:180px;
     }
 
-    /* Adjuntar imágenes */
-    .imagenes-row {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
+    /* CENTROS */
+    .view-row {
+      display:grid;
+      grid-template-columns: minmax(0,1.15fr) minmax(0,1.4fr) minmax(0,1.1fr);
+      gap:8px;
+      min-height:220px;
     }
 
-    .imagen-slot {
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      text-align: center;
-      font-size: .78rem;
+    .delegados-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:4px;
     }
 
-    .imagen-slot input {
-      font-size: .7rem;
+    .badge-count {
+      font-size:.7rem;
+      padding:2px 7px;
+      border-radius:999px;
+      border:1px solid var(--border-soft);
+      background:var(--bg-card-soft);
+      color:var(--text-muted);
     }
 
-    .observaciones-card textarea {
-      min-height: 80px;
-      resize: vertical;
+    .delegados-list {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      overflow-y:auto;
+      max-height:210px;
+      padding-right:2px;
     }
 
-    .informe-header-actions {
-      display: flex;
-      gap: 6px;
-      align-items: center;
+    .delegado-row {
+      border-radius:10px;
+      padding:4px 8px 4px 6px;
+      background:var(--bg-card-soft);
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+      cursor:pointer;
+      border:1px solid transparent;
+    }
+    .delegado-row.active {border-color:var(--accent-blue);}
+
+    .delegado-main {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:.78rem;
     }
 
-    @media (max-width: 1100px) {
-      .view-row {
-        grid-template-columns: 1.3fr 1.3fr;
-        grid-auto-rows: auto;
-        grid-template-rows: auto auto;
-      }
-      .view-row > :last-child {
-        grid-column: 1 / -1;
-      }
-      .informe-layout {
-        grid-template-columns: 1fr;
-      }
-      .informe-top {
-        grid-template-columns: 1fr;
-      }
+    .delegado-name {
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .delegado-dot {
+      width:8px;
+      height:8px;
+      border-radius:999px;
+    }
+    .delegado-centros {font-size:.7rem;color:var(--text-muted);}
+
+    .delegado-bar {
+      height:3px;
+      border-radius:999px;
+      background:rgba(148,163,184,.4);
+      overflow:hidden;
+    }
+    .delegado-bar-inner {
+      height:100%;
+      width:100%;
+    }
+
+    .delegados-actions {
+      display:flex;
+      gap:6px;
+      margin-top:6px;
+    }
+
+    /* CALENDARIO */
+    .calendar-card {align-items:stretch;}
+    .calendar-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:6px;
+    }
+    .calendar-title {
+      font-size:1.05rem;
+      font-weight:700;
+    }
+    .calendar-nav {display:flex;gap:6px;}
+    .calendar-nav-btn {
+      width:26px;height:26px;
+      border-radius:999px;
+      border:1px solid var(--border-soft);
+      background:transparent;
+      color:var(--text-main);
+      font-size:.8rem;
+      cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .calendar-weekdays {
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      font-size:.72rem;
+      color:var(--text-muted);
+      margin-bottom:4px;
+      text-align:center;
+    }
+    .calendar-grid {
+      display:grid;
+      grid-template-columns:repeat(7,1fr);
+      gap:5px;
+      grid-auto-rows:58px;
+    }
+    .calendar-day {
+      border-radius:14px;
+      border:1px solid var(--border-soft);
+      padding:4px 5px;
+      font-size:.78rem;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      cursor:pointer;
+    }
+    .calendar-day.empty {
+      background:transparent;
+      border-style:dashed;
+      cursor:default;
+    }
+    .calendar-day-number {align-self:flex-start;}
+    .calendar-day-badge {
+      display:flex;
+      align-items:center;
+      gap:4px;
+      font-size:.7rem;
+    }
+    .calendar-dot {
+      width:6px;height:6px;border-radius:999px;background:var(--accent-yellow);
+    }
+    .calendar-resp {font-weight:600;}
+
+    /* VISITAS */
+    .visitas-list {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      overflow-y:auto;
+      max-height:210px;
+      padding-right:2px;
+    }
+    .visita-row {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:6px;
+      border-radius:10px;
+      padding:4px 6px;
+      background:var(--bg-card-soft);
+      font-size:.75rem;
+    }
+    .visita-main {display:flex;flex-direction:column;gap:2px;min-width:0;}
+    .visita-top {display:flex;gap:6px;align-items:center;white-space:nowrap;}
+    .visita-centro {
+      font-weight:500;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      max-width:220px;
+    }
+    .visita-meta {display:flex;gap:6px;color:var(--text-muted);font-size:.7rem;flex-wrap:wrap;}
+    .visita-actions {display:flex;gap:4px;flex-wrap:nowrap;}
+
+    .chip {
+      border-radius:999px;
+      padding:2px 6px;
+      font-size:.7rem;
+      border:1px solid var(--border-soft);
+      background:#0b1120;
+      white-space:nowrap;
+    }
+    .chip-pendiente {background:rgba(234,179,8,.14);border-color:rgba(234,179,8,.7);color:#eab308;}
+    .chip-sininforme {background:rgba(148,163,184,.18);border-color:rgba(148,163,184,.7);color:var(--text-muted);}
+    .chip-estado-proceso {background:rgba(34,197,94,.2);border-color:rgba(34,197,94,.8);color:#16a34a;}
+    .chip-estado-finalizado {background:rgba(22,163,74,1);border-color:rgba(22,163,74,1);color:#ecfdf3;}
+    .chip-estado-anulada {background:rgba(248,113,113,.25);border-color:rgba(248,113,113,.9);color:#fecaca;}
+
+    .btn-mini {border-radius:999px;padding:2px 6px;font-size:.7rem;border-width:1px;}
+
+    /* TABLA CENTROS */
+    .table-wrapper {
+      flex:1;
+      background:var(--bg-card);
+      border-radius:var(--radius-lg);
+      border:1px solid var(--border-soft);
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+    .table-header {
+      padding:8px 10px 6px;
+      display:flex;
+      justify-content:space-between;
+      align-items:baseline;
+    }
+    .table-header h3 {font-size:.9rem;}
+    .table-header span {font-size:.72rem;color:var(--text-muted);}
+    .table-scroll {flex:1;overflow:auto;border-top:1px solid var(--border-soft);}
+    table {width:100%;border-collapse:collapse;font-size:.78rem;}
+    thead {position:sticky;top:0;background:var(--bg-card);z-index:2;}
+    th,td {padding:6px 8px;border-bottom:1px solid #0b1120;text-align:left;white-space:nowrap;}
+    th {font-weight:600;font-size:.75rem;color:var(--text-muted);}
+    tbody tr:nth-child(even){background:#020617;}
+    body.light tbody tr:nth-child(even){background:#f3f4f6;}
+    tbody tr:hover{background:rgba(15,23,42,0.9);}
+    body.light tbody tr:hover{background:#e5e7eb;}
+
+    .tag {
+      border-radius:999px;
+      padding:2px 6px;
+      font-size:.7rem;
+      border:1px solid var(--border-soft);
+      background:#0b1120;
+      white-space:nowrap;
+    }
+    .tag.exclusivo {background:rgba(22,163,74,0.15);color:var(--accent-green);border-color:rgba(22,163,74,0.7);}
+    .tag.corner {background:rgba(37,99,235,0.15);color:var(--accent-blue);border-color:rgba(37,99,235,0.7);}
+    .tag-aar {background:rgba(148,163,184,0.15);border-color:rgba(148,163,184,0.7);color:var(--text-muted);}
+    .tag-aar.si {background:rgba(34,197,94,0.15);border-color:rgba(34,197,94,0.7);color:var(--accent-green);}
+    .tag-aar.formacion {background:rgba(234,179,8,0.15);border-color:rgba(234,179,8,0.7);color:#eab308;}
+
+    .btn-link {border:none;background:transparent;color:var(--accent-blue);cursor:pointer;font-size:.74rem;text-decoration:underline;}
+
+    .table-footer {padding:4px 10px 6px;font-size:.72rem;color:var(--text-muted);text-align:right;}
+
+    /* MODALES GENERALES */
+    .modal-backdrop {
+      position:fixed;
+      inset:0;
+      background:rgba(15,23,42,0.75);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      z-index:50;
+    }
+    .modal {
+      background:var(--bg-card);
+      border-radius:14px;
+      padding:14px;
+      width:440px;
+      max-width:95%;
+      border:1px solid var(--border-soft);
+    }
+    .modal-header {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:8px;
+    }
+    .modal-header h3 {font-size:.95rem;}
+    .modal-close {cursor:pointer;font-size:1rem;color:var(--text-muted);}
+    .modal-body {display:flex;flex-direction:column;gap:8px;font-size:.78rem;}
+    .modal-field {display:flex;flex-direction:column;gap:2px;}
+    .modal-field label {font-size:.74rem;color:var(--text-muted);}
+    .modal-field input,
+    .modal-field select,
+    .modal-field textarea {
+      padding:5px 7px;
+      border-radius:8px;
+      border:1px solid var(--border-soft);
+      background:var(--bg-card-soft);
+      color:var(--text-main);
+      font-size:.78rem;
+      outline:none;
+    }
+    .modal-footer {display:flex;justify-content:flex-end;gap:8px;margin-top:10px;}
+
+    /* INFORME VISITA */
+    .informe-top {
+      display:grid;
+      grid-template-columns:minmax(0,1.4fr) minmax(0,1.6fr);
+      gap:8px;
+      margin-bottom:8px;
+    }
+    .info-table {width:100%;border-collapse:collapse;font-size:.78rem;}
+    .info-table td {padding:4px 6px;border-bottom:1px solid var(--border-soft);}
+    .info-label {color:var(--text-muted);width:32%;white-space:nowrap;}
+
+    .small-input-row {display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap;}
+    .small-input-row .modal-field {flex:1;}
+
+    .informe-layout {
+      display:grid;
+      grid-template-columns:minmax(0,1.1fr) minmax(0,1.9fr);
+      gap:8px;
+      min-height:0;
+    }
+
+    .checklist-column {
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      font-size:.78rem;
+      max-height:260px;
+      overflow-y:auto;
+      padding-right:4px;
+    }
+    .check-item {display:flex;align-items:center;gap:6px;}
+    .check-item input{width:14px;height:14px;}
+
+    .chart-column {
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      min-height:0;
+    }
+    .chart-card {flex:1;min-height:120px;}
+
+    .imagenes-row {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;}
+    .imagen-slot {align-items:center;justify-content:center;gap:6px;text-align:center;font-size:.78rem;}
+    .imagen-slot input{font-size:.7rem;}
+
+    .triple-observaciones {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;}
+    .observ-card textarea{min-height:80px;resize:vertical;}
+
+    .informe-footer-actions {margin-top:6px;display:flex;justify-content:flex-end;}
+
+    .informe-header-actions {display:flex;gap:6px;align-items:center;}
+
+    @media (max-width:1100px){
+      .dashboard-charts {grid-template-columns:1fr;}
+      .view-row {grid-template-columns:1.3fr 1.3fr;grid-auto-rows:auto;grid-template-rows:auto auto;}
+      .view-row> :last-child {grid-column:1 / -1;}
+      .informe-top {grid-template-columns:1fr;}
+      .informe-layout {grid-template-columns:1fr;}
+      .imagenes-row,.triple-observaciones{grid-template-columns:1fr;}
     }
   </style>
 
-  <!-- Librerías -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
@@ -910,7 +660,10 @@
     <div>
       <div class="section-title">Secciones</div>
       <nav class="nav-list">
-        <div class="nav-item active" data-view-target="view-centros">
+        <div class="nav-item active" data-view-target="view-dashboard">
+          <span class="icon">🏠</span> Dashboard
+        </div>
+        <div class="nav-item" data-view-target="view-centros">
           <span class="icon">🏢</span> Centros
         </div>
         <div class="nav-item" data-view-target="view-informe">
@@ -960,8 +713,49 @@
       </div>
     </div>
 
+    <!-- VISTA DASHBOARD -->
+    <section class="view active" id="view-dashboard">
+      <section class="dashboard-top">
+        <article class="kpi-card">
+          <div class="kpi-label">Total centros</div>
+          <div class="kpi-value" id="kpiTotalCentros">0</div>
+          <div class="kpi-sub" id="kpiDetalleCentros"></div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-label">Visitas mes</div>
+          <div class="kpi-value" id="kpiVisitasMes">0</div>
+          <div class="kpi-sub" id="kpiVisitasPend"></div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-label">Cobertura AAR</div>
+          <div class="kpi-value" id="kpiAAR">0%</div>
+          <div class="kpi-sub" id="kpiAARDetalle"></div>
+        </article>
+        <article class="kpi-card">
+          <div class="kpi-label">Checklist formaciones</div>
+          <div class="kpi-value" id="kpiChecklist">0%</div>
+          <div class="kpi-sub">Centros con checklist adjunto</div>
+        </article>
+      </section>
+
+      <section class="dashboard-charts">
+        <article class="card">
+          <span class="section-title-main" style="margin-bottom:4px;">KPIs globales</span>
+          <div class="chart-container"><canvas id="chartDashRadar"></canvas></div>
+        </article>
+        <article class="card">
+          <span class="section-title-main" style="margin-bottom:4px;">Estado de visitas</span>
+          <div class="chart-container"><canvas id="chartDashEstados"></canvas></div>
+        </article>
+        <article class="card">
+          <span class="section-title-main" style="margin-bottom:4px;">Centros AAR</span>
+          <div class="chart-container"><canvas id="chartDashAAR"></canvas></div>
+        </article>
+      </section>
+    </section>
+
     <!-- VISTA CENTROS -->
-    <section class="view active" id="view-centros">
+    <section class="view" id="view-centros">
       <section class="view-row">
         <!-- Delegados -->
         <article class="card">
@@ -1014,9 +808,7 @@
       <!-- TABLA CENTROS -->
       <section class="table-wrapper">
         <div class="table-header">
-          <div>
-            <h3>Listado de centros</h3>
-          </div>
+          <div><h3>Listado de centros</h3></div>
           <span id="centrosCounter"></span>
         </div>
         <div class="table-scroll">
@@ -1056,30 +848,12 @@
         <article class="card">
           <table class="info-table">
             <tbody>
-              <tr>
-                <td class="info-label">Centro</td>
-                <td id="infCentro">-</td>
-              </tr>
-              <tr>
-                <td class="info-label">Provincia</td>
-                <td id="infProvincia">-</td>
-              </tr>
-              <tr>
-                <td class="info-label">Delegado</td>
-                <td id="infDelegado">-</td>
-              </tr>
-              <tr>
-                <td class="info-label">Tipo</td>
-                <td id="infTipo">-</td>
-              </tr>
-              <tr>
-                <td class="info-label">Responsable audio</td>
-                <td id="infRespAudio">-</td>
-              </tr>
-              <tr>
-                <td class="info-label">Fecha visita</td>
-                <td id="infFecha">-</td>
-              </tr>
+              <tr><td class="info-label">Centro</td><td id="infCentro">-</td></tr>
+              <tr><td class="info-label">Provincia</td><td id="infProvincia">-</td></tr>
+              <tr><td class="info-label">Delegado</td><td id="infDelegado">-</td></tr>
+              <tr><td class="info-label">Tipo</td><td id="infTipo">-</td></tr>
+              <tr><td class="info-label">Responsable audio</td><td id="infRespAudio">-</td></tr>
+              <tr><td class="info-label">Fecha visita</td><td id="infFecha">-</td></tr>
             </tbody>
           </table>
 
@@ -1131,12 +905,18 @@
               <div class="check-item"><input type="checkbox" id="chkTchin" /> <label for="chkTchin">Tchin Tchin</label></div>
             </div>
 
-            <!-- Gráficas -->
+            <!-- Gráficas del centro -->
             <div class="chart-column">
               <div class="card chart-card">
                 <span class="section-title-main" style="margin-bottom:4px;">KPIs del centro</span>
                 <div class="chart-container">
                   <canvas id="chartInformeRadar"></canvas>
+                </div>
+              </div>
+              <div class="card chart-card">
+                <span class="section-title-main" style="margin-bottom:4px;">Estado de visitas</span>
+                <div class="chart-container">
+                  <canvas id="chartInformeEstados"></canvas>
                 </div>
               </div>
               <div class="card chart-card" id="cardInformeAAR">
@@ -1166,9 +946,26 @@
             <input type="file" accept="image/*" />
           </div>
         </div>
-        <div class="card observaciones-card" style="margin-top:8px;">
-          <strong style="font-size:.85rem; margin-bottom:4px;">Observaciones · Recomendaciones · Compromisos</strong>
-          <textarea id="infObservaciones"></textarea>
+
+        <div class="triple-observaciones">
+          <div class="card observ-card">
+            <strong style="font-size:.85rem;margin-bottom:4px;">Observaciones</strong>
+            <textarea id="infObservaciones"></textarea>
+          </div>
+          <div class="card observ-card">
+            <strong style="font-size:.85rem;margin-bottom:4px;">Recomendaciones</strong>
+            <textarea id="infRecomendaciones"></textarea>
+          </div>
+          <div class="card observ-card">
+            <strong style="font-size:.85rem;margin-bottom:4px;">Compromisos</strong>
+            <textarea id="infCompromisos"></textarea>
+          </div>
+        </div>
+
+        <div class="informe-footer-actions">
+          <button class="btn btn-cta-green" id="btnGuardarInformeBottom">
+            <span class="icon">💾</span> Guardar informe
+          </button>
         </div>
       </section>
     </section>
@@ -1205,7 +1002,7 @@
     </div>
   </div>
 
-  <!-- MODAL NUEVA VISITA (CALENDARIO) -->
+  <!-- MODAL NUEVA VISITA -->
   <div class="modal-backdrop" id="modalVisita">
     <div class="modal">
       <div class="modal-header">
@@ -1213,10 +1010,7 @@
         <span class="modal-close" data-close="modalVisita">✕</span>
       </div>
       <div class="modal-body">
-        <div class="modal-field">
-          <label>Fecha</label>
-          <input id="visFecha" readonly />
-        </div>
+        <div class="modal-field"><label>Fecha</label><input id="visFecha" readonly /></div>
         <div class="modal-field">
           <label>Centro</label>
           <select id="visCentro"></select>
@@ -1236,7 +1030,7 @@
     </div>
   </div>
 
-  <!-- MODAL INFORMES (tabla de centros) -->
+  <!-- MODAL INFORMES CENTRO -->
   <div class="modal-backdrop" id="modalInformesCentro">
     <div class="modal">
       <div class="modal-header">
@@ -1251,47 +1045,46 @@
   </div>
 
   <script>
-    // ------------- THEME -------------
     const body = document.body;
     const themeToggle = document.getElementById('themeToggle');
 
-    function aplicarTemaDesdeStorage() {
+    function aplicarTemaDesdeStorage(){
       const saved = localStorage.getItem('cca_theme');
-      if (saved === 'light') body.classList.add('light');
+      if(saved==='light') body.classList.add('light');
     }
     aplicarTemaDesdeStorage();
 
-    themeToggle.addEventListener('click', () => {
+    themeToggle.addEventListener('click',()=>{
       body.classList.toggle('light');
-      localStorage.setItem('cca_theme', body.classList.contains('light') ? 'light' : 'dark');
+      localStorage.setItem('cca_theme', body.classList.contains('light')?'light':'dark');
     });
 
-    // ------------- NAV VISTAS -------------
-    document.querySelectorAll('.nav-item[data-view-target]').forEach(nav => {
-      nav.addEventListener('click', () => {
-        const target = nav.dataset.viewTarget;
-        document.querySelectorAll('.nav-item[data-view-target]').forEach(n => n.classList.remove('active'));
+    // NAV VISTAS
+    document.querySelectorAll('.nav-item[data-view-target]').forEach(nav=>{
+      nav.addEventListener('click',()=>{
+        const target=nav.dataset.viewTarget;
+        document.querySelectorAll('.nav-item[data-view-target]').forEach(n=>n.classList.remove('active'));
         nav.classList.add('active');
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
         document.getElementById(target).classList.add('active');
       });
     });
 
-    // ------------- DATOS BÁSICOS -------------
+    // DATOS
     const delegadosColores = {
-      "ENERITZ ARANGUREN": "#22c55e",
-      "LAURA PLAZAS": "#2563eb",
-      "LAURA RAMOS": "#14b8a6",
-      "Daniel Chazo": "#a855f7",
-      "Manuel Cánovas": "#f97316",
-      "Cecilia Pérez": "#0ea5e9",
-      "Martin SEBASTIÁN": "#ef4444",
-      "Marisa Carmona": "#eab308",
-      "Blanca Fdez. de la Pradilla": "#ec4899",
-      "Maribel Amezcua": "#facc15",
-      "Sonia Godino": "#22d3ee",
-      "Verónica Alfonsín": "#4ade80",
-      "Sergio Perán": "#fb7185"
+      "ENERITZ ARANGUREN":"#22c55e",
+      "LAURA PLAZAS":"#2563eb",
+      "LAURA RAMOS":"#14b8a6",
+      "Daniel Chazo":"#a855f7",
+      "Manuel Cánovas":"#f97316",
+      "Cecilia Pérez":"#0ea5e9",
+      "Martin SEBASTIÁN":"#ef4444",
+      "Marisa Carmona":"#eab308",
+      "Blanca Fdez. de la Pradilla":"#ec4899",
+      "Maribel Amezcua":"#facc15",
+      "Sonia Godino":"#22d3ee",
+      "Verónica Alfonsín":"#4ade80",
+      "Sergio Perán":"#fb7185"
     };
 
     const centros = [];
@@ -1307,9 +1100,8 @@
       "TORRELAVEGA CARREFOUR CC",
       "ZARAGOZA CALLE DELICIAS"
     ]);
-
     const informesPorCentro = {};
-    const aarPorCentro = {}; // demo, por ahora No en todos
+    const aarPorCentro = {};
 
     let filtroDelegadoActual = null;
     let filtroTextoActual = "";
@@ -1317,88 +1109,73 @@
     let nextVisitaId = 1;
     let visitaEnEdicion = null;
 
-    // ------------- UTILIDADES -------------
-    function tipoCentro(nombreCentro) {
-      return exclusivosNombres.has(nombreCentro) ? "Exclusivo" : "Corner";
-    }
+    function tipoCentro(nombreCentro){return exclusivosNombres.has(nombreCentro)?"Exclusivo":"Corner";}
+    function getAarEstado(nombreCentro){return aarPorCentro[nombreCentro]||"No";}
+    function getInformesCentro(nombreCentro){return informesPorCentro[nombreCentro]||[];}
 
-    function getAarEstado(nombreCentro) {
-      return aarPorCentro[nombreCentro] || "No";
-    }
-
-    function getInformesCentro(nombreCentro) {
-      return informesPorCentro[nombreCentro] || [];
-    }
-
-    // ------------- RENDER TABLA CENTROS -------------
+    // TABLA CENTROS
     const tablaBody = document.getElementById('tablaCentrosBody');
     const centrosCounter = document.getElementById('centrosCounter');
     const tableFooter = document.getElementById('tableFooter');
 
-    function renderTablaCentros() {
+    function renderTablaCentros(){
       const texto = filtroTextoActual.toLowerCase();
-      tablaBody.innerHTML = "";
-
-      const filtrados = centros.filter(c => {
-        const cad = (c.centro + " " + c.propietario + " " + c.delegado).toLowerCase();
+      tablaBody.innerHTML="";
+      const filtrados = centros.filter(c=>{
+        const cad=(c.centro+" "+c.propietario+" "+c.delegado).toLowerCase();
         const pasaTexto = cad.includes(texto);
-        const pasaDelegado = !filtroDelegadoActual ||
-          c.delegado.toLowerCase().includes(filtroDelegadoActual.toLowerCase());
+        const pasaDelegado = !filtroDelegadoActual || c.delegado.toLowerCase().includes(filtroDelegadoActual.toLowerCase());
         return pasaTexto && pasaDelegado;
       });
 
-      filtrados.forEach(c => {
-        const tr = document.createElement('tr');
-        const t = tipoCentro(c.centro);
-        const informes = getInformesCentro(c.centro);
-        const aarEstado = getAarEstado(c.centro);
+      filtrados.forEach(c=>{
+        const tr=document.createElement('tr');
+        const t=tipoCentro(c.centro);
+        const informes=getInformesCentro(c.centro);
+        const aarEstado=getAarEstado(c.centro);
 
-        const visitasCentro = visitas.filter(v => v.centro === c.centro);
-        const visitaPendienteInforme = visitasCentro.find(v => v.estadoInforme !== 'finalizado');
-
+        const visitasCentro=visitas.filter(v=>v.centro===c.centro);
+        const visitaPendienteInforme = visitasCentro.find(v=>v.estadoInforme!=='finalizado');
         let textoBtn;
-        if (visitaPendienteInforme) textoBtn = 'Informe';
-        else if (visitasCentro.length) textoBtn = 'Ver visitas';
-        else textoBtn = informes.length ? `Ver (${informes.length})` : "Añadir informe";
+        if(visitaPendienteInforme) textoBtn='Informe';
+        else if(visitasCentro.length) textoBtn='Ver visitas';
+        else textoBtn=informes.length?`Ver (${informes.length})`:"Añadir informe";
 
-        tr.innerHTML = `
+        tr.innerHTML=`
           <td>${c.codigo}</td>
           <td>${c.propietario}</td>
           <td>${c.centro}</td>
           <td>${c.provincia}</td>
           <td>${c.delegado}</td>
-          <td><span class="tag ${t === 'Exclusivo' ? 'exclusivo' : 'corner'}">${t}</span></td>
+          <td><span class="tag ${t==='Exclusivo'?'exclusivo':'corner'}">${t}</span></td>
           <td><button class="btn-link btn-informe-centro" data-centro="${c.centro}">${textoBtn}</button></td>
-          <td><span class="tag tag-aar ${aarEstado === 'Sí' ? 'si' : (aarEstado === 'En formación' ? 'formacion' : '')}">${aarEstado}</span></td>
+          <td><span class="tag tag-aar ${aarEstado==='Sí'?'si':(aarEstado==='En formación'?'formacion':'')}">${aarEstado}</span></td>
         `;
         tablaBody.appendChild(tr);
       });
 
-      centrosCounter.textContent = `Centros: ${filtrados.length} / ${centros.length}`;
-      tableFooter.textContent = `Centros mostrados: ${filtrados.length}`;
+      centrosCounter.textContent=`Centros: ${filtrados.length} / ${centros.length}`;
+      tableFooter.textContent=`Centros mostrados: ${filtrados.length}`;
     }
 
-    // ------------- RENDER DELEGADOS -------------
-    const delegadosList = document.getElementById('delegadosList');
-    const delegadosCount = document.getElementById('delegadosCount');
+    // DELEGADOS
+    const delegadosList=document.getElementById('delegadosList');
+    const delegadosCount=document.getElementById('delegadosCount');
 
-    function renderDelegados() {
-      delegadosList.innerHTML = "";
-      const mapa = new Map();
-      centros.forEach(c => {
-        if (!mapa.has(c.delegado)) mapa.set(c.delegado, []);
+    function renderDelegados(){
+      delegadosList.innerHTML="";
+      const mapa=new Map();
+      centros.forEach(c=>{
+        if(!mapa.has(c.delegado)) mapa.set(c.delegado,[]);
         mapa.get(c.delegado).push(c);
       });
-
-      delegadosCount.textContent = `${mapa.size} delegados`;
-
-      Array.from(mapa.entries()).sort().forEach(([nombre, lista]) => {
-        const color = delegadosColores[nombre] || '#e5e7eb';
-        const row = document.createElement('div');
-        row.className = 'delegado-row';
-        if (filtroDelegadoActual === nombre) row.classList.add('active');
-
-        row.innerHTML = `
+      delegadosCount.textContent=`${mapa.size} delegados`;
+      Array.from(mapa.entries()).sort().forEach(([nombre,lista])=>{
+        const color=delegadosColores[nombre]||'#e5e7eb';
+        const row=document.createElement('div');
+        row.className='delegado-row';
+        if(filtroDelegadoActual===nombre) row.classList.add('active');
+        row.innerHTML=`
           <div class="delegado-main">
             <div class="delegado-name">
               <span class="delegado-dot" style="background:${color}"></span>
@@ -1408,92 +1185,79 @@
           </div>
           <div class="delegado-bar"><div class="delegado-bar-inner" style="background:${color}"></div></div>
         `;
-        row.addEventListener('click', () => {
-          filtroDelegadoActual = filtroDelegadoActual === nombre ? null : nombre;
-          renderDelegados();
-          renderTablaCentros();
-          renderVisitas();
+        row.addEventListener('click',()=>{
+          filtroDelegadoActual = (filtroDelegadoActual===nombre)?null:nombre;
+          renderDelegados();renderTablaCentros();renderVisitas();actualizarDashboardCharts();
         });
         delegadosList.appendChild(row);
       });
     }
 
-    // ------------- BUSCADORES -------------
-    document.getElementById('buscadorGlobal').addEventListener('input', e => {
-      filtroTextoActual = e.target.value || "";
+    // BUSCADOR GLOBAL
+    document.getElementById('buscadorGlobal').addEventListener('input',e=>{
+      filtroTextoActual=e.target.value||"";
       renderTablaCentros();
       renderVisitas();
     });
 
-    // ------------- MODALES GENERALES -------------
-    function abrirModal(id) {
-      document.getElementById(id).style.display = 'flex';
-    }
-    function cerrarModal(id) {
-      document.getElementById(id).style.display = 'none';
-    }
-    document.querySelectorAll('[data-close]').forEach(el => {
-      el.addEventListener('click', () => cerrarModal(el.dataset.close));
+    // MODALES
+    function abrirModal(id){document.getElementById(id).style.display='flex';}
+    function cerrarModal(id){document.getElementById(id).style.display='none';}
+    document.querySelectorAll('[data-close]').forEach(el=>{
+      el.addEventListener('click',()=>cerrarModal(el.dataset.close));
     });
 
-    // ------------- ALTA CENTROS -------------
-    const btnAddCentro = document.getElementById('btnAddCentro');
-    const guardarCentroBtn = document.getElementById('guardarCentro');
-
-    btnAddCentro.addEventListener('click', () => {
-      const sel = document.getElementById('nuevoDelegado');
-      sel.innerHTML = "";
-      const nombres = new Set([...Object.keys(delegadosColores), ...centros.map(c => c.delegado)]);
-      nombres.forEach(nombre => {
-        const opt = document.createElement('option');
-        opt.value = nombre;
-        opt.textContent = nombre;
-        sel.appendChild(opt);
+    // NUEVO CENTRO
+    document.getElementById('btnAddCentro').addEventListener('click',()=>{
+      const sel=document.getElementById('nuevoDelegado');
+      sel.innerHTML="";
+      const nombres=new Set([...Object.keys(delegadosColores),...centros.map(c=>c.delegado)]);
+      nombres.forEach(nombre=>{
+        const opt=document.createElement('option');
+        opt.value=nombre;opt.textContent=nombre;sel.appendChild(opt);
       });
       abrirModal('modalCentro');
     });
 
-    guardarCentroBtn.addEventListener('click', () => {
-      const nuevo = {
-        codigo: document.getElementById('nuevoCodigo').value || "NEW",
-        propietario: document.getElementById('nuevoPropietario').value || "N/D",
-        centro: document.getElementById('nuevoCentro').value || "Centro sin nombre",
-        provincia: document.getElementById('nuevoProvincia').value || "N/D",
-        delegado: document.getElementById('nuevoDelegado').value || "N/D"
+    document.getElementById('guardarCentro').addEventListener('click',()=>{
+      const nuevo={
+        codigo:document.getElementById('nuevoCodigo').value||"NEW",
+        propietario:document.getElementById('nuevoPropietario').value||"N/D",
+        centro:document.getElementById('nuevoCentro').value||"Centro sin nombre",
+        provincia:document.getElementById('nuevoProvincia').value||"N/D",
+        delegado:document.getElementById('nuevoDelegado').value||"N/D"
       };
-      const tipo = document.getElementById('nuevoTipo').value;
-      if (tipo === "Exclusivo") exclusivosNombres.add(nuevo.centro);
+      const tipo=document.getElementById('nuevoTipo').value;
+      if(tipo==="Exclusivo") exclusivosNombres.add(nuevo.centro);
       centros.push(nuevo);
       cerrarModal('modalCentro');
       actualizarTodo();
     });
 
-    // ------------- EXCEL CENTROS -------------
-    const inputExcel = document.getElementById('inputExcel');
-    document.getElementById('btnAdjuntarExcel').addEventListener('click', () => {
-      inputExcel.click();
-    });
+    // EXCEL CENTROS
+    const inputExcel=document.getElementById('inputExcel');
+    document.getElementById('btnAdjuntarExcel').addEventListener('click',()=>inputExcel.click());
 
-    inputExcel.addEventListener('change', e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = evt => {
-        const data = new Uint8Array(evt.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[sheetName];
-        const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-        rows.slice(1).forEach(row => {
-          if (!row || row.length < 5) return;
-          const [codigo, propietario, centro, provincia, delegado] = row;
-          if (!centro) return;
+    inputExcel.addEventListener('change',e=>{
+      const file=e.target.files[0];
+      if(!file) return;
+      const reader=new FileReader();
+      reader.onload=evt=>{
+        const data=new Uint8Array(evt.target.result);
+        const workbook=XLSX.read(data,{type:'array'});
+        const sheetName=workbook.SheetNames[0];
+        const sheet=workbook.Sheets[sheetName];
+        const rows=XLSX.utils.sheet_to_json(sheet,{header:1});
+        rows.slice(1).forEach(row=>{
+          if(!row||row.length<5) return;
+          const [codigo,propietario,centro,provincia,delegado]=row;
+          if(!centro) return;
           centros.push({
-            codigo: (codigo || "").toString().trim(),
-            propietario: (propietario || "").toString().trim(),
-            centro: (centro || "").toString().trim(),
-            provincia: (provincia || "").toString().trim(),
-            delegado: (delegado || "").toString().trim()
+            codigo:(codigo||"").toString().trim(),
+            propietario:(propietario||"").toString().trim(),
+            centro:(centro||"").toString().trim(),
+            provincia:(provincia||"").toString().trim(),
+            delegado:(delegado||"").toString().trim()
           });
         });
         actualizarTodo();
@@ -1501,76 +1265,67 @@
       reader.readAsArrayBuffer(file);
     });
 
-    // ------------- CALENDARIO -------------
-    const calendarTitle = document.getElementById('calendarTitle');
-    const calendarGrid = document.getElementById('calendarGrid');
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
+    // CALENDARIO
+    const calendarTitle=document.getElementById('calendarTitle');
+    const calendarGrid=document.getElementById('calendarGrid');
+    let currentMonth=new Date().getMonth();
+    let currentYear=new Date().getFullYear();
 
-    function nombreMesES(m) {
-      return [
-        "Enero","Febrero","Marzo","Abril","Mayo","Junio",
-        "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"
-      ][m];
+    function nombreMesES(m){
+      return["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"][m];
     }
 
-    function renderCalendar() {
-      calendarTitle.textContent = `${nombreMesES(currentMonth)} ${currentYear}`;
-      calendarGrid.innerHTML = "";
-      const firstDay = new Date(currentYear, currentMonth, 1);
-      const startingDay = (firstDay.getDay() + 6) % 7; // lunes=0
-      const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-      const totalCells = startingDay + daysInMonth;
-      const rows = Math.ceil(totalCells / 7);
-      const cells = rows * 7;
+    function renderCalendar(){
+      calendarTitle.textContent=`${nombreMesES(currentMonth)} ${currentYear}`;
+      calendarGrid.innerHTML="";
+      const firstDay=new Date(currentYear,currentMonth,1);
+      const startingDay=(firstDay.getDay()+6)%7;
+      const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
+      const totalCells=startingDay+daysInMonth;
+      const rows=Math.ceil(totalCells/7);
+      const cells=rows*7;
 
-      for (let i = 0; i < cells; i++) {
-        const dayNum = i - startingDay + 1;
-        const div = document.createElement('div');
-        div.className = 'calendar-day';
-        if (dayNum < 1 || dayNum > daysInMonth) {
+      for(let i=0;i<cells;i++){
+        const dayNum=i-startingDay+1;
+        const div=document.createElement('div');
+        div.className='calendar-day';
+        if(dayNum<1||dayNum>daysInMonth){
           div.classList.add('empty');
           calendarGrid.appendChild(div);
           continue;
         }
-        div.dataset.date = new Date(currentYear, currentMonth, dayNum).toISOString().slice(0,10);
-        const numSpan = document.createElement('div');
-        numSpan.className = 'calendar-day-number';
-        numSpan.textContent = dayNum;
+        div.dataset.date=new Date(currentYear,currentMonth,dayNum).toISOString().slice(0,10);
+        const numSpan=document.createElement('div');
+        numSpan.className='calendar-day-number';
+        numSpan.textContent=dayNum;
         div.appendChild(numSpan);
 
-        const content = document.createElement('div');
-        content.className = 'calendar-day-badge';
-
-        const visitasDia = visitas.filter(v => v.fecha === div.dataset.date);
-        if (visitasDia.length) {
-          const v = visitasDia[0];
-          const dot = document.createElement('div');
-          dot.className = 'calendar-dot';
-          if (v.estado === 'anulada') dot.style.background = '#ef4444';
-          else if (v.estado === 'realizada') dot.style.background = '#22c55e';
-          else dot.style.background = '#eab308';
-
-          const respLetter = v.respAudio && v.respAudio.startsWith('A') ? 'A' : 'S';
-          const respSpan = document.createElement('span');
-          respSpan.className = 'calendar-resp';
-          respSpan.textContent = respLetter;
-
+        const content=document.createElement('div');
+        content.className='calendar-day-badge';
+        const visitasDia=visitas.filter(v=>v.fecha===div.dataset.date);
+        if(visitasDia.length){
+          const v=visitasDia[0];
+          const dot=document.createElement('div');
+          dot.className='calendar-dot';
+          if(v.estado==='anulada') dot.style.background='#ef4444';
+          else if(v.estado==='realizada') dot.style.background='#22c55e';
+          else dot.style.background='#eab308';
+          const respLetter=v.respAudio && v.respAudio.startsWith('A') ? 'A' : 'S';
+          const respSpan=document.createElement('span');
+          respSpan.className='calendar-resp';
+          respSpan.textContent=respLetter;
           content.appendChild(respSpan);
           content.appendChild(dot);
           div.appendChild(content);
         }
 
-        div.addEventListener('click', () => {
-          document.getElementById('visFecha').value = div.dataset.date;
-          // centros disponibles
-          const sel = document.getElementById('visCentro');
-          sel.innerHTML = "";
-          centros.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c.centro;
-            opt.textContent = c.centro;
-            sel.appendChild(opt);
+        div.addEventListener('click',()=>{
+          document.getElementById('visFecha').value=div.dataset.date;
+          const sel=document.getElementById('visCentro');
+          sel.innerHTML="";
+          centros.forEach(c=>{
+            const opt=document.createElement('option');
+            opt.value=c.centro;opt.textContent=c.centro;sel.appendChild(opt);
           });
           abrirModal('modalVisita');
         });
@@ -1578,119 +1333,95 @@
         calendarGrid.appendChild(div);
       }
     }
-
-    document.getElementById('calPrev').addEventListener('click', () => {
-      currentMonth--;
-      if (currentMonth < 0) { currentMonth = 11; currentYear--; }
-      renderCalendar();
+    document.getElementById('calPrev').addEventListener('click',()=>{
+      currentMonth--;if(currentMonth<0){currentMonth=11;currentYear--;}renderCalendar();
     });
-    document.getElementById('calNext').addEventListener('click', () => {
-      currentMonth++;
-      if (currentMonth > 11) { currentMonth = 0; currentYear++; }
-      renderCalendar();
+    document.getElementById('calNext').addEventListener('click',()=>{
+      currentMonth++;if(currentMonth>11){currentMonth=0;currentYear++;}renderCalendar();
     });
 
-    // ------------- VISITAS -------------
-    const visitasList = document.getElementById('visitasList');
-
-    document.getElementById('guardarVisita').addEventListener('click', () => {
-      const fecha = document.getElementById('visFecha').value;
-      const centro = document.getElementById('visCentro').value;
-      const respAudio = document.getElementById('visRespAudio').value;
-      const centroObj = centros.find(c => c.centro === centro) || {};
-      const visita = {
-        id: nextVisitaId++,
-        fecha,
-        centro,
-        provincia: centroObj.provincia || "",
-        delegado: centroObj.delegado || "",
+    // VISITAS
+    const visitasList=document.getElementById('visitasList');
+    document.getElementById('guardarVisita').addEventListener('click',()=>{
+      const fecha=document.getElementById('visFecha').value;
+      const centro=document.getElementById('visCentro').value;
+      const respAudio=document.getElementById('visRespAudio').value;
+      const centroObj=centros.find(c=>c.centro===centro)||{};
+      const visita={
+        id:nextVisitaId++,
+        fecha,centro,
+        provincia:centroObj.provincia||"",
+        delegado:centroObj.delegado||"",
         respAudio,
-        estado: 'pendiente',
-        estadoInforme: 'ninguno'
+        estado:'pendiente',
+        estadoInforme:'ninguno',
+        observaciones:'',
+        recomendaciones:'',
+        compromisos:''
       };
       visitas.push(visita);
       cerrarModal('modalVisita');
       actualizarTodo();
     });
 
-    function renderVisitas() {
-      visitasList.innerHTML = "";
-      const texto = filtroTextoActual.toLowerCase();
-      const filtradas = visitas.filter(v => {
-        const cad = (v.centro + " " + v.delegado + " " + v.respAudio).toLowerCase();
-        const pasaTexto = cad.includes(texto);
-        const pasaDelegado = !filtroDelegadoActual ||
-          (v.delegado || "").toLowerCase().includes(filtroDelegadoActual.toLowerCase());
+    function renderVisitas(){
+      visitasList.innerHTML="";
+      const texto=filtroTextoActual.toLowerCase();
+      const filtradas=visitas.filter(v=>{
+        const cad=(v.centro+" "+v.delegado+" "+v.respAudio).toLowerCase();
+        const pasaTexto=cad.includes(texto);
+        const pasaDelegado=!filtroDelegadoActual || (v.delegado||"").toLowerCase().includes(filtroDelegadoActual.toLowerCase());
         return pasaTexto && pasaDelegado;
-      });
+      }).sort((a,b)=>a.fecha.localeCompare(b.fecha));
 
-      filtradas.sort((a,b) => a.fecha.localeCompare(b.fecha));
-
-      filtradas.forEach(v => {
-        const row = document.createElement('div');
-        row.className = 'visita-row';
-        row.dataset.id = v.id;
-
-        const main = document.createElement('div');
-        main.className = 'visita-main';
-
-        const top = document.createElement('div');
-        top.className = 'visita-top';
-        top.innerHTML = `
-          <span>${v.fecha}</span>
-          <span class="visita-centro">${v.centro}</span>
-        `;
-
-        const meta = document.createElement('div');
-        meta.className = 'visita-meta';
-        meta.innerHTML = `
-          <span>${v.delegado || "-"}</span>
-          <span>${v.respAudio}</span>
-        `;
-
-        main.appendChild(top);
-        main.appendChild(meta);
+      filtradas.forEach(v=>{
+        const row=document.createElement('div');
+        row.className='visita-row';
+        const main=document.createElement('div');
+        main.className='visita-main';
+        const top=document.createElement('div');
+        top.className='visita-top';
+        top.innerHTML=`<span>${v.fecha}</span><span class="visita-centro">${v.centro}</span>`;
+        const meta=document.createElement('div');
+        meta.className='visita-meta';
+        meta.innerHTML=`<span>${v.delegado||"-"}</span><span>${v.respAudio}</span>`;
+        main.appendChild(top);main.appendChild(meta);
         row.appendChild(main);
 
-        const actions = document.createElement('div');
-        actions.className = 'visita-actions';
+        const actions=document.createElement('div');
+        actions.className='visita-actions';
 
-        const chipEstado = document.createElement('span');
-        chipEstado.className = 'chip';
-        if (v.estado === 'pendiente') chipEstado.classList.add('chip-pendiente');
-        else if (v.estado === 'anulada') chipEstado.classList.add('chip-estado-anulada');
+        const chipEstado=document.createElement('span');
+        chipEstado.className='chip';
+        if(v.estado==='pendiente') chipEstado.classList.add('chip-pendiente');
+        else if(v.estado==='anulada') chipEstado.classList.add('chip-estado-anulada');
         else chipEstado.classList.add('chip-estado-proceso');
-        chipEstado.textContent = v.estado === 'pendiente' ? 'Pendiente' :
-                                 v.estado === 'anulada' ? 'Anulada' : 'Realizada';
+        chipEstado.textContent=v.estado==='pendiente'?'Pendiente':(v.estado==='anulada'?'Anulada':'Realizada');
         actions.appendChild(chipEstado);
 
-        const chipInf = document.createElement('span');
-        chipInf.className = 'chip';
-        if (v.estadoInforme === 'none' || v.estadoInforme === 'ninguno') chipInf.classList.add('chip-sininforme');
-        else if (v.estadoInforme === 'proceso') chipInf.classList.add('chip-estado-proceso');
+        const chipInf=document.createElement('span');
+        chipInf.className='chip';
+        if(v.estadoInforme==='ninguno') chipInf.classList.add('chip-sininforme');
+        else if(v.estadoInforme==='proceso') chipInf.classList.add('chip-estado-proceso');
         else chipInf.classList.add('chip-estado-finalizado');
-        chipInf.textContent = v.estadoInforme === 'finalizado' ? 'Informe finalizado' :
-                              v.estadoInforme === 'proceso' ? 'Informe en proceso' :
-                              'Sin informe';
+        chipInf.textContent=v.estadoInforme==='finalizado'?'Informe finalizado':(v.estadoInforme==='proceso'?'Informe en proceso':'Sin informe');
         actions.appendChild(chipInf);
 
-        const btnEstado = document.createElement('button');
-        btnEstado.className = 'btn btn-mini';
-        btnEstado.textContent = 'Estado';
-        btnEstado.addEventListener('click', () => {
-          if (v.estado === 'pendiente') v.estado = 'anulada';
-          else if (v.estado === 'anulada') v.estado = 'realizada';
-          else v.estado = 'pendiente';
+        const btnEstado=document.createElement('button');
+        btnEstado.className='btn btn-mini';
+        btnEstado.textContent='Estado';
+        btnEstado.addEventListener('click',()=>{
+          if(v.estado==='pendiente') v.estado='anulada';
+          else if(v.estado==='anulada') v.estado='realizada';
+          else v.estado='pendiente';
           actualizarTodo();
         });
         actions.appendChild(btnEstado);
 
-        const btnInf = document.createElement('button');
-        btnInf.className = 'btn btn-mini';
-        btnInf.textContent = 'Informe';
-        btnInf.addEventListener('click', () => {
-          abrirInformeParaVisita(v);
-        });
+        const btnInf=document.createElement('button');
+        btnInf.className='btn btn-mini';
+        btnInf.textContent='Informe';
+        btnInf.addEventListener('click',()=>abrirInformeParaVisita(v));
         actions.appendChild(btnInf);
 
         row.appendChild(actions);
@@ -1698,61 +1429,59 @@
       });
     }
 
-    function abrirInformeParaVisita(v) {
-      visitaEnEdicion = v;
-      v.estadoInforme = 'proceso';
-      // activar vista informe
-      document.querySelectorAll('.nav-item[data-view-target]').forEach(n => n.classList.remove('active'));
+    function abrirInformeParaVisita(v){
+      visitaEnEdicion=v;
+      v.estadoInforme='proceso';
+      document.querySelectorAll('.nav-item[data-view-target]').forEach(n=>n.classList.remove('active'));
       document.querySelector('.nav-item[data-view-target="view-informe"]').classList.add('active');
-      document.querySelectorAll('.view').forEach(vw => vw.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(vw=>vw.classList.remove('active'));
       document.getElementById('view-informe').classList.add('active');
 
-      // rellenar datos
-      document.getElementById('infCentro').textContent = v.centro;
-      document.getElementById('infProvincia').textContent = v.provincia || "-";
-      document.getElementById('infDelegado').textContent = v.delegado || "-";
-      const tipo = tipoCentro(v.centro);
-      document.getElementById('infTipo').textContent = tipo;
-      document.getElementById('infRespAudio').textContent = v.respAudio;
-      document.getElementById('infFecha').textContent = v.fecha;
-      document.getElementById('infAudiologo').value = v.audiologo || "";
-      document.getElementById('infHoras').value = v.horas || "";
-      document.getElementById('infObservaciones').value = v.observaciones || "";
-      document.getElementById('checklistEstado').textContent = v.checklistAdjunto ? "Checklist adjunto" : "";
+      document.getElementById('infCentro').textContent=v.centro;
+      document.getElementById('infProvincia').textContent=v.provincia||"-";
+      document.getElementById('infDelegado').textContent=v.delegado||"-";
+      const tipo=tipoCentro(v.centro);
+      document.getElementById('infTipo').textContent=tipo;
+      document.getElementById('infRespAudio').textContent=v.respAudio;
+      document.getElementById('infFecha').textContent=v.fecha;
+      document.getElementById('infAudiologo').value=v.audiologo||"";
+      document.getElementById('infHoras').value=v.horas||"";
+      document.getElementById('infObservaciones').value=v.observaciones||"";
+      document.getElementById('infRecomendaciones').value=v.recomendaciones||"";
+      document.getElementById('infCompromisos').value=v.compromisos||"";
+      document.getElementById('checklistEstado').textContent=v.checklistAdjunto?"Checklist adjunto":"";
 
-      // AAR
-      const aarEstado = getAarEstado(v.centro);
-      document.getElementById('cardInformeAAR').style.display = aarEstado === 'No' ? 'none' : 'flex';
+      const aarEstado=getAarEstado(v.centro);
+      document.getElementById('cardInformeAAR').style.display=aarEstado==='No'?'none':'flex';
 
       actualizarGraficasInforme(v.centro, tipo, aarEstado);
-      actualizarTodo();
+      actualizarDashboardCharts();
     }
 
-    // ------------- INFORMES DESDE TABLA CENTROS -------------
-    document.addEventListener('click', e => {
-      if (e.target.matches('.btn-informe-centro')) {
-        const centro = e.target.dataset.centro;
-        const visitasCentro = visitas.filter(v => v.centro === centro);
-        if (visitasCentro.length) {
+    // INFORMES DESDE TABLA
+    document.addEventListener('click',e=>{
+      if(e.target.matches('.btn-informe-centro')){
+        const centro=e.target.dataset.centro;
+        const visitasCentro=visitas.filter(v=>v.centro===centro);
+        if(visitasCentro.length){
           abrirInformeParaVisita(visitasCentro[0]);
-        } else {
-          // si no hay visitas, solo mostramos lista de informes guardados
-          const cont = document.getElementById('informesCentroBody');
-          const informes = getInformesCentro(centro);
-          cont.innerHTML = "";
-          const titulo = document.createElement('p');
-          titulo.textContent = centro;
+        }else{
+          const cont=document.getElementById('informesCentroBody');
+          const informes=getInformesCentro(centro);
+          cont.innerHTML="";
+          const titulo=document.createElement('p');
+          titulo.textContent=centro;
           cont.appendChild(titulo);
-          if (!informes.length) {
-            const p = document.createElement('p');
-            p.style.fontSize = '.8rem';
-            p.textContent = "No hay informes guardados para este centro.";
+          if(!informes.length){
+            const p=document.createElement('p');
+            p.style.fontSize='.8rem';
+            p.textContent="No hay informes guardados para este centro.";
             cont.appendChild(p);
-          } else {
-            informes.forEach((inf, idx) => {
-              const div = document.createElement('div');
-              div.className = 'modal-field';
-              div.innerHTML = `<label>Informe ${idx + 1}</label><div>${inf}</div>`;
+          }else{
+            informes.forEach((inf,idx)=>{
+              const div=document.createElement('div');
+              div.className='modal-field';
+              div.innerHTML=`<label>Informe ${idx+1}</label><div>${inf}</div>`;
               cont.appendChild(div);
             });
           }
@@ -1761,147 +1490,222 @@
       }
     });
 
-    // ------------- GRÁFICAS INFORME -------------
-    let chartInformeRadar = null;
-    let chartInformeDonut = null;
+    // CHARTS
+    let chartDashRadar=null, chartDashEstados=null, chartDashAAR=null;
+    let chartInformeRadar=null, chartInformeEstados=null, chartInformeDonut=null;
 
-    function actualizarGraficasInforme(centro, tipo, aarEstado) {
-      const ctxRadar = document.getElementById('chartInformeRadar').getContext('2d');
-      const ctxDonut = document.getElementById('chartInformeDonut').getContext('2d');
-      if (chartInformeRadar) chartInformeRadar.destroy();
-      if (chartInformeDonut) chartInformeDonut.destroy();
+    function actualizarDashboardCharts(){
+      const totalCentros=centros.length;
+      const numExclusivo=centros.filter(c=>tipoCentro(c.centro)==='Exclusivo').length;
+      const numCorner=totalCentros-numExclusivo;
+      const aarSi=centros.filter(c=>getAarEstado(c.centro)==='Sí').length;
+      const aarEnForm=centros.filter(c=>getAarEstado(c.centro)==='En formación').length;
 
-      // datos demo por centro
-      const seed = centro.length;
-      const procesos = 70 + (seed % 20);
-      const convPrueba = 60 + (seed % 25);
-      const convCierre = 55 + (seed % 30);
-      const hit = 80 + (seed % 15);
-      const ayudas = 50 + (seed % 20);
-      const aar = aarEstado === 'No' ? 0 : 60 + (seed % 25);
-      const formaciones = 40 + (seed % 35);
+      const hoy=new Date();
+      const mesActual=hoy.getMonth();
+      const visitasMes=visitas.filter(v=>new Date(v.fecha).getMonth()===mesActual).length;
+      const visitasPend=visitas.filter(v=>v.estado==='pendiente').length;
 
-      chartInformeRadar = new Chart(ctxRadar, {
-        type: 'radar',
-        data: {
-          labels: ['Procesos','Conv. prueba','Conv. cierre','HIT','Ayudas','AAR','Formaciones'],
-          datasets: [{
-            label: centro,
-            data: [procesos, convPrueba, convCierre, hit, ayudas, aar, formaciones],
-            borderWidth: 2,
-            pointRadius: 3
-          }]
+      document.getElementById('kpiTotalCentros').textContent=totalCentros;
+      document.getElementById('kpiDetalleCentros').textContent=`${numExclusivo} exclusivos · ${numCorner} corner`;
+      document.getElementById('kpiVisitasMes').textContent=visitasMes;
+      document.getElementById('kpiVisitasPend').textContent=`${visitasPend} pendientes`;
+
+      const totalAAR=aarSi+aarEnForm;
+      const porcAAR=totalCentros?Math.round((totalAAR/totalCentros)*100):0;
+      document.getElementById('kpiAAR').textContent=`${porcAAR}%`;
+      document.getElementById('kpiAARDetalle').textContent=`${aarSi} Sí · ${aarEnForm} En formación`;
+
+      const checklistCentros = visitas.filter(v=>v.checklistAdjunto).map(v=>v.centro);
+      const numChecklist = new Set(checklistCentros).size;
+      const porcChecklist = totalCentros?Math.round((numChecklist/totalCentros)*100):0;
+      document.getElementById('kpiChecklist').textContent=`${porcChecklist}%`;
+
+      const ctxR=document.getElementById('chartDashRadar').getContext('2d');
+      const ctxE=document.getElementById('chartDashEstados').getContext('2d');
+      const ctxA=document.getElementById('chartDashAAR').getContext('2d');
+      if(chartDashRadar) chartDashRadar.destroy();
+      if(chartDashEstados) chartDashEstados.destroy();
+      if(chartDashAAR) chartDashAAR.destroy();
+
+      const procesos=70 + (numExclusivo%20);
+      const convPrueba=60 + (visitas.length%25);
+      const convCierre=55 + ((visitas.length-visitasPend)%30);
+      const hit=80;
+      const ayudas=50 + (numCorner%20);
+      const aarScore=porcAAR;
+      const formaciones=porcChecklist;
+
+      chartDashRadar=new Chart(ctxR,{
+        type:'radar',
+        data:{
+          labels:['Procesos','Conv. prueba','Conv. cierre','HIT','Ayudas','AAR','Formaciones'],
+          datasets:[{data:[procesos,convPrueba,convCierre,hit,ayudas,aarScore,formaciones],borderWidth:2,pointRadius:3}]
         },
-        options: {
-          responsive: true,
-          plugins: { legend: { display:false } },
-          scales: {
-            r: {
-              beginAtZero: true,
-              max: 100,
-              ticks: { display:false },
-              grid: { color: 'rgba(148,163,184,.35)' },
-              angleLines: { color: 'rgba(148,163,184,.35)' },
-              pointLabels: { color: body.classList.contains('light') ? '#374151' : '#e5e7eb', font:{size:9} }
-            }
-          }
+        options:{
+          plugins:{legend:{display:false}},
+          scales:{r:{beginAtZero:true,max:100,ticks:{display:false}}}
         }
       });
 
-      if (aarEstado !== 'No') {
-        chartInformeDonut = new Chart(ctxDonut, {
-          type: 'doughnut',
-          data: {
-            labels: ['Aplicado','No aplicado'],
-            datasets: [{
-              data: [aar, 100-aar],
-              borderWidth:0
-            }]
-          },
-          options: {
-            responsive:true,
-            plugins:{ legend:{position:'bottom', labels:{font:{size:10}} } },
-            cutout:'60%'
-          }
+      const pend=visitasPend;
+      const real=visitas.filter(v=>v.estado==='realizada').length;
+      const anul=visitas.filter(v=>v.estado==='anulada').length;
+      chartDashEstados=new Chart(ctxE,{
+        type:'bar',
+        data:{
+          labels:['Pendientes','Realizadas','Anuladas'],
+          datasets:[{data:[pend,real,anul]}]
+        },
+        options:{
+          plugins:{legend:{display:false}},
+          scales:{y:{beginAtZero:true,precision:0}}
+        }
+      });
+
+      chartDashAAR=new Chart(ctxA,{
+        type:'doughnut',
+        data:{
+          labels:['AAR','No AAR'],
+          datasets:[{data:[totalAAR, Math.max(totalCentros-totalAAR,0)],borderWidth:0}]
+        },
+        options:{
+          plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},
+          cutout:'60%'
+        }
+      });
+    }
+
+    function actualizarGraficasInforme(centro,tipo,aarEstado){
+      const ctxR=document.getElementById('chartInformeRadar').getContext('2d');
+      const ctxE=document.getElementById('chartInformeEstados').getContext('2d');
+      const ctxD=document.getElementById('chartInformeDonut').getContext('2d');
+      if(chartInformeRadar) chartInformeRadar.destroy();
+      if(chartInformeEstados) chartInformeEstados.destroy();
+      if(chartInformeDonut) chartInformeDonut.destroy();
+
+      const seed=centro.length;
+      const procesos=70+(seed%20);
+      const convPrueba=60+(seed%25);
+      const convCierre=55+(seed%30);
+      const hit=80+(seed%10);
+      const ayudas=50+(seed%20);
+      const aar=aarEstado==='No'?0:60+(seed%25);
+      const formaciones=40+(seed%35);
+
+      chartInformeRadar=new Chart(ctxR,{
+        type:'radar',
+        data:{
+          labels:['Procesos','Conv. prueba','Conv. cierre','HIT','Ayudas','AAR','Formaciones'],
+          datasets:[{data:[procesos,convPrueba,convCierre,hit,ayudas,aar,formaciones],borderWidth:2,pointRadius:3}]
+        },
+        options:{
+          plugins:{legend:{display:false}},
+          scales:{r:{beginAtZero:true,max:100,ticks:{display:false}}}
+        }
+      });
+
+      const visitasCentro=visitas.filter(v=>v.centro===centro);
+      const pend=visitasCentro.filter(v=>v.estado==='pendiente').length;
+      const real=visitasCentro.filter(v=>v.estado==='realizada').length;
+      const anul=visitasCentro.filter(v=>v.estado==='anulada').length;
+      chartInformeEstados=new Chart(ctxE,{
+        type:'bar',
+        data:{labels:['Pendientes','Realizadas','Anuladas'],datasets:[{data:[pend,real,anul]}]},
+        options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,precision:0}}}
+      });
+
+      if(aarEstado!=='No'){
+        chartInformeDonut=new Chart(ctxD,{
+          type:'doughnut',
+          data:{labels:['Aplicado','No aplicado'],datasets:[{data:[aar,100-aar],borderWidth:0}]},
+          options:{plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},cutout:'60%'}
         });
       }
     }
 
-    // ------------- GUARDAR INFORME -------------
-    document.getElementById('btnAdjuntarChecklist').addEventListener('click', () => {
-      if (!visitaEnEdicion) return;
-      visitaEnEdicion.checklistAdjunto = true;
-      document.getElementById('checklistEstado').textContent = "Checklist adjunto";
+    // CHECKLIST E INFORME
+    document.getElementById('btnAdjuntarChecklist').addEventListener('click',()=>{
+      if(!visitaEnEdicion) return;
+      visitaEnEdicion.checklistAdjunto=true;
+      document.getElementById('checklistEstado').textContent="Checklist adjunto";
+      actualizarDashboardCharts();
     });
 
-    document.getElementById('btnGuardarInforme').addEventListener('click', () => {
-      if (!visitaEnEdicion) return;
-      visitaEnEdicion.audiologo = document.getElementById('infAudiologo').value;
-      visitaEnEdicion.horas = document.getElementById('infHoras').value;
-      visitaEnEdicion.observaciones = document.getElementById('infObservaciones').value;
-      visitaEnEdicion.estadoInforme = 'finalizado';
+    function guardarInformeVisita(){
+      if(!visitaEnEdicion) return;
+      visitaEnEdicion.audiologo=document.getElementById('infAudiologo').value;
+      visitaEnEdicion.horas=document.getElementById('infHoras').value;
+      visitaEnEdicion.observaciones=document.getElementById('infObservaciones').value;
+      visitaEnEdicion.recomendaciones=document.getElementById('infRecomendaciones').value;
+      visitaEnEdicion.compromisos=document.getElementById('infCompromisos').value;
+      visitaEnEdicion.estadoInforme='finalizado';
 
-      if (!informesPorCentro[visitaEnEdicion.centro]) informesPorCentro[visitaEnEdicion.centro] = [];
-      informesPorCentro[visitaEnEdicion.centro].push(`Informe guardado ${visitaEnEdicion.fecha}`);
+      if(!informesPorCentro[visitaEnEdicion.centro]) informesPorCentro[visitaEnEdicion.centro]=[];
+      informesPorCentro[visitaEnEdicion.centro].push(`Informe ${visitaEnEdicion.fecha}`);
 
       actualizarTodo();
       alert('Informe guardado (demo).');
-    });
+    }
 
-    // ------------- BOTONES GUARDAR/EXPORTAR/IMPRIMIR -------------
-    document.getElementById('btnGuardarVista').addEventListener('click', () => {
-      alert('Guardado de vista (demo).');
-    });
+    document.getElementById('btnGuardarInforme').addEventListener('click',guardarInformeVisita);
+    document.getElementById('btnGuardarInformeBottom').addEventListener('click',guardarInformeVisita);
 
-    document.getElementById('btnExportHtml').addEventListener('click', () => {
-      const blob = new Blob([document.documentElement.outerHTML], {type:"text/html"});
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'control_center_audio.html';
-      a.click();
+    // BOTONES GUARDAR/EXPORTAR/IMPRIMIR
+    document.getElementById('btnGuardarVista').addEventListener('click',()=>alert('Guardado de vista (demo).'));
+    document.getElementById('btnExportHtml').addEventListener('click',()=>{
+      const blob=new Blob([document.documentElement.outerHTML],{type:'text/html'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;a.download='control_center_audio.html';a.click();
       URL.revokeObjectURL(url);
     });
+    document.getElementById('btnImprimir').addEventListener('click',()=>window.print());
+    document.getElementById('btnPrintVisitas').addEventListener('click',()=>window.print());
+    document.getElementById('btnSaveVisitas').addEventListener('click',()=>alert('Visitas guardadas (demo).'));
+    document.getElementById('btnPrintInforme').addEventListener('click',()=>window.print());
 
-    document.getElementById('btnImprimir').addEventListener('click', () => window.print());
-    document.getElementById('btnPrintVisitas').addEventListener('click', () => window.print());
-    document.getElementById('btnSaveVisitas').addEventListener('click', () => alert('Visitas guardadas (demo).'));
-    document.getElementById('btnPrintInforme').addEventListener('click', () => window.print());
-
-    // ------------- ACTUALIZAR TODO -------------
-    function actualizarTodo() {
+    // ACTUALIZAR TODO
+    function actualizarTodo(){
       renderDelegados();
       renderTablaCentros();
       renderCalendar();
       renderVisitas();
+      actualizarDashboardCharts();
     }
 
-    // ------------- DEMO INICIAL -------------
-    (function cargaDemoInicial() {
-      const demo = [
-        { codigo:"4ABB", propietario:"MAZA Oriol", centro:"PAMPLONA C. Exclusivo", provincia:"NAVARRA", delegado:"Sonia Godino" },
-        { codigo:"4AFH", propietario:"MAZA Oriol", centro:"PAMPLONA Calle Sancho el Mayor", provincia:"NAVARRA", delegado:"Sonia Godino" },
-        { codigo:"4AWQ", propietario:"MAZA Oriol", centro:"PAMPLONA Carlos III", provincia:"NAVARRA", delegado:"Sonia Godino" },
-        { codigo:"4MRM", propietario:"AAO", centro:"REINA DE MERCEDES", provincia:"Madrid", delegado:"Sergio Perán" },
-        { codigo:"4PEC", propietario:"AAO", centro:"SANTANDER CC PEÑACASTILLO", provincia:"Santander", delegado:"Sergio Perán" },
-        { codigo:"4AXF", propietario:"URRUTIA Esteban", centro:"SANTIAGO DE COMPOSTELA RUA DA ROSA", provincia:"A Coruña", delegado:"Daniel Chazo" },
-        { codigo:"4TOL", propietario:"AAO", centro:"TORRELAVEGA CARREFOUR CC", provincia:"Santander", delegado:"Sergio Perán" },
-        { codigo:"4ZDE", propietario:"AAO", centro:"ZARAGOZA CALLE DELICIAS", provincia:"ZARAGOZA", delegado:"ENERITZ ARANGUREN" },
-        { codigo:"4AKI", propietario:"PIEDRAFITA Rocio", centro:"CC LOS VALLES", provincia:"MADRID", delegado:"Blanca Fdez. de la Pradilla" },
-        { codigo:"4MLG", propietario:"AAO", centro:"FUENLABRADA Calle Leganes", provincia:"MADRID", delegado:"Marisa Carmona" }
+    // DEMO INICIAL
+    (function cargaDemoInicial(){
+      const demo=[
+        {codigo:"4ABB",propietario:"MAZA Oriol",centro:"PAMPLONA C. Exclusivo",provincia:"NAVARRA",delegado:"Sonia Godino"},
+        {codigo:"4AFH",propietario:"MAZA Oriol",centro:"PAMPLONA Calle Sancho el Mayor",provincia:"NAVARRA",delegado:"Sonia Godino"},
+        {codigo:"4AWQ",propietario:"MAZA Oriol",centro:"PAMPLONA Carlos III",provincia:"NAVARRA",delegado:"Sonia Godino"},
+        {codigo:"4MRM",propietario:"AAO",centro:"REINA DE MERCEDES",provincia:"Madrid",delegado:"Sergio Perán"},
+        {codigo:"4PEC",propietario:"AAO",centro:"SANTANDER CC PEÑACASTILLO",provincia:"Santander",delegado:"Sergio Perán"},
+        {codigo:"4AXF",propietario:"URRUTIA Esteban",centro:"SANTIAGO DE COMPOSTELA RUA DA ROSA",provincia:"A Coruña",delegado:"Daniel Chazo"},
+        {codigo:"4TOL",propietario:"AAO",centro:"TORRELAVEGA CARREFOUR CC",provincia:"Santander",delegado:"Sergio Perán"},
+        {codigo:"4ZDE",propietario:"AAO",centro:"ZARAGOZA CALLE DELICIAS",provincia:"ZARAGOZA",delegado:"ENERITZ ARANGUREN"},
+        {codigo:"4AKI",propietario:"PIEDRAFITA Rocio",centro:"CC LOS VALLES",provincia:"MADRID",delegado:"Blanca Fdez. de la Pradilla"},
+        {codigo:"4MLG",propietario:"AAO",centro:"FUENLABRADA Calle Leganes",provincia:"MADRID",delegado:"Marisa Carmona"}
       ];
-      demo.forEach(c => centros.push(c));
+      demo.forEach(c=>centros.push(c));
+      aarPorCentro["REINA DE MERCEDES"]="Sí";
+      aarPorCentro["PAMPLONA C. Exclusivo"]="En formación";
 
-      // demo visita
+      const hoy=new Date();
+      const fechaHoy=hoy.toISOString().slice(0,10);
       visitas.push({
-        id: nextVisitaId++,
-        fecha: new Date().toISOString().slice(0,10),
-        centro: "SANTIAGO DE COMPOSTELA RUA DA ROSA",
-        provincia: "A Coruña",
-        delegado: "Daniel Chazo",
-        respAudio: "Ariannys Rojas",
-        estado: "pendiente",
-        estadoInforme: "ninguno"
+        id:nextVisitaId++,
+        fecha:fechaHoy,
+        centro:"SANTIAGO DE COMPOSTELA RUA DA ROSA",
+        provincia:"A Coruña",
+        delegado:"Daniel Chazo",
+        respAudio:"Ariannys Rojas",
+        estado:"pendiente",
+        estadoInforme:"ninguno",
+        observaciones:"",
+        recomendaciones:"",
+        compromisos:""
       });
 
       actualizarTodo();
