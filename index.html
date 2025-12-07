@@ -490,6 +490,116 @@
       color: var(--text-muted);
     }
 
+    .informe-banner {
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      border: 1px solid #111827;
+      display: flex;
+      background: linear-gradient(90deg, #000000 0%, #111827 60%, #4b5563 100%);
+    }
+
+    .informe-banner-left {
+      background: var(--primary);
+      color: #ffffff;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .informe-banner-right {
+      flex: 1;
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      color: #e5e7eb;
+    }
+
+    .informe-banner-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .informe-banner-subtitle {
+      font-size: 12px;
+      color: #9ca3af;
+    }
+
+    .informe-meta-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px 12px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #f9fafb;
+    }
+
+    @media (max-width: 900px) {
+      .informe-meta-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .informe-meta-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .meta-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 2px;
+    }
+
+    .meta-input,
+    .meta-select {
+      width: 100%;
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 4px 8px;
+      background: #ffffff;
+    }
+
+    .meta-input:focus,
+    .meta-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px rgba(193, 18, 31, 0.25);
+    }
+
+    .tipo-visita-group {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .pill-toggle {
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
+    .pill-toggle.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary-dark);
+    }
+
     .informe-centro-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -561,20 +671,9 @@
 
     .informe-imagenes-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-auto-rows: auto;
       gap: 10px;
-    }
-
-    @media (max-width: 900px) {
-      .informe-imagenes-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 640px) {
-      .informe-imagenes-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
     }
 
     .img-block {
@@ -582,6 +681,10 @@
       border: 1px solid var(--border);
       padding: 8px 9px;
       background: #f9fafb;
+    }
+
+    .img-block.bloque-tecnico {
+      grid-column: 1 / -1;
     }
 
     .img-block-title {
@@ -611,6 +714,7 @@
       border-radius: 8px;
       border: 1px solid var(--border);
       background: #ffffff;
+      cursor: zoom-in;
     }
 
     .textarea-mini {
@@ -641,6 +745,115 @@
     canvas#checklistChart {
       max-width: 100%;
       margin-top: 6px;
+    }
+
+    /* MODAL HISTÓRICO */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 40;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      max-width: 620px;
+      width: 90%;
+      max-height: 80vh;
+      overflow: auto;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.4);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .modal-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      font-size: 13px;
+    }
+
+    .historico-item {
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 8px 9px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .historico-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .historico-tag {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ZOOM IMAGEN */
+
+    .img-zoom-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .img-zoom-overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 10px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    /* PRINT STYLES */
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .sidebar,
+      .main-header,
+      .main-content > .card:not(#cardInformeVisita),
+      #historicoModal,
+      #imgZoomOverlay {
+        display: none !important;
+      }
+
+      #cardInformeVisita {
+        display: block !important;
+        border: none;
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .main-content {
+        padding: 0;
+      }
     }
   </style>
 </head>
@@ -805,14 +1018,77 @@
               Se rellena automáticamente al seleccionar "Crear" en el listado de centros.
             </div>
           </div>
-          <span class="badge" id="informeEstadoBadge">Sin centro seleccionado</span>
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span class="badge" id="informeEstadoBadge">Sin centro seleccionado</span>
+            <button class="btn btn-outline btn-sm" id="btnImprimirInforme">🖨️ Imprimir</button>
+          </div>
+        </div>
+
+        <div class="informe-banner">
+          <div class="informe-banner-left">IA</div>
+          <div class="informe-banner-right">
+            <div class="informe-banner-title">Informe de visita</div>
+            <div class="informe-banner-subtitle">
+              Evaluación ejecutiva del punto de venta y procesos de audiología.
+            </div>
+          </div>
         </div>
 
         <div id="informeEmpty" class="informe-empty">
-          Selecciona un centro con el botón <strong>"Crear"</strong> para iniciar el informe de visita.
+          Selecciona un centro con el botón <strong>"Crear"</strong> para iniciar el informe de visita
+          o consulta el histórico de informes de un centro.
         </div>
 
         <div id="informeContenido" style="display:none;">
+          <!-- META EJECUTIVA -->
+          <div class="informe-meta-grid" id="metaGrid">
+            <div>
+              <div class="meta-label">Audiológ@</div>
+              <input id="infAudiologo" class="meta-input" placeholder="Nombre del audiológ@" />
+            </div>
+            <div>
+              <div class="meta-label">Horas de servicio</div>
+              <input id="infHorasServicio" class="meta-input" placeholder="p. ej. 4 horas" />
+            </div>
+            <div>
+              <div class="meta-label">Delegado/a de formación</div>
+              <input
+                id="infDelegadoFormacion"
+                class="meta-input"
+                placeholder="Nombre delegado/a formación"
+              />
+            </div>
+            <div>
+              <div class="meta-label">Tipo de visita</div>
+              <div class="tipo-visita-group" id="tipoVisitaContainer">
+                <button
+                  type="button"
+                  class="pill-toggle"
+                  data-tipo-visita="apertura"
+                  id="btnApertura"
+                >
+                  Apertura
+                </button>
+                <button
+                  type="button"
+                  class="pill-toggle"
+                  data-tipo-visita="seguimiento"
+                  id="btnSeguimiento"
+                >
+                  Seguimiento
+                </button>
+              </div>
+            </div>
+            <div>
+              <div class="meta-label">Responsable Audio</div>
+              <select id="infRespAudioSelect" class="meta-select">
+                <option value="">— Seleccionar —</option>
+                <option value="Ariannys Rojas">Ariannys Rojas</option>
+                <option value="Sonia Guasque">Sonia Guasque</option>
+              </select>
+            </div>
+          </div>
+
           <!-- Datos del centro -->
           <div class="informe-centro-grid">
             <div>
@@ -844,8 +1120,8 @@
               <div class="informe-centro-item-value" id="infCentroAAR"></div>
             </div>
             <div>
-              <div class="informe-centro-item-label">Resp. Audio</div>
-              <div class="informe-centro-item-value" id="infRespAudio"></div>
+              <div class="informe-centro-item-label">Resp. Audio (centro)</div>
+              <div class="informe-centro-item-value" id="infRespAudioCentro"></div>
             </div>
           </div>
 
@@ -853,10 +1129,12 @@
           <div class="informe-section">
             <div class="informe-section-header">
               <div class="informe-section-title">Checklist de evaluación</div>
-              <label class="btn btn-outline btn-sm" for="checklistInput">
-                <span>📎</span>
-                <span>Adjuntar checklist</span>
-              </label>
+              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                <label class="btn btn-outline btn-sm" for="checklistInput">
+                  <span>📎</span>
+                  <span>Adjuntar checklist</span>
+                </label>
+              </div>
               <input type="file" id="checklistInput" accept=".xlsx,.xls,.csv" />
             </div>
             <div id="checklistResumen" class="text-muted">
@@ -874,43 +1152,44 @@
             </div>
             <div class="informe-imagenes-grid">
               <div class="img-block">
-                <div class="img-block-title">Bloque técnico 1</div>
+                <div class="img-block-title">Imagen 1 · Exterior</div>
                 <div class="img-block-subtitle">
-                  Hasta 5 imágenes · Ej: zona de pruebas, sala audio, señalética...
+                  Fachada, rótulos, accesos, visibilidad desde el exterior.
                 </div>
                 <label class="btn btn-outline btn-sm" for="imgInput1">
                   <span>🖼️</span>
-                  <span>Añadir imágenes</span>
+                  <span>Añadir imagen</span>
                 </label>
-                <input type="file" id="imgInput1" accept="image/*" multiple />
+                <input type="file" id="imgInput1" accept="image/*" />
                 <div id="imgPreview1" class="img-preview-grid"></div>
                 <textarea
                   id="imgObs1"
                   class="textarea-mini"
-                  placeholder="Observaciones técnicas del bloque 1..."
+                  placeholder="Observaciones técnicas del exterior..."
                 ></textarea>
               </div>
               <div class="img-block">
-                <div class="img-block-title">Bloque técnico 2</div>
+                <div class="img-block-title">Imagen 2 · Interior</div>
                 <div class="img-block-subtitle">
-                  Hasta 5 imágenes · Ej: exposición, mostrador, escaparate...
+                  Zona de recepción, sala de espera, visibilidad de audiología.
                 </div>
                 <label class="btn btn-outline btn-sm" for="imgInput2">
                   <span>🖼️</span>
-                  <span>Añadir imágenes</span>
+                  <span>Añadir imagen</span>
                 </label>
-                <input type="file" id="imgInput2" accept="image/*" multiple />
+                <input type="file" id="imgInput2" accept="image/*" />
                 <div id="imgPreview2" class="img-preview-grid"></div>
                 <textarea
                   id="imgObs2"
                   class="textarea-mini"
-                  placeholder="Observaciones técnicas del bloque 2..."
+                  placeholder="Observaciones técnicas del interior..."
                 ></textarea>
               </div>
-              <div class="img-block">
-                <div class="img-block-title">Bloque técnico 3</div>
+              <div class="img-block bloque-tecnico">
+                <div class="img-block-title">Bloque técnico · Gabinete</div>
                 <div class="img-block-subtitle">
-                  Hasta 5 imágenes · Ej: almacén, documentación, otros...
+                  Hasta 3 imágenes · Equipamiento, insonorización, ergonomía, flujos de trabajo,
+                  documentación y otros elementos técnicos.
                 </div>
                 <label class="btn btn-outline btn-sm" for="imgInput3">
                   <span>🖼️</span>
@@ -921,7 +1200,7 @@
                 <textarea
                   id="imgObs3"
                   class="textarea-mini"
-                  placeholder="Observaciones técnicas del bloque 3..."
+                  placeholder="Observaciones técnicas del gabinete y procesos..."
                 ></textarea>
               </div>
             </div>
@@ -959,6 +1238,22 @@
     </section>
   </main>
 
+  <!-- MODAL HISTÓRICO -->
+  <div class="modal-overlay" id="historicoModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" id="historicoTitulo">Histórico de informes</div>
+        <button class="btn btn-icon btn-outline" id="historicoCerrar">✖️</button>
+      </div>
+      <div class="modal-body" id="historicoLista"></div>
+    </div>
+  </div>
+
+  <!-- ZOOM IMAGEN -->
+  <div class="img-zoom-overlay" id="imgZoomOverlay">
+    <img id="imgZoomImage" src="" alt="Zoom imagen" />
+  </div>
+
   <!-- SheetJS para lectura de Excel -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <!-- Chart.js para gráficos del checklist -->
@@ -978,7 +1273,6 @@
         TIPOLOGIA: "Córner",
         CENTRO_AAR: "",
         VISITA: "",
-        INFORME_ESTADO: "",
         AUDIOLOGO: "",
         HORAS_SERVICIO: "",
         RESP_AUDIO: "Sonia Guasque",
@@ -992,7 +1286,6 @@
         TIPOLOGIA: "Córner",
         CENTRO_AAR: "",
         VISITA: "",
-        INFORME_ESTADO: "",
         AUDIOLOGO: "",
         HORAS_SERVICIO: "",
         RESP_AUDIO: "Sonia Guasque",
@@ -1006,7 +1299,6 @@
         TIPOLOGIA: "Córner",
         CENTRO_AAR: "",
         VISITA: "",
-        INFORME_ESTADO: "",
         AUDIOLOGO: "",
         HORAS_SERVICIO: "",
         RESP_AUDIO: "Ariannys Rojas",
@@ -1020,7 +1312,6 @@
         TIPOLOGIA: "Córner",
         CENTRO_AAR: "",
         VISITA: "",
-        INFORME_ESTADO: "",
         AUDIOLOGO: "",
         HORAS_SERVICIO: "",
         RESP_AUDIO: "Sonia Guasque",
@@ -1034,18 +1325,18 @@
         TIPOLOGIA: "Córner",
         CENTRO_AAR: "",
         VISITA: "",
-        INFORME_ESTADO: "",
         AUDIOLOGO: "",
         HORAS_SERVICIO: "",
         RESP_AUDIO: "Sonia Guasque",
       },
     ];
 
-    const STORAGE_KEY = "InformeGestionAudio_PreInforme_v2";
+    const STORAGE_KEY = "InformeGestionAudio_PreInforme_v3";
 
     let centros = [];
-    let estado = {};
+    let estado = {}; // { CODIGO: { visita, centroAAR, respAudio, informes: [...] } }
     let centroSeleccionadoCodigo = null;
+    let currentInformeId = null;
     let checklistChart = null;
 
     // ==========================
@@ -1071,13 +1362,30 @@
       }
     }
 
+    function estadoCentroDesdeInformes(informes) {
+      if (!informes || !informes.length) return "";
+      if (informes.some((i) => i.estado === "finalizado")) return "finalizado";
+      if (informes.some((i) => i.estado === "borrador")) return "borrador";
+      return "";
+    }
+
     function aplicarEstadoALosCentros() {
       centros.forEach((c) => {
         const e = estado[c.CODIGO];
         if (e) {
           c.VISITA = e.visita || "";
-          c.INFORME_ESTADO = e.informeEstado || "";
           c.CENTRO_AAR = e.centroAAR || c.CENTRO_AAR || "";
+          c.RESP_AUDIO = e.respAudio || c.RESP_AUDIO || "";
+          const informes = e.informes || [];
+          c.NUM_INFORMES = informes.length;
+          c.INFORME_ESTADO = estadoCentroDesdeInformes(informes);
+          const finalizados = informes.filter((i) => i.estado === "finalizado");
+          const ultimo = finalizados.length ? finalizados[finalizados.length - 1] : null;
+          c.ULTIMO_INFORME_FECHA = ultimo ? ultimo.fechaVisita || ultimo.fechaFinalizacion : "";
+        } else {
+          c.NUM_INFORMES = 0;
+          c.INFORME_ESTADO = "";
+          c.ULTIMO_INFORME_FECHA = "";
         }
       });
     }
@@ -1091,6 +1399,25 @@
         month: "2-digit",
         year: "2-digit",
       });
+    }
+
+    function leerNumeroCelda(sheet, addr) {
+      const cell = sheet[addr];
+      if (!cell) return null;
+      let v = cell.v;
+      if (typeof v === "string") {
+        v = v.replace("%", "").replace(",", ".");
+      }
+      const num = parseFloat(v);
+      return isNaN(num) ? null : num;
+    }
+
+    function boolDesdeCelda(cell) {
+      if (!cell) return null;
+      const v = String(cell.v).trim().toUpperCase();
+      if (v === "1" || v === "SI" || v === "SÍ" || v === "YES") return true;
+      if (v === "0" || v === "NO") return false;
+      return null;
     }
 
     // ==========================
@@ -1122,34 +1449,28 @@
         const tr = document.createElement("tr");
         tr.dataset.codigo = c.CODIGO;
 
-        // CODIGO
         const tdCodigo = document.createElement("td");
         tdCodigo.className = "col-codigo";
         tdCodigo.textContent = c.CODIGO || "";
         tr.appendChild(tdCodigo);
 
-        // PROPIETARIO
         const tdProp = document.createElement("td");
         tdProp.textContent = c.PROPIETARIO || "";
         tr.appendChild(tdProp);
 
-        // CENTRO
         const tdCentro = document.createElement("td");
         tdCentro.className = "col-centro";
         tdCentro.textContent = c.CENTRO || "";
         tr.appendChild(tdCentro);
 
-        // PROVINCIA
         const tdProv = document.createElement("td");
         tdProv.textContent = c.PROVINCIA || "";
         tr.appendChild(tdProv);
 
-        // DELEGADOS
         const tdDel = document.createElement("td");
         tdDel.textContent = c.DELEGADOS || "";
         tr.appendChild(tdDel);
 
-        // TIPOLOGIA
         const tdTip = document.createElement("td");
         const spanTip = document.createElement("span");
         spanTip.className = "pill pill-corner";
@@ -1157,7 +1478,7 @@
         tdTip.appendChild(spanTip);
         tr.appendChild(tdTip);
 
-        // CENTRO AAR editable (Sí/No)
+        // CENTRO AAR editable
         const tdAar = document.createElement("td");
         const selAar = document.createElement("select");
         selAar.style.fontSize = "12px";
@@ -1173,7 +1494,7 @@
         selAar.value = c.CENTRO_AAR || "";
         selAar.addEventListener("change", () => {
           const code = c.CODIGO;
-          if (!estado[code]) estado[code] = {};
+          if (!estado[code]) estado[code] = { informes: [] };
           estado[code].centroAAR = selAar.value;
           c.CENTRO_AAR = selAar.value;
           guardarEstado();
@@ -1210,7 +1531,7 @@
             return;
           }
           const code = c.CODIGO;
-          if (!estado[code]) estado[code] = {};
+          if (!estado[code]) estado[code] = { informes: [] };
           estado[code].visita = valor;
           guardarEstado();
           aplicarEstadoALosCentros();
@@ -1228,41 +1549,77 @@
 
         // INFORME
         const tdInforme = document.createElement("td");
-        if (c.INFORME_ESTADO === "finalizado") {
-          const icon = document.createElement("span");
-          icon.className = "icon-finalizado";
-          icon.title = "Informe finalizado";
-          icon.textContent = "✅";
-          tdInforme.appendChild(icon);
+        const eCentro = estado[c.CODIGO] || {};
+        const numInf = (eCentro.informes || []).length;
+        const contInforme = document.createElement("div");
+        contInforme.style.display = "flex";
+        contInforme.style.flexDirection = "column";
+        contInforme.style.gap = "4px";
 
-          const detail = document.createElement("div");
-          detail.className = "text-muted";
-          detail.textContent = formatearFechaCorta(c.VISITA);
-          tdInforme.appendChild(detail);
-        } else if (c.VISITA) {
-          const btnCrear = document.createElement("button");
-          btnCrear.className = "pill pill-crear";
-          btnCrear.textContent = "Crear";
-          btnCrear.title =
-            "Abrir edición de informe para este centro.";
+        const filaAcciones = document.createElement("div");
+        filaAcciones.style.display = "flex";
+        filaAcciones.style.gap = "4px";
+        filaAcciones.style.flexWrap = "wrap";
+        const filaEstado = document.createElement("div");
+        filaEstado.className = "text-muted";
 
-          btnCrear.addEventListener("click", () => {
-            cargarCentroEnInforme(c.CODIGO);
-            // scroll suave al bloque de informe
-            const card = document.getElementById("cardInformeVisita");
-            if (card) {
-              card.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-          });
-
-          tdInforme.appendChild(btnCrear);
+        if (!numInf) {
+          if (c.VISITA) {
+            const btnCrear = document.createElement("button");
+            btnCrear.className = "pill pill-crear";
+            btnCrear.textContent = "Crear";
+            btnCrear.title = "Crear un nuevo informe para este centro.";
+            btnCrear.addEventListener("click", () => {
+              crearInformeParaCentro(c);
+            });
+            filaAcciones.appendChild(btnCrear);
+            filaEstado.textContent = "Sin informes previos.";
+          } else {
+            filaEstado.textContent = "Sin visita guardada.";
+          }
         } else {
-          tdInforme.innerHTML =
-            '<span class="text-muted">Sin visita guardada</span>';
+          if (c.INFORME_ESTADO === "finalizado") {
+            const icon = document.createElement("span");
+            icon.className = "icon-finalizado";
+            icon.title = "Al menos un informe finalizado";
+            icon.textContent = "✅";
+            filaEstado.appendChild(icon);
+            const fechaTxt = c.ULTIMO_INFORME_FECHA
+              ? " · Último informe: " + formatearFechaCorta(c.ULTIMO_INFORME_FECHA)
+              : "";
+            const span = document.createElement("span");
+            span.textContent = `  (${numInf} en histórico)${fechaTxt}`;
+            filaEstado.appendChild(span);
+          } else if (c.INFORME_ESTADO === "borrador") {
+            filaEstado.textContent = `En edición (${numInf} informe/s).`;
+          }
+
+          if (c.VISITA) {
+            const btnCrear = document.createElement("button");
+            btnCrear.className = "pill pill-crear";
+            btnCrear.textContent = "Crear";
+            btnCrear.title = "Crear un nuevo informe para este centro.";
+            btnCrear.addEventListener("click", () => {
+              crearInformeParaCentro(c);
+            });
+            filaAcciones.appendChild(btnCrear);
+          }
+
+          const btnHist = document.createElement("button");
+          btnHist.className = "btn btn-sm btn-outline";
+          btnHist.textContent = `Histórico (${numInf})`;
+          btnHist.addEventListener("click", () => {
+            abrirHistoricoCentro(c.CODIGO);
+          });
+          filaAcciones.appendChild(btnHist);
         }
+
+        contInforme.appendChild(filaAcciones);
+        contInforme.appendChild(filaEstado);
+        tdInforme.appendChild(contInforme);
         tr.appendChild(tdInforme);
 
-        // AUDIOLOGO
+        // AUDIOLOGO (columna de tabla, libre)
         const tdAud = document.createElement("td");
         tdAud.textContent = c.AUDIOLOGO || "";
         tr.appendChild(tdAud);
@@ -1272,9 +1629,35 @@
         tdHoras.textContent = c.HORAS_SERVICIO || "";
         tr.appendChild(tdHoras);
 
-        // RESP AUDIO
+        // RESP AUDIO (selector por centro)
         const tdResp = document.createElement("td");
-        tdResp.textContent = c.RESP_AUDIO || "";
+        const selResp = document.createElement("select");
+        selResp.style.fontSize = "12px";
+        selResp.style.padding = "3px 6px";
+        selResp.style.borderRadius = "999px";
+        selResp.style.border = "1px solid var(--border)";
+        const opcionesResp = ["", "Ariannys Rojas", "Sonia Guasque"];
+        opcionesResp.forEach((val) => {
+          const opt = document.createElement("option");
+          opt.value = val;
+          opt.textContent = val === "" ? "—" : val;
+          selResp.appendChild(opt);
+        });
+        selResp.value = c.RESP_AUDIO || "";
+        selResp.addEventListener("change", () => {
+          const code = c.CODIGO;
+          if (!estado[code]) estado[code] = { informes: [] };
+          estado[code].respAudio = selResp.value;
+          c.RESP_AUDIO = selResp.value;
+          guardarEstado();
+          if (centroSeleccionadoCodigo === code) {
+            document.getElementById("infRespAudioCentro").textContent =
+              selResp.value || "—";
+            document.getElementById("infRespAudioSelect").value =
+              selResp.value || "";
+          }
+        });
+        tdResp.appendChild(selResp);
         tr.appendChild(tdResp);
 
         tbody.appendChild(tr);
@@ -1297,7 +1680,6 @@
 
     function actualizarResumen() {
       const totalCentros = centros.length;
-
       let visitasProgramadas = 0;
       let informesFinalizados = 0;
 
@@ -1336,7 +1718,7 @@
         visitasProgramadas > 0
           ? `De las visitas programadas, ${Math.round(
               (informesFinalizados / Math.max(visitasProgramadas, 1)) * 100
-            )}% ya tienen informe finalizado`
+            )}% ya tienen al menos un informe finalizado`
           : "Aún no hay visitas programadas.";
     }
 
@@ -1363,7 +1745,6 @@
             row["Tpología"] || row["Tipología"] || row["TIPOLOGIA"] || "",
           CENTRO_AAR: row["Centro AAR"] || "",
           VISITA: "",
-          INFORME_ESTADO: "",
           AUDIOLOGO: row["Audiólogo"] || row["AUDIÓLOGO"] || "",
           HORAS_SERVICIO:
             row["Horas de servicio"] || row["HORAS DE SERVICIO"] || "",
@@ -1407,7 +1788,55 @@
       }
     }
 
-    function cargarCentroEnInforme(codigo) {
+    function actualizarTipoVisitaUI(tv) {
+      const btnA = document.getElementById("btnApertura");
+      const btnS = document.getElementById("btnSeguimiento");
+      if (!btnA || !btnS) return;
+      btnA.classList.toggle("active", !!tv.apertura);
+      btnS.classList.toggle("active", !!tv.seguimiento);
+    }
+
+    function leerTipoVisitaDesdeUI() {
+      const btnA = document.getElementById("btnApertura");
+      const btnS = document.getElementById("btnSeguimiento");
+      return {
+        apertura: btnA ? btnA.classList.contains("active") : false,
+        seguimiento: btnS ? btnS.classList.contains("active") : false,
+      };
+    }
+
+    function setInformeEditable(editable) {
+      const ids = [
+        "infAudiologo",
+        "infHorasServicio",
+        "infDelegadoFormacion",
+        "infRespAudioSelect",
+        "checklistInput",
+        "imgInput1",
+        "imgInput2",
+        "imgInput3",
+        "informeObservaciones",
+        "informeCompromisos",
+        "imgObs1",
+        "imgObs2",
+        "imgObs3",
+      ];
+      ids.forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = !editable;
+      });
+      const tipoVisitaContainer = document.getElementById("tipoVisitaContainer");
+      if (tipoVisitaContainer) {
+        tipoVisitaContainer.style.pointerEvents = editable ? "auto" : "none";
+        tipoVisitaContainer.style.opacity = editable ? "1" : "0.6";
+      }
+      const btnBorr = document.getElementById("btnGuardarBorrador");
+      const btnFin = document.getElementById("btnGuardarFinal");
+      if (btnBorr) btnBorr.style.display = editable ? "inline-flex" : "none";
+      if (btnFin) btnFin.style.display = editable ? "inline-flex" : "none";
+    }
+
+    function cargarCentroEnInforme(codigo, informeId, forzarSoloLectura = false) {
       const centro = centros.find((c) => c.CODIGO === codigo);
       const badge = document.getElementById("informeEstadoBadge");
       const empty = document.getElementById("informeEmpty");
@@ -1420,7 +1849,22 @@
         return;
       }
 
+      const e = estado[codigo] || { informes: [] };
+      e.informes = e.informes || [];
+      let inf =
+        e.informes.find((i) => i.id === informeId) ||
+        e.informes[e.informes.length - 1];
+
+      if (!inf) {
+        badge.textContent = "No hay informe para mostrar";
+        empty.style.display = "block";
+        cont.style.display = "none";
+        return;
+      }
+
+      currentInformeId = inf.id;
       centroSeleccionadoCodigo = codigo;
+
       empty.style.display = "none";
       cont.style.display = "block";
 
@@ -1434,13 +1878,25 @@
         centro.PROPIETARIO || "";
       document.getElementById("infDelegado").textContent =
         centro.DELEGADOS || "";
-      document.getElementById("infRespAudio").textContent =
-        centro.RESP_AUDIO || "";
       document.getElementById("infCentroAAR").textContent =
         centro.CENTRO_AAR || "—";
+      document.getElementById("infRespAudioCentro").textContent =
+        centro.RESP_AUDIO || "—";
 
-      const e = estado[codigo] || {};
-      const inf = e.informe || {};
+      document.getElementById("infAudiologo").value = inf.audiologo || "";
+      document.getElementById("infHorasServicio").value =
+        inf.horasServicio || centro.HORAS_SERVICIO || "";
+      document.getElementById("infDelegadoFormacion").value =
+        inf.delegadoFormacion || "";
+
+      const respAudio =
+        e.respAudio || centro.RESP_AUDIO || document.getElementById("infRespAudioSelect").value;
+      document.getElementById("infRespAudioSelect").value = respAudio || "";
+      document.getElementById("infRespAudioCentro").textContent =
+        respAudio || "—";
+
+      actualizarTipoVisitaUI(inf.tipoVisita || { apertura: false, seguimiento: false });
+
       document.getElementById("informeObservaciones").value =
         inf.observaciones || "";
       document.getElementById("informeCompromisos").value =
@@ -1448,13 +1904,84 @@
       document.getElementById("checklistResumen").textContent =
         inf.checklistResumen || "Checklist no adjuntado todavía.";
 
-      if (e.informeEstado === "finalizado") {
+      limpiarImagenesYChecklist();
+      if (inf.checklistMetrics) {
+        const ds = [];
+        if (inf.checklistMetrics.aplicProc != null) {
+          ds.push({
+            label: "% Aplicación procesos",
+            value: inf.checklistMetrics.aplicProc,
+          });
+        }
+        if (inf.checklistMetrics.convPrueba != null) {
+          ds.push({
+            label: "Conv. a prueba",
+            value: inf.checklistMetrics.convPrueba,
+          });
+        }
+        if (inf.checklistMetrics.convVenta != null) {
+          ds.push({
+            label: "Conv. a venta",
+            value: inf.checklistMetrics.convVenta,
+          });
+        }
+        renderChecklistChart(ds);
+      } else {
+        renderChecklistChart(null);
+      }
+
+      const soloLectura = forzarSoloLectura || inf.estado === "finalizado";
+      setInformeEditable(!soloLectura);
+
+      if (inf.estado === "finalizado") {
         badge.textContent = "Informe finalizado";
       } else {
         badge.textContent = "Informe en edición";
       }
+    }
 
-      limpiarImagenesYChecklist();
+    function crearInformeParaCentro(c) {
+      if (!c.VISITA) {
+        alert("Debes guardar una fecha de visita para este centro antes de crear el informe.");
+        return;
+      }
+      const code = c.CODIGO;
+      if (!estado[code]) estado[code] = { informes: [] };
+      const e = estado[code];
+      e.informes = e.informes || [];
+      const ultimo = e.informes[e.informes.length - 1];
+
+      const id = "INF-" + Date.now().toString();
+      const nuevo = {
+        id,
+        fechaCreacion: new Date().toISOString(),
+        fechaVisita: c.VISITA || "",
+        estado: "borrador",
+        audiologo: ultimo ? ultimo.audiologo : "",
+        horasServicio: ultimo ? ultimo.horasServicio : "",
+        delegadoFormacion: ultimo ? ultimo.delegadoFormacion : "",
+        tipoVisita: ultimo
+          ? ultimo.tipoVisita || { apertura: false, seguimiento: false }
+          : { apertura: false, seguimiento: false },
+        observaciones: "",
+        compromisos: "",
+        checklistResumen: "",
+        checklistTipo: null,
+        checklistMetrics: null,
+        imgObs1: "",
+        imgObs2: "",
+        imgObs3: "",
+      };
+
+      e.informes.push(nuevo);
+      guardarEstado();
+      aplicarEstadoALosCentros();
+      renderTabla(document.getElementById("searchInput").value);
+      actualizarResumen();
+      cargarCentroEnInforme(code, id, false);
+
+      const card = document.getElementById("cardInformeVisita");
+      if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
     function renderChecklistChart(dataset) {
@@ -1464,7 +1991,7 @@
       if (checklistChart) {
         checklistChart.destroy();
       }
-      if (!dataset || dataset.length === 0) {
+      if (!dataset || !dataset.length) {
         checklistChart = null;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         return;
@@ -1472,11 +1999,10 @@
       checklistChart = new Chart(ctx, {
         type: "bar",
         data: {
-          labels: dataset.map((d) => d.col),
+          labels: dataset.map((d) => d.label),
           datasets: [
             {
-              label: "Media por ítem",
-              data: dataset.map((d) => d.avg),
+              data: dataset.map((d) => d.value),
             },
           ],
         },
@@ -1495,6 +2021,12 @@
     }
 
     function manejarChecklist(file) {
+      if (!centroSeleccionadoCodigo || !currentInformeId) {
+        alert("Selecciona primero un centro e informe (botón 'Crear').");
+        const input = document.getElementById("checklistInput");
+        if (input) input.value = "";
+        return;
+      }
       const resumenEl = document.getElementById("checklistResumen");
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -1502,43 +2034,121 @@
         const workbook = XLSX.read(data, { type: "array" });
         const firstSheetName = workbook.SheetNames[0];
         const sheet = workbook.Sheets[firstSheetName];
-        const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
 
-        const rows = json.length;
-        const cols = rows > 0 ? Object.keys(json[0]) : [];
+        // Determinar tipo CORNER / EXCLUSIVO
+        const nameUpper = file.name.toUpperCase();
+        let tipo = null;
+        if (nameUpper.includes("CORNER")) tipo = "CORNER";
+        else if (nameUpper.includes("EXCLUSIVO")) tipo = "EXCLUSIVO";
+        else {
+          const centro = centros.find(
+            (c) => c.CODIGO === centroSeleccionadoCodigo
+          );
+          const tip = (centro?.TIPOLOGIA || "").toUpperCase();
+          if (tip.includes("CORNER") || tip.includes("CÓRNER")) tipo = "CORNER";
+          else if (tip.includes("EXCLUSIVO")) tipo = "EXCLUSIVO";
+        }
 
-        resumenEl.textContent = `Checklist cargado (${file.name}). Filas: ${rows}, columnas: ${cols.length}.`;
+        if (!tipo) {
+          resumenEl.textContent =
+            "Checklist cargado, pero no se ha podido identificar si es CORNER o EXCLUSIVO.";
+          renderChecklistChart(null);
+          return;
+        }
 
-        // Detección genérica de columnas numéricas y cálculo de medias
-        const numericCols = [];
-        cols.forEach((col) => {
-          const nums = json
-            .map((r) => parseFloat(r[col]))
-            .filter((v) => !isNaN(v));
-          if (nums.length > 0) {
-            const avg =
-              nums.reduce((acc, v) => acc + v, 0) / Math.max(nums.length, 1);
-            numericCols.push({ col, avg });
+        let metrics = null;
+
+        if (tipo === "CORNER") {
+          let total = 0;
+          let aplica = 0;
+          for (let row = 7; row <= 88; row++) {
+            const cell = sheet["F" + row];
+            if (!cell) continue;
+            const v = parseFloat(cell.v);
+            if (v === 0 || v === 1) {
+              total++;
+              if (v === 1) aplica++;
+            }
           }
-        });
+          let aplicProc = leerNumeroCelda(sheet, "F90");
+          if (aplicProc == null && total > 0) {
+            aplicProc = (aplica / total) * 100;
+          }
+          const aplicaHIT = boolDesdeCelda(sheet["F63"]);
+          const convPrueba = leerNumeroCelda(sheet, "B92");
+          const convVenta = leerNumeroCelda(sheet, "B93");
+          metrics = { aplicProc, aplicaHIT, convPrueba, convVenta };
+        } else if (tipo === "EXCLUSIVO") {
+          let total = 0;
+          let aplica = 0;
+          for (let row = 8; row <= 102; row++) {
+            const cell = sheet["F" + row];
+            if (!cell) continue;
+            const v = parseFloat(cell.v);
+            if (v === 0 || v === 1) {
+              total++;
+              if (v === 1) aplica++;
+            }
+          }
+          let aplicProc = leerNumeroCelda(sheet, "F104");
+          if (aplicProc == null && total > 0) {
+            aplicProc = (aplica / total) * 100;
+          }
+          const aplicaHIT = boolDesdeCelda(sheet["F65"]);
+          const convPrueba = leerNumeroCelda(sheet, "I126");
+          const convVenta = leerNumeroCelda(sheet, "I127");
+          metrics = { aplicProc, aplicaHIT, convPrueba, convVenta };
+        }
 
-        const top = numericCols.slice(0, 5);
-        renderChecklistChart(top);
+        const partes = [];
+        partes.push(`Checklist ${tipo} cargado (${file.name}).`);
+        if (metrics.aplicProc != null) {
+          partes.push(`% Aplicación procesos: ${metrics.aplicProc.toFixed(1)}.`);
+        }
+        if (metrics.convPrueba != null) {
+          partes.push(`Conv. a prueba: ${metrics.convPrueba}.`);
+        }
+        if (metrics.convVenta != null) {
+          partes.push(`Conv. a venta: ${metrics.convVenta}.`);
+        }
+        if (metrics.aplicaHIT != null) {
+          partes.push(`Aplica HIT: ${metrics.aplicaHIT ? "Sí" : "No"}.`);
+        }
 
-        // Guardar texto de resumen dentro del informe del centro
-        if (centroSeleccionadoCodigo) {
-          if (!estado[centroSeleccionadoCodigo])
-            estado[centroSeleccionadoCodigo] = {};
-          const eCentro = estado[centroSeleccionadoCodigo];
-          eCentro.informe = eCentro.informe || {};
-          eCentro.informe.checklistResumen = resumenEl.textContent;
-          guardarEstado();
+        resumenEl.textContent = partes.join(" ");
+
+        const ds = [];
+        if (metrics.aplicProc != null) {
+          ds.push({
+            label: "% Aplicación procesos",
+            value: metrics.aplicProc,
+          });
+        }
+        if (metrics.convPrueba != null) {
+          ds.push({ label: "Conv. a prueba", value: metrics.convPrueba });
+        }
+        if (metrics.convVenta != null) {
+          ds.push({ label: "Conv. a venta", value: metrics.convVenta });
+        }
+        renderChecklistChart(ds);
+
+        const eCentro = estado[centroSeleccionadoCodigo];
+        if (eCentro) {
+          const inf = (eCentro.informes || []).find(
+            (i) => i.id === currentInformeId
+          );
+          if (inf) {
+            inf.checklistResumen = resumenEl.textContent;
+            inf.checklistTipo = tipo;
+            inf.checklistMetrics = metrics;
+            guardarEstado();
+          }
         }
       };
       reader.readAsArrayBuffer(file);
     }
 
-    function setupImagenInput(inputId, previewId, maxImgs = 5) {
+    function setupImagenInput(inputId, previewId, maxImgs) {
       const input = document.getElementById(inputId);
       const preview = document.getElementById(previewId);
       if (!input || !preview) return;
@@ -1551,6 +2161,9 @@
             const img = document.createElement("img");
             img.src = ev.target.result;
             img.className = "img-thumb";
+            img.addEventListener("click", () => {
+              abrirZoomImagen(img.src);
+            });
             preview.appendChild(img);
           };
           reader.readAsDataURL(file);
@@ -1558,29 +2171,59 @@
       });
     }
 
+    function abrirZoomImagen(src) {
+      const overlay = document.getElementById("imgZoomOverlay");
+      const img = document.getElementById("imgZoomImage");
+      if (!overlay || !img) return;
+      img.src = src;
+      overlay.style.display = "flex";
+    }
+
+    function cerrarZoomImagen() {
+      const overlay = document.getElementById("imgZoomOverlay");
+      if (!overlay) return;
+      overlay.style.display = "none";
+    }
+
     function guardarInforme(finalizar) {
-      if (!centroSeleccionadoCodigo) {
+      if (!centroSeleccionadoCodigo || !currentInformeId) {
         alert(
-          "Selecciona primero un centro (botón 'Crear') para poder guardar el informe."
+          "Selecciona primero un centro e informe (botón 'Crear') para poder guardar."
         );
         return;
       }
       const code = centroSeleccionadoCodigo;
-      if (!estado[code]) estado[code] = {};
       const e = estado[code];
-      const inf = e.informe || {};
+      if (!e) return;
+      const inf = (e.informes || []).find((i) => i.id === currentInformeId);
+      if (!inf) return;
 
+      inf.audiologo = document.getElementById("infAudiologo").value.trim();
+      inf.horasServicio =
+        document.getElementById("infHorasServicio").value.trim();
+      inf.delegadoFormacion =
+        document.getElementById("infDelegadoFormacion").value.trim();
+      inf.tipoVisita = leerTipoVisitaDesdeUI();
       inf.observaciones =
         document.getElementById("informeObservaciones").value.trim();
       inf.compromisos =
         document.getElementById("informeCompromisos").value.trim();
-      inf.checklistResumen =
-        document.getElementById("checklistResumen").textContent || "";
+      inf.imgObs1 = document.getElementById("imgObs1").value.trim();
+      inf.imgObs2 = document.getElementById("imgObs2").value.trim();
+      inf.imgObs3 = document.getElementById("imgObs3").value.trim();
+      if (finalizar) {
+        inf.estado = "finalizado";
+        inf.fechaFinalizacion = new Date().toISOString();
+      } else {
+        inf.estado = inf.estado || "borrador";
+      }
 
-      e.informe = inf;
-      e.informeEstado = finalizar
-        ? "finalizado"
-        : e.informeEstado || "crear";
+      const respSel = document.getElementById("infRespAudioSelect").value;
+      if (respSel) {
+        e.respAudio = respSel;
+        const centro = centros.find((c) => c.CODIGO === code);
+        if (centro) centro.RESP_AUDIO = respSel;
+      }
 
       guardarEstado();
       aplicarEstadoALosCentros();
@@ -1592,11 +2235,109 @@
         ? "Informe finalizado"
         : "Informe guardado";
 
+      if (finalizar) {
+        setInformeEditable(false);
+      }
+
       alert(
         finalizar
           ? `Informe guardado y marcado como FINALIZADO para el centro ${code}.`
           : `Borrador de informe guardado para el centro ${code}.`
       );
+    }
+
+    // ==========================
+    // HISTÓRICO
+    // ==========================
+
+    function abrirHistoricoCentro(codigo) {
+      const modal = document.getElementById("historicoModal");
+      const lista = document.getElementById("historicoLista");
+      const titulo = document.getElementById("historicoTitulo");
+      const centro = centros.find((c) => c.CODIGO === codigo);
+      const e = estado[codigo] || { informes: [] };
+      const informes = e.informes || [];
+
+      titulo.textContent = `Histórico de informes · ${codigo} · ${
+        centro ? centro.CENTRO : ""
+      }`;
+      lista.innerHTML = "";
+
+      if (!informes.length) {
+        const p = document.createElement("p");
+        p.className = "text-muted";
+        p.textContent = "Este centro aún no tiene informes registrados.";
+        lista.appendChild(p);
+      } else {
+        informes
+          .slice()
+          .sort((a, b) => (a.fechaCreacion || "").localeCompare(b.fechaCreacion))
+          .forEach((inf) => {
+            const item = document.createElement("div");
+            item.className = "historico-item";
+
+            const text = document.createElement("div");
+            text.className = "historico-text";
+            const linea1 = document.createElement("div");
+            const fechaVisita = inf.fechaVisita
+              ? formatearFechaCorta(inf.fechaVisita)
+              : "sin fecha";
+            linea1.textContent = `Visita: ${fechaVisita} · Estado: ${
+              inf.estado === "finalizado" ? "Finalizado" : "Borrador"
+            }`;
+            const linea2 = document.createElement("div");
+            linea2.className = "historico-tag";
+            linea2.textContent = `Creado: ${formatearFechaCorta(
+              inf.fechaCreacion
+            )}`;
+            text.appendChild(linea1);
+            text.appendChild(linea2);
+
+            const acciones = document.createElement("div");
+            acciones.style.display = "flex";
+            acciones.style.gap = "4px";
+
+            const btnVer = document.createElement("button");
+            btnVer.className = "btn btn-sm btn-outline";
+            btnVer.textContent = "Ver";
+            btnVer.addEventListener("click", () => {
+              modal.style.display = "none";
+              cargarCentroEnInforme(
+                codigo,
+                inf.id,
+                inf.estado === "finalizado"
+              );
+              const card = document.getElementById("cardInformeVisita");
+              if (card) {
+                card.scrollIntoView({ behavior: "smooth", block: "start" });
+              }
+            });
+
+            const btnImp = document.createElement("button");
+            btnImp.className = "btn btn-sm btn-primary";
+            btnImp.textContent = "Imprimir";
+            btnImp.addEventListener("click", () => {
+              modal.style.display = "none";
+              cargarCentroEnInforme(codigo, inf.id, true);
+              setTimeout(() => {
+                window.print();
+              }, 300);
+            });
+
+            acciones.appendChild(btnVer);
+            acciones.appendChild(btnImp);
+            item.appendChild(text);
+            item.appendChild(acciones);
+            lista.appendChild(item);
+          });
+      }
+
+      modal.style.display = "flex";
+    }
+
+    function cerrarHistorico() {
+      const modal = document.getElementById("historicoModal");
+      if (modal) modal.style.display = "none";
     }
 
     // ==========================
@@ -1651,6 +2392,7 @@
         renderTabla(document.getElementById("searchInput").value);
         actualizarResumen();
         centroSeleccionadoCodigo = null;
+        currentInformeId = null;
         document.getElementById("informeEmpty").style.display = "block";
         document.getElementById("informeContenido").style.display = "none";
         document.getElementById("informeEstadoBadge").textContent =
@@ -1666,17 +2408,57 @@
       });
 
       // Imágenes
-      setupImagenInput("imgInput1", "imgPreview1");
-      setupImagenInput("imgInput2", "imgPreview2");
-      setupImagenInput("imgInput3", "imgPreview3");
+      setupImagenInput("imgInput1", "imgPreview1", 1);
+      setupImagenInput("imgInput2", "imgPreview2", 1);
+      setupImagenInput("imgInput3", "imgPreview3", 3);
 
-      // Botones de guardado de informe
+      // Botones de tipo de visita
+      ["btnApertura", "btnSeguimiento"].forEach((id) => {
+        const btn = document.getElementById(id);
+        if (btn) {
+          btn.addEventListener("click", () => {
+            btn.classList.toggle("active");
+          });
+        }
+      });
+
+      // Botones de guardado
       document
         .getElementById("btnGuardarBorrador")
         .addEventListener("click", () => guardarInforme(false));
       document
         .getElementById("btnGuardarFinal")
         .addEventListener("click", () => guardarInforme(true));
+
+      // Imprimir informe actual
+      document
+        .getElementById("btnImprimirInforme")
+        .addEventListener("click", () => {
+          if (!centroSeleccionadoCodigo || !currentInformeId) {
+            alert("Selecciona primero un informe para imprimir.");
+            return;
+          }
+          // Nos aseguramos de que esté cargado en modo lectura
+          cargarCentroEnInforme(centroSeleccionadoCodigo, currentInformeId, true);
+          setTimeout(() => {
+            window.print();
+          }, 200);
+        });
+
+      // Modal histórico
+      document
+        .getElementById("historicoCerrar")
+        .addEventListener("click", cerrarHistorico);
+      document
+        .getElementById("historicoModal")
+        .addEventListener("click", (e) => {
+          if (e.target.id === "historicoModal") cerrarHistorico();
+        });
+
+      // Zoom imagen
+      document
+        .getElementById("imgZoomOverlay")
+        .addEventListener("click", cerrarZoomImagen);
     });
   </script>
 </body>
