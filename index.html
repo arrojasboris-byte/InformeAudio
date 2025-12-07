@@ -2,32 +2,26 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Informe-gestión Audio</title>
+  <title>INFORME AUDIO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root {
-      --primary: #c1121f;
-      --primary-dark: #8f0e17;
-      --primary-light: #fbe4e6;
-      --sidebar-bg: #111827;
-      --sidebar-border: #1f2933;
-      --bg: #f3f4f6;
-      --card-bg: #ffffff;
-      --text-main: #111827;
-      --text-muted: #6b7280;
-      --amber: #ffc857;
-      --border: #e5e7eb;
-      --success: #22c55e;
+      --primary: #f97373;          /* rojo suave para botones / barras */
+      --primary-strong: #f43f5e;
+      --bg: #020617;               /* fondo muy oscuro */
+      --bg-card: #020617;
+      --bg-elevated: #020617;
+      --border: #1e293b;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --amber: #facc15;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background-color: var(--bg);
       color: var(--text-main);
       display: flex;
@@ -37,17 +31,17 @@
     /* SIDEBAR */
 
     .sidebar {
-      width: 260px;
-      background: var(--sidebar-bg);
-      color: #f9fafb;
+      width: 240px;
+      background: #020617;
+      color: #e5e7eb;
       display: flex;
       flex-direction: column;
-      border-right: 1px solid var(--sidebar-border);
+      border-right: 1px solid #0f172a;
     }
 
     .sidebar-header {
-      padding: 18px 20px;
-      border-bottom: 1px solid var(--sidebar-border);
+      padding: 16px 18px;
+      border-bottom: 1px solid #0f172a;
       display: flex;
       align-items: center;
       gap: 10px;
@@ -57,12 +51,13 @@
       width: 32px;
       height: 32px;
       border-radius: 999px;
-      background: var(--primary);
+      background: var(--primary-strong);
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
       font-size: 16px;
+      color: #0b1120;
     }
 
     .sidebar-title {
@@ -78,8 +73,8 @@
 
     .sidebar-title span:last-child {
       font-size: 11px;
-      text-transform: uppercase;
       color: var(--text-muted);
+      text-transform: uppercase;
     }
 
     .sidebar-nav {
@@ -92,8 +87,6 @@
       text-transform: uppercase;
       color: var(--text-muted);
       padding: 8px 12px;
-      margin-top: 4px;
-      margin-bottom: 4px;
     }
 
     .nav-item {
@@ -103,34 +96,32 @@
       padding: 8px 12px;
       border-radius: 999px;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 13px;
       color: #e5e7eb;
       margin: 2px 4px;
       border: 1px solid transparent;
     }
 
-    .nav-item span.icon {
-      font-size: 16px;
-    }
+    .nav-item span.icon { font-size: 16px; }
 
     .nav-item.active {
-      background: var(--primary);
-      border-color: var(--primary-dark);
+      background: #111827;
+      border-color: #1e293b;
     }
 
     .nav-item:hover:not(.active) {
-      background: rgba(248, 250, 252, 0.04);
-      border-color: rgba(148, 163, 184, 0.4);
+      background: #020617;
+      border-color: #1e293b;
     }
 
     .sidebar-footer {
-      padding: 12px 16px;
-      border-top: 1px solid var(--sidebar-border);
-      font-size: 12px;
+      padding: 10px 14px;
+      border-top: 1px solid #0f172a;
+      font-size: 11px;
       color: var(--text-muted);
     }
 
-    /* MAIN AREA */
+    /* MAIN */
 
     .main {
       flex: 1;
@@ -140,9 +131,9 @@
     }
 
     .main-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      background: #ffffff;
+      padding: 14px 18px;
+      border-bottom: 1px solid #020617;
+      background: #020617;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
@@ -153,489 +144,376 @@
     .main-header-left {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 2px;
     }
 
     .main-title {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 600;
     }
 
     .main-subtitle {
-      font-size: 13px;
+      font-size: 12px;
       color: var(--text-muted);
     }
 
     .main-header-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
     .btn {
       border-radius: 999px;
-      border: 1px solid transparent;
-      padding: 7px 14px;
-      font-size: 13px;
+      border: 1px solid #1e293b;
+      padding: 6px 12px;
+      font-size: 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: #ffffff;
+      gap: 5px;
+      background: #020617;
       color: var(--text-main);
-      transition: background 0.15s ease, transform 0.05s ease,
-        box-shadow 0.1s ease, border-color 0.15s ease;
     }
 
-    .btn-sm {
-      padding: 5px 11px;
-      font-size: 12px;
-    }
+    .btn-sm { padding: 4px 10px; font-size: 11px; }
 
     .btn-primary {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary-dark);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+      background: var(--primary-strong);
+      border-color: var(--primary-strong);
+      color: #020617;
     }
 
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      transform: translateY(-0.5px);
-      box-shadow: 0 4px 12px rgba(193, 18, 31, 0.4);
-    }
+    .btn-primary:hover { filter: brightness(1.05); }
 
-    .btn-outline {
-      border-color: var(--border);
-      background: #ffffff;
-    }
-
-    .btn-outline:hover {
-      background: #f9fafb;
-    }
+    .btn-outline { background: #020617; }
+    .btn-outline:hover { background: #0b1120; }
 
     .btn-icon {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
       padding: 0;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      font-size: 15px;
     }
 
-    input[type="file"] {
-      display: none;
-    }
-
-    /* CONTENT */
+    input[type="file"] { display: none; }
 
     .main-content {
-      padding: 16px 20px 24px;
+      padding: 10px 16px 18px;
       overflow: auto;
       flex: 1;
     }
 
     .card {
-      background: var(--card-bg);
-      border-radius: 14px;
-      padding: 16px 16px 18px;
-      border: 1px solid var(--border);
-      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
-      margin-bottom: 16px;
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 12px 14px 14px;
+      border: 1px solid #020617;
+      box-shadow: 0 0 0 1px #020617;
+      margin-bottom: 10px;
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
-      gap: 8px;
+      margin-bottom: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
-    .card-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .card-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
+    .card-title { font-size: 14px; font-weight: 600; }
+    .card-subtitle { font-size: 11px; color: var(--text-muted); }
 
     .badge {
-      font-size: 11px;
-      padding: 3px 8px;
+      font-size: 10px;
+      padding: 2px 7px;
       border-radius: 999px;
-      background: var(--primary-light);
-      color: var(--primary-dark);
+      border: 1px solid #1e293b;
+      background: #020617;
+      color: var(--text-muted);
     }
 
     .summary-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    @media (max-width: 900px) {
-      .summary-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 640px) {
-      .sidebar {
-        display: none;
-      }
-
-      .main-header {
-        position: sticky;
-        top: 0;
-        z-index: 8;
-      }
-
-      .summary-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      gap: 8px;
     }
 
     .summary-card {
       border-radius: 12px;
-      padding: 10px 11px;
-      border: 1px solid var(--border);
-      background: #f9fafb;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+      padding: 8px 10px;
+      border: 1px solid #0f172a;
+      background: #020617;
+      font-size: 11px;
     }
 
     .summary-label {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
 
     .summary-value {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 600;
     }
 
     .summary-detail {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
     }
 
-    /* TABLE */
+    /* TABLE CENTROS */
 
-    .table-wrapper {
-      overflow-x: auto;
-    }
+    .table-wrapper { overflow-x: auto; }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 13px;
+      font-size: 12px;
       min-width: 900px;
     }
 
     thead {
-      background: #f9fafb;
+      background: #020617;
     }
 
-    th,
-    td {
-      padding: 7px 8px;
-      border-bottom: 1px solid var(--border);
+    th, td {
+      padding: 5px 6px;
+      border-bottom: 1px solid #020617;
       text-align: left;
       white-space: nowrap;
     }
 
     th {
-      font-size: 11px;
+      font-size: 10px;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--text-muted);
+      background: #020617;
       position: sticky;
       top: 0;
-      background: #f9fafb;
       z-index: 5;
     }
 
-    tbody tr:hover {
-      background: #fdf2f3;
-    }
+    tbody tr:hover { background: #020617; }
 
     .col-codigo {
       font-weight: 600;
-      font-size: 12px;
-      color: var(--primary-dark);
+      font-size: 11px;
+      color: var(--primary);
     }
 
-    .col-centro {
-      font-weight: 500;
-    }
+    .col-centro { font-weight: 500; }
 
-    .col-visit-cell {
-      min-width: 160px;
-    }
+    .col-visit-cell { min-width: 120px; }
 
     .visita-group {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
 
     .visita-input {
-      font-size: 12px;
-      padding: 4px 6px;
+      font-size: 11px;
+      padding: 3px 6px;
       border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      min-width: 120px;
+      border: 1px solid #1e293b;
+      background: #020617;
+      color: var(--text-main);
+      min-width: 100px;
     }
 
     .visita-input:focus {
       outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px rgba(193, 18, 31, 0.25);
+      border-color: var(--amber);
     }
 
     .visita-guardada .visita-input {
-      background: var(--amber);
-      border-color: #e0a800;
-    }
-
-    .visita-guardada .visita-input::-webkit-calendar-picker-indicator {
-      filter: contrast(3);
+      background: #1e293b;
+      border-color: #eab308;
     }
 
     .pill {
       padding: 2px 7px;
       border-radius: 999px;
-      font-size: 11px;
-      border: 1px solid rgba(209, 213, 219, 0.9);
+      font-size: 10px;
+      border: 1px solid #1e293b;
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: #f9fafb;
+      background: #020617;
+      color: var(--text-main);
     }
 
     .pill-corner {
-      border-color: rgba(248, 113, 113, 0.6);
-      background: #fef2f2;
-      color: #b91c1c;
+      border-color: #f97373;
+      color: #f97373;
     }
 
     .pill-crear {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary-dark);
+      background: var(--primary-strong);
+      border-color: var(--primary-strong);
+      color: #020617;
       cursor: pointer;
     }
 
-    .pill-crear:hover {
-      background: var(--primary-dark);
-    }
-
-    .icon-finalizado {
-      color: var(--success);
-      font-size: 18px;
-    }
-
-    .text-muted {
-      color: var(--text-muted);
-      font-size: 12px;
-    }
+    .icon-finalizado { color: #22c55e; font-size: 16px; }
 
     .filter-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: 6px;
+      margin-bottom: 6px;
       align-items: center;
       justify-content: space-between;
     }
 
-    .filter-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-
     .input-text {
-      font-size: 12px;
-      padding: 5px 8px;
+      font-size: 11px;
+      padding: 4px 8px;
       border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #ffffff;
+      border: 1px solid #1e293b;
+      background: #020617;
+      color: var(--text-main);
       min-width: 160px;
     }
 
-    .input-text:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px rgba(193, 18, 31, 0.25);
-    }
+    .input-text:focus { outline: none; border-color: var(--primary-strong); }
+
+    .text-muted { color: var(--text-muted); font-size: 11px; }
 
     /* INFORME DE VISITA */
 
     .informe-empty {
-      padding: 6px 4px 2px;
-      font-size: 13px;
+      padding: 4px 2px;
+      font-size: 11px;
       color: var(--text-muted);
     }
 
     .informe-banner {
       border-radius: 12px;
       overflow: hidden;
-      margin-bottom: 10px;
-      border: 1px solid #111827;
+      margin-bottom: 8px;
+      border: 1px solid #020617;
       display: flex;
-      background: linear-gradient(90deg, #000000 0%, #111827 60%, #4b5563 100%);
+      background: linear-gradient(90deg, #020617 0%, #020617 60%, #0f172a 100%);
     }
 
     .informe-banner-left {
-      background: var(--primary);
-      color: #ffffff;
-      padding: 10px 14px;
+      background: #ef4444;
+      color: #020617;
+      padding: 8px 12px;
       display: flex;
       align-items: center;
       font-weight: 700;
-      font-size: 18px;
-      letter-spacing: 0.05em;
+      font-size: 16px;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
     }
 
     .informe-banner-right {
       flex: 1;
-      padding: 8px 14px;
+      padding: 6px 12px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       color: #e5e7eb;
     }
 
-    .informe-banner-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .informe-banner-subtitle {
-      font-size: 12px;
-      color: #9ca3af;
-    }
+    .informe-banner-title { font-size: 15px; font-weight: 600; }
+    .informe-banner-subtitle { font-size: 11px; color: var(--text-muted); }
 
     .informe-meta-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px 12px;
-      margin-bottom: 10px;
-      font-size: 12px;
-      padding: 8px 10px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: #f9fafb;
-    }
-
-    @media (max-width: 900px) {
-      .informe-meta-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 640px) {
-      .informe-meta-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      gap: 6px 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
     }
 
     .meta-label {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .meta-input,
     .meta-select {
       width: 100%;
-      font-size: 12px;
+      font-size: 11px;
       border-radius: 999px;
-      border: 1px solid var(--border);
+      border: 1px solid #1f2937;
       padding: 4px 8px;
-      background: #ffffff;
+      background: #020617;
+      color: var(--text-main);
     }
+
+    .meta-input[readonly] { opacity: 0.7; }
 
     .meta-input:focus,
     .meta-select:focus {
       outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px rgba(193, 18, 31, 0.25);
+      border-color: var(--primary-strong);
     }
 
-    .tipo-visita-group {
+    .tipo-visita-row {
       display: flex;
       gap: 4px;
       flex-wrap: wrap;
+      margin-bottom: 6px;
+      font-size: 11px;
     }
 
     .pill-toggle {
       padding: 3px 9px;
       border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      font-size: 11px;
+      border: 1px solid #1f2937;
+      background: #020617;
+      font-size: 10px;
       cursor: pointer;
+      color: var(--text-muted);
     }
 
     .pill-toggle.active {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary-dark);
+      background: var(--primary-strong);
+      border-color: var(--primary-strong);
+      color: #020617;
     }
 
     .informe-centro-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px 12px;
-      margin-bottom: 10px;
-      font-size: 12px;
-    }
-
-    @media (max-width: 900px) {
-      .informe-centro-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 640px) {
-      .informe-centro-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      gap: 6px 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
     }
 
     .informe-centro-item-label {
-      font-size: 11px;
+      font-size: 10px;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
     }
 
     .informe-centro-item-value {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 500;
     }
 
     .informe-section {
-      margin-top: 12px;
-      padding-top: 10px;
-      border-top: 1px dashed var(--border);
+      margin-top: 8px;
+      padding-top: 6px;
+      border-top: 1px dashed #1f2937;
     }
 
     .informe-section-header {
@@ -643,108 +521,142 @@
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 6px;
     }
 
     .informe-section-title {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .chart-card-inner {
+      border-radius: 12px;
+      border: 1px solid #020617;
+      background: #020617;
+      padding: 8px 8px 6px;
+      height: 170px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chart-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .chart-tag {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      border: 1px solid #1e293b;
+      color: var(--text-muted);
+    }
+
+    .chart-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chart-wrapper canvas { max-width: 100%; max-height: 130px; }
+
+    /* IMÁGENES Y NOTAS */
+
+    .img-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .img-card {
+      border-radius: 12px;
+      border: 1px solid #020617;
+      background: #020617;
+      padding: 6px 8px;
+      font-size: 11px;
+    }
+
+    .img-title { font-size: 11px; font-weight: 600; margin-bottom: 2px; }
+    .img-subtitle { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+
+    .img-preview-row {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .img-thumb {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #020617;
+      cursor: zoom-in;
+    }
+
+    .img-notes-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 4px;
     }
 
     .textarea-base {
       width: 100%;
-      min-height: 80px;
+      min-height: 70px;
       border-radius: 10px;
-      border: 1px solid var(--border);
+      border: 1px solid #1e293b;
       padding: 6px 8px;
-      font-size: 13px;
+      font-size: 11px;
       resize: vertical;
       font-family: inherit;
+      background: #020617;
+      color: var(--text-main);
     }
 
     .textarea-base:focus {
       outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px rgba(193, 18, 31, 0.25);
+      border-color: var(--primary-strong);
     }
 
-    .informe-imagenes-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      grid-auto-rows: auto;
-      gap: 10px;
-    }
-
-    .img-block {
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 8px 9px;
-      background: #f9fafb;
-    }
-
-    .img-block.bloque-tecnico {
-      grid-column: 1 / -1;
-    }
-
-    .img-block-title {
-      font-size: 12px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .img-block-subtitle {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .img-preview-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
+    .textarea-wide {
       margin-top: 4px;
-      margin-bottom: 6px;
+      min-height: 50px;
     }
 
-    .img-thumb {
-      width: 56px;
-      height: 56px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #ffffff;
-      cursor: zoom-in;
+    .obs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
     }
 
-    .textarea-mini {
-      width: 100%;
-      min-height: 60px;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      padding: 4px 6px;
-      font-size: 12px;
-      resize: vertical;
-      font-family: inherit;
-      background: #ffffff;
+    .obs-card {
+      border-radius: 12px;
+      border: 1px solid #020617;
+      background: #020617;
+      padding: 6px 8px;
     }
 
-    .textarea-mini:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 1px rgba(193, 18, 31, 0.2);
-    }
+    .obs-title { font-size: 11px; font-weight: 600; margin-bottom: 2px; }
 
     .informe-actions {
       display: flex;
       justify-content: flex-end;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    canvas#checklistChart {
-      max-width: 100%;
-      margin-top: 6px;
+      gap: 6px;
+      margin-top: 8px;
     }
 
     /* MODAL HISTÓRICO */
@@ -752,7 +664,7 @@
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.7);
+      background: rgba(15, 23, 42, 0.85);
       display: none;
       align-items: center;
       justify-content: center;
@@ -760,61 +672,46 @@
     }
 
     .modal-card {
-      background: #ffffff;
+      background: #020617;
       border-radius: 12px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       max-width: 620px;
       width: 90%;
       max-height: 80vh;
       overflow: auto;
-      border: 1px solid var(--border);
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.4);
+      border: 1px solid #1e293b;
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
-    .modal-title {
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .modal-body {
-      font-size: 13px;
-    }
+    .modal-title { font-size: 14px; font-weight: 600; }
+    .modal-body { font-size: 11px; }
 
     .historico-item {
       border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 8px 9px;
-      margin-bottom: 6px;
+      border: 1px solid #1e293b;
+      padding: 6px 7px;
+      margin-bottom: 5px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 6px;
     }
 
-    .historico-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .historico-tag {
-      font-size: 11px;
-      color: var(--text-muted);
-    }
+    .historico-text { display: flex; flex-direction: column; gap: 2px; }
+    .historico-tag { font-size: 10px; color: var(--text-muted); }
 
     /* ZOOM IMAGEN */
 
     .img-zoom-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.9);
       display: none;
       align-items: center;
       justify-content: center;
@@ -825,35 +722,77 @@
       max-width: 90%;
       max-height: 90%;
       border-radius: 10px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7);
     }
 
-    /* PRINT STYLES */
+    /* DETALLES CHECKLIST (2ª PÁGINA EN IMPRESIÓN) */
+
+    #cardChecklistDetalles {
+      margin-top: 8px;
+    }
+
+    #checklistDetallesTabla {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    #checklistDetallesTabla th,
+    #checklistDetallesTabla td {
+      padding: 4px 6px;
+      border-bottom: 1px solid #020617;
+      text-align: left;
+    }
+
+    #checklistDetallesTabla th {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* PRINT */
 
     @media print {
       body {
         background: #ffffff;
+        color: #000000;
       }
 
       .sidebar,
       .main-header,
-      .main-content > .card:not(#cardInformeVisita),
       #historicoModal,
       #imgZoomOverlay {
         display: none !important;
       }
 
-      #cardInformeVisita {
-        display: block !important;
-        border: none;
-        box-shadow: none;
-        margin: 0;
-        padding: 0;
+      .main {
+        flex: none;
+        width: 100%;
       }
 
       .main-content {
         padding: 0;
       }
+
+      .card {
+        background: #ffffff;
+        border-color: #e5e7eb;
+        box-shadow: none;
+      }
+
+      #cardChecklistDetalles {
+        page-break-before: always;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .chart-grid { grid-template-columns: minmax(0, 1fr); }
+      .img-row { grid-template-columns: minmax(0, 1fr); }
+      .img-notes-row { grid-template-columns: minmax(0, 1fr); }
+      .obs-grid { grid-template-columns: minmax(0, 1fr); }
+      .informe-meta-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .informe-centro-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
   </style>
 </head>
@@ -863,84 +802,64 @@
     <div class="sidebar-header">
       <div class="logo-circle">IA</div>
       <div class="sidebar-title">
-        <span>Informe-gestión Audio</span>
-        <span>Panel de control</span>
+        <span>INFORME AUDIO</span>
+        <span>Panel visitas</span>
       </div>
     </div>
     <div class="sidebar-nav">
       <div class="nav-section-title">Módulos</div>
-
       <div class="nav-item active">
-        <span class="icon">📝</span>
-        <span>Pre-informe</span>
+        <span class="icon">📝</span><span>Pre-informe</span>
       </div>
       <div class="nav-item">
-        <span class="icon">📊</span>
-        <span>Dashboard general</span>
+        <span class="icon">📊</span><span>Dashboard general</span>
       </div>
       <div class="nav-item">
-        <span class="icon">📁</span>
-        <span>Informes individuales</span>
+        <span class="icon">📁</span><span>Informes</span>
       </div>
       <div class="nav-item">
-        <span class="icon">📆</span>
-        <span>Histórico de visitas</span>
-      </div>
-      <div class="nav-item">
-        <span class="icon">⚙️</span>
-        <span>Configuración</span>
+        <span class="icon">📆</span><span>Histórico visitas</span>
       </div>
     </div>
     <div class="sidebar-footer">
-      Versión demo · Módulo Pre-informe<br />
-      Datos persistidos en este navegador.
+      INFORME AUDIO · Demo<br/>Datos guardados en este navegador.
     </div>
   </aside>
 
   <!-- MAIN -->
   <main class="main">
-    <!-- HEADER -->
     <header class="main-header">
       <div class="main-header-left">
-        <div class="main-title">Pre-informe · Centros y planificación</div>
+        <div class="main-title">Pre-informe y planificación</div>
         <div class="main-subtitle">
-          Selecciona la fecha de visita, guarda y controla el estado de los informes.
+          Programa visitas, crea informes y controla los resultados de audiología.
         </div>
       </div>
-
       <div class="main-header-actions">
         <label class="btn btn-outline btn-sm" for="excelInput">
-          <span>📥</span>
-          <span>Cargar Excel centros</span>
+          📥 Cargar Excel centros
         </label>
         <input type="file" id="excelInput" accept=".xlsx,.xls" />
-        <button class="btn btn-primary btn-sm" id="btnExport">
-          <span>⬇️</span>
-          <span>Exportar estado (JSON)</span>
-        </button>
-        <button class="btn btn-icon btn-outline" id="btnReset" title="Borrar estado guardado">
-          🗑️
-        </button>
+        <button class="btn btn-primary btn-sm" id="btnExport">⬇️ Exportar estado</button>
+        <button class="btn btn-icon btn-outline" id="btnReset" title="Borrar estado">🗑️</button>
       </div>
     </header>
 
-    <!-- CONTENT -->
     <section class="main-content">
-      <!-- MINI DASHBOARD -->
+      <!-- Resumen -->
       <section class="card">
         <div class="card-header">
           <div>
             <div class="card-title">Resumen rápido</div>
             <div class="card-subtitle">
-              Datos calculados a partir de los centros cargados y el estado de visitas / informes.
+              Calculado sobre los centros cargados y los informes finalizados.
             </div>
           </div>
-          <span class="badge">Módulo: Pre-informe</span>
+          <span class="badge">INFORME AUDIO</span>
         </div>
-
         <div class="summary-grid">
           <div class="summary-card">
-            <div class="summary-label">Centros totales</div>
+            <div class="summary-label">Centros</div>
             <div class="summary-value" id="sumCentros">0</div>
             <div class="summary-detail" id="sumDelegados"></div>
           </div>
@@ -957,65 +876,50 @@
         </div>
       </section>
 
-      <!-- PRE-INFORME -->
+      <!-- Tabla centros -->
       <section class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">Listado de centros · Pre-informe</div>
+            <div class="card-title">Centros y visitas</div>
             <div class="card-subtitle">
-              Puedes cargar tu propio Excel o usar los datos demo que aparecen por defecto.
+              Carga tu Excel o usa los datos demo. Programa la visita y crea el informe.
             </div>
           </div>
         </div>
-
         <div class="filter-row">
-          <div class="filter-group">
-            <input
-              type="text"
-              id="searchInput"
-              class="input-text"
-              placeholder="Buscar por código, centro, provincia..."
-            />
-          </div>
-          <div class="filter-group">
-            <span class="text-muted">
-              Consejo: programa primero las visitas, se marcarán en ámbar cuando queden guardadas.
-            </span>
-          </div>
+          <input id="searchInput" class="input-text" placeholder="Buscar por código, centro, provincia..." />
+          <span class="text-muted">Truco: programa la visita y pulsa “Crear” para generar el informe.</span>
         </div>
-
         <div class="table-wrapper">
           <table id="tablaCentros">
             <thead>
               <tr>
-                <th>Codigo</th>
+                <th>Código</th>
                 <th>Propietario</th>
                 <th>Centro</th>
                 <th>Provincia</th>
-                <th>Delegados</th>
+                <th>Delegado</th>
                 <th>Tipología</th>
                 <th>Centro AAR</th>
                 <th>Visita</th>
                 <th>Informe</th>
                 <th>Audiólogo</th>
-                <th>Horas de servicio</th>
+                <th>Horas servicio</th>
                 <th>Resp. Audio</th>
               </tr>
             </thead>
-            <tbody>
-              <!-- Rellenado por JS -->
-            </tbody>
+            <tbody></tbody>
           </table>
         </div>
       </section>
 
-      <!-- INFORME DE VISITA -->
+      <!-- INFORME DE VISITA (PÁGINA 1) -->
       <section class="card" id="cardInformeVisita">
         <div class="card-header">
           <div>
             <div class="card-title">Informe de visita</div>
             <div class="card-subtitle">
-              Se rellena automáticamente al seleccionar "Crear" en el listado de centros.
+              Al crear un informe desde una visita pendiente se rellenan automáticamente los datos de cabecera.
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -1035,89 +939,82 @@
         </div>
 
         <div id="informeEmpty" class="informe-empty">
-          Selecciona un centro con el botón <strong>"Crear"</strong> para iniciar el informe de visita
-          o consulta el histórico de informes de un centro.
+          Selecciona un centro con el botón <strong>“Crear”</strong> o abre un informe desde el histórico.
         </div>
 
         <div id="informeContenido" style="display:none;">
-          <!-- META EJECUTIVA -->
-          <div class="informe-meta-grid" id="metaGrid">
+          <!-- Meta cabecera -->
+          <div class="informe-meta-grid">
+            <div>
+              <div class="meta-label">Centro</div>
+              <input id="metaCentro" class="meta-input" readonly />
+            </div>
+            <div>
+              <div class="meta-label">Delegado</div>
+              <input id="metaDelegado" class="meta-input" readonly />
+            </div>
+            <div>
+              <div class="meta-label">Tipo de centro</div>
+              <select id="metaTipoCentro" class="meta-select">
+                <option value="">Corner o Exclusivo...</option>
+                <option value="CORNER">Corner</option>
+                <option value="EXCLUSIVO">Exclusivo</option>
+              </select>
+            </div>
+            <div>
+              <div class="meta-label">Centro AAR</div>
+              <select id="metaCentroAAR" class="meta-select">
+                <option value="">¿Centro AAR?</option>
+                <option value="Sí">Sí</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+            <div>
+              <div class="meta-label">Responsable Audio</div>
+              <select id="infRespAudioSelect" class="meta-select">
+                <option value="">Selecciona responsable...</option>
+                <option value="Ariannys Rojas">Ariannys Rojas</option>
+                <option value="Sonia Guasque">Sonia Guasque</option>
+              </select>
+            </div>
+            <div>
+              <div class="meta-label">Fecha visita</div>
+              <input id="metaFechaVisita" class="meta-input" readonly placeholder="dd/mm/aaaa" />
+            </div>
             <div>
               <div class="meta-label">Audiológ@</div>
               <input id="infAudiologo" class="meta-input" placeholder="Nombre del audiológ@" />
             </div>
             <div>
-              <div class="meta-label">Horas de servicio</div>
-              <input id="infHorasServicio" class="meta-input" placeholder="p. ej. 4 horas" />
-            </div>
-            <div>
-              <div class="meta-label">Delegado/a de formación</div>
-              <input
-                id="infDelegadoFormacion"
-                class="meta-input"
-                placeholder="Nombre delegado/a formación"
-              />
-            </div>
-            <div>
-              <div class="meta-label">Tipo de visita</div>
-              <div class="tipo-visita-group" id="tipoVisitaContainer">
-                <button
-                  type="button"
-                  class="pill-toggle"
-                  data-tipo-visita="apertura"
-                  id="btnApertura"
-                >
-                  Apertura
-                </button>
-                <button
-                  type="button"
-                  class="pill-toggle"
-                  data-tipo-visita="seguimiento"
-                  id="btnSeguimiento"
-                >
-                  Seguimiento
-                </button>
-              </div>
-            </div>
-            <div>
-              <div class="meta-label">Responsable Audio</div>
-              <select id="infRespAudioSelect" class="meta-select">
-                <option value="">— Seleccionar —</option>
-                <option value="Ariannys Rojas">Ariannys Rojas</option>
-                <option value="Sonia Guasque">Sonia Guasque</option>
-              </select>
+              <div class="meta-label">Horas servicio</div>
+              <input id="infHorasServicio" class="meta-input" placeholder="p. ej. 4 h" />
             </div>
           </div>
 
-          <!-- Datos del centro -->
+          <div class="tipo-visita-row">
+            <span class="meta-label" style="margin:0;">Tipo de visita</span>
+            <button type="button" id="btnApertura" class="pill-toggle">Apertura</button>
+            <button type="button" id="btnSeguimiento" class="pill-toggle">Seguimiento</button>
+            <span style="flex:1;"></span>
+            <label class="btn btn-outline btn-sm" for="checklistInput">
+              📎 Checklist evaluación (adjuntar fichero)
+            </label>
+            <input type="file" id="checklistInput" accept=".xlsx,.xls,.csv" />
+          </div>
+
+          <!-- Datos centro compactos -->
           <div class="informe-centro-grid">
             <div>
               <div class="informe-centro-item-label">Código</div>
               <div class="informe-centro-item-value" id="infCodigo"></div>
             </div>
             <div>
-              <div class="informe-centro-item-label">Centro</div>
-              <div class="informe-centro-item-value" id="infCentro"></div>
-            </div>
-            <div>
               <div class="informe-centro-item-label">Provincia</div>
               <div class="informe-centro-item-value" id="infProvincia"></div>
             </div>
             <div>
-              <div class="informe-centro-item-label">Tipología</div>
-              <div class="informe-centro-item-value" id="infTipologia"></div>
-            </div>
-            <div>
               <div class="informe-centro-item-label">Propietario</div>
               <div class="informe-centro-item-value" id="infPropietario"></div>
-            </div>
-            <div>
-              <div class="informe-centro-item-label">Delegado/a</div>
-              <div class="informe-centro-item-value" id="infDelegado"></div>
-            </div>
-            <div>
-              <div class="informe-centro-item-label">Centro AAR</div>
-              <div class="informe-centro-item-value" id="infCentroAAR"></div>
             </div>
             <div>
               <div class="informe-centro-item-label">Resp. Audio (centro)</div>
@@ -1125,114 +1022,129 @@
             </div>
           </div>
 
-          <!-- Checklist -->
+          <!-- GRAFICOS -->
           <div class="informe-section">
-            <div class="informe-section-header">
-              <div class="informe-section-title">Checklist de evaluación</div>
-              <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-                <label class="btn btn-outline btn-sm" for="checklistInput">
-                  <span>📎</span>
-                  <span>Adjuntar checklist</span>
-                </label>
+            <div class="chart-grid">
+              <div class="chart-card-inner">
+                <div class="chart-title-row">
+                  <span>Radar de resultados</span>
+                  <span class="chart-tag">% visita</span>
+                </div>
+                <div class="chart-wrapper">
+                  <canvas id="radarChart"></canvas>
+                </div>
               </div>
-              <input type="file" id="checklistInput" accept=".xlsx,.xls,.csv" />
+              <div class="chart-card-inner">
+                <div class="chart-title-row">
+                  <span>Áreas de mejora de procesos</span>
+                  <span class="chart-tag">% no aplicados</span>
+                </div>
+                <div class="chart-wrapper">
+                  <canvas id="mejoraChart"></canvas>
+                </div>
+              </div>
+              <div class="chart-card-inner">
+                <div class="chart-title-row">
+                  <span>KPIs de negocio visita</span>
+                  <span class="chart-tag">% visita</span>
+                </div>
+                <div class="chart-wrapper">
+                  <canvas id="kpiChart"></canvas>
+                </div>
+              </div>
             </div>
-            <div id="checklistResumen" class="text-muted">
+            <div id="checklistResumen" class="text-muted" style="margin-top:4px;">
               Checklist no adjuntado todavía.
             </div>
-            <canvas id="checklistChart" height="120"></canvas>
           </div>
 
-          <!-- Imágenes + observaciones técnicas -->
+          <!-- IMÁGENES -->
           <div class="informe-section">
             <div class="informe-section-header">
               <div class="informe-section-title">
-                Documentación fotográfica y observaciones técnicas
+                Imágenes de la visita
               </div>
             </div>
-            <div class="informe-imagenes-grid">
-              <div class="img-block">
-                <div class="img-block-title">Imagen 1 · Exterior</div>
-                <div class="img-block-subtitle">
-                  Fachada, rótulos, accesos, visibilidad desde el exterior.
-                </div>
-                <label class="btn btn-outline btn-sm" for="imgInput1">
-                  <span>🖼️</span>
-                  <span>Añadir imagen</span>
-                </label>
+            <div class="img-row">
+              <div class="img-card">
+                <div class="img-title">Imagen 1 · Exterior</div>
+                <div class="img-subtitle">Escaparate, fachada, visibilidad desde el exterior.</div>
+                <label class="btn btn-outline btn-sm" for="imgInput1">🖼️ Seleccionar</label>
                 <input type="file" id="imgInput1" accept="image/*" />
-                <div id="imgPreview1" class="img-preview-grid"></div>
-                <textarea
-                  id="imgObs1"
-                  class="textarea-mini"
-                  placeholder="Observaciones técnicas del exterior..."
-                ></textarea>
+                <div id="imgPreview1" class="img-preview-row"></div>
               </div>
-              <div class="img-block">
-                <div class="img-block-title">Imagen 2 · Interior</div>
-                <div class="img-block-subtitle">
-                  Zona de recepción, sala de espera, visibilidad de audiología.
-                </div>
-                <label class="btn btn-outline btn-sm" for="imgInput2">
-                  <span>🖼️</span>
-                  <span>Añadir imagen</span>
-                </label>
+              <div class="img-card">
+                <div class="img-title">Imagen 2 · Interior</div>
+                <div class="img-subtitle">Zona de recepción, sala de espera, visibilidad de audio.</div>
+                <label class="btn btn-outline btn-sm" for="imgInput2">🖼️ Seleccionar</label>
                 <input type="file" id="imgInput2" accept="image/*" />
-                <div id="imgPreview2" class="img-preview-grid"></div>
-                <textarea
-                  id="imgObs2"
-                  class="textarea-mini"
-                  placeholder="Observaciones técnicas del interior..."
-                ></textarea>
+                <div id="imgPreview2" class="img-preview-row"></div>
               </div>
-              <div class="img-block bloque-tecnico">
-                <div class="img-block-title">Bloque técnico · Gabinete</div>
-                <div class="img-block-subtitle">
-                  Hasta 3 imágenes · Equipamiento, insonorización, ergonomía, flujos de trabajo,
-                  documentación y otros elementos técnicos.
-                </div>
-                <label class="btn btn-outline btn-sm" for="imgInput3">
-                  <span>🖼️</span>
-                  <span>Añadir imágenes</span>
-                </label>
+              <div class="img-card">
+                <div class="img-title">Imagen 3 · Gabinete técnico</div>
+                <div class="img-subtitle">Equipamiento, insonorización, ergonomía.</div>
+                <label class="btn btn-outline btn-sm" for="imgInput3">🖼️ Seleccionar</label>
                 <input type="file" id="imgInput3" accept="image/*" multiple />
-                <div id="imgPreview3" class="img-preview-grid"></div>
-                <textarea
-                  id="imgObs3"
-                  class="textarea-mini"
-                  placeholder="Observaciones técnicas del gabinete y procesos..."
-                ></textarea>
+                <div id="imgPreview3" class="img-preview-row"></div>
               </div>
             </div>
+
+            <div class="img-notes-row">
+              <textarea id="imgObs12" class="textarea-base" placeholder="Observaciones imágenes 1 y 2..."></textarea>
+              <textarea id="imgObs3" class="textarea-base" placeholder="Observaciones gabinete técnico..."></textarea>
+            </div>
+            <textarea id="imgObsGeneral" class="textarea-base textarea-wide" placeholder="Observaciones generales sobre las imágenes y documentación fotográfica..."></textarea>
           </div>
 
-          <!-- Observaciones y compromisos -->
+          <!-- OBS / RECOM / COMPROMISOS -->
           <div class="informe-section">
-            <div class="informe-section-title">Observaciones y recomendaciones</div>
-            <textarea
-              id="informeObservaciones"
-              class="textarea-base"
-              placeholder="Describe aquí las observaciones técnicas, puntos fuertes y áreas de mejora detectadas durante la visita..."
-            ></textarea>
-          </div>
+            <div class="obs-grid">
+              <div class="obs-card">
+                <div class="obs-title">Observaciones</div>
+                <textarea id="informeObservaciones" class="textarea-base" placeholder="Observaciones relevantes de la visita..."></textarea>
+              </div>
+              <div class="obs-card">
+                <div class="obs-title">Recomendaciones</div>
+                <textarea id="informeRecomendaciones" class="textarea-base" placeholder="Recomendaciones de mejora, acciones sugeridas..."></textarea>
+              </div>
+              <div class="obs-card">
+                <div class="obs-title">Compromisos</div>
+                <textarea id="informeCompromisos" class="textarea-base" placeholder="Compromisos acordados con el centro (plazos, responsables, seguimiento)..."></textarea>
+              </div>
+            </div>
 
-          <div class="informe-section">
-            <div class="informe-section-title">Compromisos</div>
-            <textarea
-              id="informeCompromisos"
-              class="textarea-base"
-              placeholder="Detalla los compromisos acordados con el centro (plazos, acciones, responsables, seguimiento, etc.)..."
-            ></textarea>
+            <div class="informe-actions">
+              <button class="btn btn-outline btn-sm" id="btnGuardarBorrador">💾 Guardar borrador</button>
+              <button class="btn btn-primary btn-sm" id="btnGuardarFinal">✅ Guardar y finalizar</button>
+            </div>
           </div>
+        </div>
+      </section>
 
-          <div class="informe-actions">
-            <button class="btn btn-outline btn-sm" id="btnGuardarBorrador">
-              💾 Guardar borrador
-            </button>
-            <button class="btn btn-primary btn-sm" id="btnGuardarFinal">
-              ✅ Guardar y finalizar
-            </button>
+      <!-- DETALLES CHECKLIST (PÁGINA 2 EN IMPRESIÓN) -->
+      <section class="card" id="cardChecklistDetalles">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Detalles checklist</div>
+            <div class="card-subtitle">
+              Criterios y estado de aplicación (información de apoyo para lectura detallada).
+            </div>
           </div>
+        </div>
+        <div id="checklistDetallesVacio" class="text-muted">
+          Aún no se ha cargado ningún checklist para este informe.
+        </div>
+        <div class="table-wrapper" id="checklistDetallesContenido" style="display:none;">
+          <table id="checklistDetallesTabla">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Criterio</th>
+                <th>Aplica</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </section>
     </section>
@@ -1251,18 +1163,17 @@
 
   <!-- ZOOM IMAGEN -->
   <div class="img-zoom-overlay" id="imgZoomOverlay">
-    <img id="imgZoomImage" src="" alt="Zoom imagen" />
+    <img id="imgZoomImage" src="" alt="Zoom" />
   </div>
 
-  <!-- SheetJS para lectura de Excel -->
+  <!-- SheetJS y Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-  <!-- Chart.js para gráficos del checklist -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-    // ==========================
-    // DATOS DEMO INICIALES
-    // ==========================
+    /* =====================
+       DEMO Y ESTADO
+    ======================*/
     const demoData = [
       {
         CODIGO: "4DIA",
@@ -1331,25 +1242,23 @@
       },
     ];
 
-    const STORAGE_KEY = "InformeGestionAudio_PreInforme_v3";
+    const STORAGE_KEY = "InformeAudio_v1";
 
     let centros = [];
-    let estado = {}; // { CODIGO: { visita, centroAAR, respAudio, informes: [...] } }
+    let estado = {}; // {CODIGO: {visita, centroAAR, respAudio, informes: [...]}}
     let centroSeleccionadoCodigo = null;
     let currentInformeId = null;
-    let checklistChart = null;
 
-    // ==========================
-    // UTILIDADES
-    // ==========================
+    let radarChart = null;
+    let mejoraChart = null;
+    let kpiChart = null;
 
     function cargarEstado() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return {};
-        return JSON.parse(raw);
+        return raw ? JSON.parse(raw) : {};
       } catch (e) {
-        console.error("Error leyendo localStorage", e);
+        console.error(e);
         return {};
       }
     }
@@ -1358,7 +1267,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
       } catch (e) {
-        console.error("Error guardando localStorage", e);
+        console.error(e);
       }
     }
 
@@ -1376,11 +1285,11 @@
           c.VISITA = e.visita || "";
           c.CENTRO_AAR = e.centroAAR || c.CENTRO_AAR || "";
           c.RESP_AUDIO = e.respAudio || c.RESP_AUDIO || "";
-          const informes = e.informes || [];
-          c.NUM_INFORMES = informes.length;
-          c.INFORME_ESTADO = estadoCentroDesdeInformes(informes);
-          const finalizados = informes.filter((i) => i.estado === "finalizado");
-          const ultimo = finalizados.length ? finalizados[finalizados.length - 1] : null;
+          const infs = e.informes || [];
+          c.NUM_INFORMES = infs.length;
+          c.INFORME_ESTADO = estadoCentroDesdeInformes(infs);
+          const finalizados = infs.filter((i) => i.estado === "finalizado");
+          const ultimo = finalizados[finalizados.length - 1];
           c.ULTIMO_INFORME_FECHA = ultimo ? ultimo.fechaVisita || ultimo.fechaFinalizacion : "";
         } else {
           c.NUM_INFORMES = 0;
@@ -1394,20 +1303,14 @@
       if (!iso) return "";
       const d = new Date(iso);
       if (isNaN(d.getTime())) return iso;
-      return d.toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "2-digit",
-      });
+      return d.toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "2-digit" });
     }
 
     function leerNumeroCelda(sheet, addr) {
       const cell = sheet[addr];
       if (!cell) return null;
       let v = cell.v;
-      if (typeof v === "string") {
-        v = v.replace("%", "").replace(",", ".");
-      }
+      if (typeof v === "string") v = v.replace("%", "").replace(",", ".");
       const num = parseFloat(v);
       return isNaN(num) ? null : num;
     }
@@ -1415,19 +1318,16 @@
     function boolDesdeCelda(cell) {
       if (!cell) return null;
       const v = String(cell.v).trim().toUpperCase();
-      if (v === "1" || v === "SI" || v === "SÍ" || v === "YES") return true;
-      if (v === "0" || v === "NO") return false;
+      if (["1", "SI", "SÍ", "YES"].includes(v)) return true;
+      if (["0", "NO"].includes(v)) return false;
       return null;
     }
 
-    // ==========================
-    // RENDER TABLA
-    // ==========================
+    /* ========= TABLA CENTROS ========= */
 
     function renderTabla(filtroTexto = "") {
       const tbody = document.querySelector("#tablaCentros tbody");
       tbody.innerHTML = "";
-
       const term = filtroTexto.trim().toLowerCase();
 
       const filtrados = centros.filter((c) => {
@@ -1478,19 +1378,11 @@
         tdTip.appendChild(spanTip);
         tr.appendChild(tdTip);
 
-        // CENTRO AAR editable
         const tdAar = document.createElement("td");
         const selAar = document.createElement("select");
-        selAar.style.fontSize = "12px";
-        selAar.style.padding = "3px 6px";
-        selAar.style.borderRadius = "999px";
-        selAar.style.border = "1px solid var(--border)";
-        ["", "Sí", "No"].forEach((val) => {
-          const opt = document.createElement("option");
-          opt.value = val;
-          opt.textContent = val === "" ? "—" : val;
-          selAar.appendChild(opt);
-        });
+        selAar.className = "meta-select";
+        selAar.style.fontSize = "11px";
+        selAar.innerHTML = `<option value="">—</option><option value="Sí">Sí</option><option value="No">No</option>`;
         selAar.value = c.CENTRO_AAR || "";
         selAar.addEventListener("change", () => {
           const code = c.CODIGO;
@@ -1499,19 +1391,17 @@
           c.CENTRO_AAR = selAar.value;
           guardarEstado();
           if (centroSeleccionadoCodigo === code) {
-            document.getElementById("infCentroAAR").textContent =
-              selAar.value || "—";
+            document.getElementById("metaCentroAAR").value = selAar.value || "";
+            document.getElementById("infCentroAAR").textContent = selAar.value || "—";
           }
         });
         tdAar.appendChild(selAar);
         tr.appendChild(tdAar);
 
-        // VISITA
         const tdVisita = document.createElement("td");
         tdVisita.className = "col-visit-cell";
-        const visitaGroup = document.createElement("div");
-        visitaGroup.className = "visita-group";
-
+        const vGroup = document.createElement("div");
+        vGroup.className = "visita-group";
         const inputDate = document.createElement("input");
         inputDate.type = "date";
         inputDate.className = "visita-input";
@@ -1519,11 +1409,9 @@
           inputDate.value = c.VISITA;
           tdVisita.classList.add("visita-guardada");
         }
-
         const btnSave = document.createElement("button");
-        btnSave.className = "btn btn-sm btn-outline";
+        btnSave.className = "btn btn-outline btn-sm";
         btnSave.textContent = "Guardar";
-
         btnSave.addEventListener("click", () => {
           const valor = inputDate.value;
           if (!valor) {
@@ -1538,111 +1426,89 @@
           renderTabla(document.getElementById("searchInput").value);
           actualizarResumen();
         });
-
-        visitaGroup.appendChild(inputDate);
-        visitaGroup.appendChild(btnSave);
-        tdVisita.appendChild(visitaGroup);
-        if (c.VISITA) {
-          tdVisita.classList.add("visita-guardada");
-        }
+        vGroup.appendChild(inputDate);
+        vGroup.appendChild(btnSave);
+        tdVisita.appendChild(vGroup);
         tr.appendChild(tdVisita);
 
-        // INFORME
         const tdInforme = document.createElement("td");
-        const eCentro = estado[c.CODIGO] || {};
-        const numInf = (eCentro.informes || []).length;
-        const contInforme = document.createElement("div");
-        contInforme.style.display = "flex";
-        contInforme.style.flexDirection = "column";
-        contInforme.style.gap = "4px";
+        const cont = document.createElement("div");
+        cont.style.display = "flex";
+        cont.style.flexDirection = "column";
+        cont.style.gap = "3px";
+        const filaA = document.createElement("div");
+        filaA.style.display = "flex";
+        filaA.style.gap = "4px";
+        filaA.style.flexWrap = "wrap";
+        const filaB = document.createElement("div");
+        filaB.className = "text-muted";
 
-        const filaAcciones = document.createElement("div");
-        filaAcciones.style.display = "flex";
-        filaAcciones.style.gap = "4px";
-        filaAcciones.style.flexWrap = "wrap";
-        const filaEstado = document.createElement("div");
-        filaEstado.className = "text-muted";
+        const eC = estado[c.CODIGO] || { informes: [] };
+        const numInf = (eC.informes || []).length;
 
         if (!numInf) {
           if (c.VISITA) {
             const btnCrear = document.createElement("button");
             btnCrear.className = "pill pill-crear";
             btnCrear.textContent = "Crear";
-            btnCrear.title = "Crear un nuevo informe para este centro.";
-            btnCrear.addEventListener("click", () => {
-              crearInformeParaCentro(c);
-            });
-            filaAcciones.appendChild(btnCrear);
-            filaEstado.textContent = "Sin informes previos.";
+            btnCrear.addEventListener("click", () => crearInformeParaCentro(c));
+            filaA.appendChild(btnCrear);
+            filaB.textContent = "Sin informes previos.";
           } else {
-            filaEstado.textContent = "Sin visita guardada.";
+            filaB.textContent = "Sin visita guardada.";
           }
         } else {
           if (c.INFORME_ESTADO === "finalizado") {
             const icon = document.createElement("span");
             icon.className = "icon-finalizado";
-            icon.title = "Al menos un informe finalizado";
             icon.textContent = "✅";
-            filaEstado.appendChild(icon);
-            const fechaTxt = c.ULTIMO_INFORME_FECHA
-              ? " · Último informe: " + formatearFechaCorta(c.ULTIMO_INFORME_FECHA)
-              : "";
+            filaB.appendChild(icon);
             const span = document.createElement("span");
-            span.textContent = `  (${numInf} en histórico)${fechaTxt}`;
-            filaEstado.appendChild(span);
-          } else if (c.INFORME_ESTADO === "borrador") {
-            filaEstado.textContent = `En edición (${numInf} informe/s).`;
+            span.textContent =
+              "  (" +
+              numInf +
+              " en histórico, último " +
+              (c.ULTIMO_INFORME_FECHA ? formatearFechaCorta(c.ULTIMO_INFORME_FECHA) : "-") +
+              ")";
+            filaB.appendChild(span);
+          } else {
+            filaB.textContent = `En edición (${numInf}).`;
           }
 
           if (c.VISITA) {
             const btnCrear = document.createElement("button");
             btnCrear.className = "pill pill-crear";
             btnCrear.textContent = "Crear";
-            btnCrear.title = "Crear un nuevo informe para este centro.";
-            btnCrear.addEventListener("click", () => {
-              crearInformeParaCentro(c);
-            });
-            filaAcciones.appendChild(btnCrear);
+            btnCrear.addEventListener("click", () => crearInformeParaCentro(c));
+            filaA.appendChild(btnCrear);
           }
 
           const btnHist = document.createElement("button");
-          btnHist.className = "btn btn-sm btn-outline";
+          btnHist.className = "btn btn-outline btn-sm";
           btnHist.textContent = `Histórico (${numInf})`;
-          btnHist.addEventListener("click", () => {
-            abrirHistoricoCentro(c.CODIGO);
-          });
-          filaAcciones.appendChild(btnHist);
+          btnHist.addEventListener("click", () => abrirHistoricoCentro(c.CODIGO));
+          filaA.appendChild(btnHist);
         }
 
-        contInforme.appendChild(filaAcciones);
-        contInforme.appendChild(filaEstado);
-        tdInforme.appendChild(contInforme);
+        cont.appendChild(filaA);
+        cont.appendChild(filaB);
+        tdInforme.appendChild(cont);
         tr.appendChild(tdInforme);
 
-        // AUDIOLOGO (columna de tabla, libre)
         const tdAud = document.createElement("td");
         tdAud.textContent = c.AUDIOLOGO || "";
         tr.appendChild(tdAud);
 
-        // HORAS SERVICIO
         const tdHoras = document.createElement("td");
         tdHoras.textContent = c.HORAS_SERVICIO || "";
         tr.appendChild(tdHoras);
 
-        // RESP AUDIO (selector por centro)
         const tdResp = document.createElement("td");
         const selResp = document.createElement("select");
-        selResp.style.fontSize = "12px";
-        selResp.style.padding = "3px 6px";
-        selResp.style.borderRadius = "999px";
-        selResp.style.border = "1px solid var(--border)";
-        const opcionesResp = ["", "Ariannys Rojas", "Sonia Guasque"];
-        opcionesResp.forEach((val) => {
-          const opt = document.createElement("option");
-          opt.value = val;
-          opt.textContent = val === "" ? "—" : val;
-          selResp.appendChild(opt);
-        });
+        selResp.className = "meta-select";
+        selResp.style.fontSize = "11px";
+        selResp.innerHTML =
+          '<option value="">—</option><option value="Ariannys Rojas">Ariannys Rojas</option><option value="Sonia Guasque">Sonia Guasque</option>';
         selResp.value = c.RESP_AUDIO || "";
         selResp.addEventListener("change", () => {
           const code = c.CODIGO;
@@ -1651,10 +1517,8 @@
           c.RESP_AUDIO = selResp.value;
           guardarEstado();
           if (centroSeleccionadoCodigo === code) {
-            document.getElementById("infRespAudioCentro").textContent =
-              selResp.value || "—";
-            document.getElementById("infRespAudioSelect").value =
-              selResp.value || "";
+            document.getElementById("infRespAudioCentro").textContent = selResp.value || "—";
+            document.getElementById("infRespAudioSelect").value = selResp.value || "";
           }
         });
         tdResp.appendChild(selResp);
@@ -1664,78 +1528,54 @@
       });
 
       if (!filtrados.length) {
-        const trEmpty = document.createElement("tr");
+        const tr = document.createElement("tr");
         const td = document.createElement("td");
         td.colSpan = 12;
         td.className = "text-muted";
         td.textContent = "No hay centros que coincidan con el filtro.";
-        trEmpty.appendChild(td);
-        tbody.appendChild(trEmpty);
+        tr.appendChild(td);
+        tbody.appendChild(tr);
       }
     }
 
-    // ==========================
-    // RESUMEN / DASHBOARD MINI
-    // ==========================
+    /* ========= RESUMEN ========= */
 
     function actualizarResumen() {
-      const totalCentros = centros.length;
-      let visitasProgramadas = 0;
-      let informesFinalizados = 0;
+      const total = centros.length;
+      let visitas = 0;
+      let informesFinal = 0;
 
       centros.forEach((c) => {
-        if (c.VISITA) visitasProgramadas++;
-        if (c.INFORME_ESTADO === "finalizado") informesFinalizados++;
+        if (c.VISITA) visitas++;
+        if (c.INFORME_ESTADO === "finalizado") informesFinal++;
       });
 
-      const sumCentros = document.getElementById("sumCentros");
-      const sumDelegados = document.getElementById("sumDelegados");
-      const sumVisitas = document.getElementById("sumVisitas");
-      const sumVisitasDetalle = document.getElementById("sumVisitasDetalle");
-      const sumInformes = document.getElementById("sumInformes");
-      const sumInformesDetalle =
-        document.getElementById("sumInformesDetalle");
-
-      sumCentros.textContent = totalCentros;
-      const delegadosUnicos = [
-        ...new Set(centros.map((c) => c.DELEGADOS).filter(Boolean)),
-      ];
-      sumDelegados.textContent =
-        delegadosUnicos.length > 0
-          ? `Delegados implicados: ${delegadosUnicos.length}`
+      document.getElementById("sumCentros").textContent = total;
+      const delegadosUnicos = [...new Set(centros.map((c) => c.DELEGADOS).filter(Boolean))];
+      document.getElementById("sumDelegados").textContent =
+        delegadosUnicos.length > 0 ? `Delegados: ${delegadosUnicos.length}` : "";
+      document.getElementById("sumVisitas").textContent = visitas;
+      document.getElementById("sumVisitasDetalle").textContent =
+        total > 0
+          ? `Cobertura: ${Math.round((visitas / Math.max(total, 1)) * 100)}%`
           : "";
-
-      sumVisitas.textContent = visitasProgramadas;
-      sumVisitasDetalle.textContent =
-        totalCentros > 0
-          ? `Cobertura: ${Math.round(
-              (visitasProgramadas / Math.max(totalCentros, 1)) * 100
-            )}% de centros con visita programada`
-          : "";
-
-      sumInformes.textContent = informesFinalizados;
-      sumInformesDetalle.textContent =
-        visitasProgramadas > 0
-          ? `De las visitas programadas, ${Math.round(
-              (informesFinalizados / Math.max(visitasProgramadas, 1)) * 100
-            )}% ya tienen al menos un informe finalizado`
+      document.getElementById("sumInformes").textContent = informesFinal;
+      document.getElementById("sumInformesDetalle").textContent =
+        visitas > 0
+          ? `${Math.round((informesFinal / Math.max(visitas, 1)) * 100)}% de visitas con informe finalizado`
           : "Aún no hay visitas programadas.";
     }
 
-    // ==========================
-    // CARGA EXCEL CENTROS
-    // ==========================
+    /* ========= CARGA EXCEL CENTROS ========= */
 
     function manejarExcel(file) {
       const reader = new FileReader();
       reader.onload = (e) => {
         const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const firstSheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[firstSheetName];
+        const wb = XLSX.read(data, { type: "array" });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
         const json = XLSX.utils.sheet_to_json(sheet, { defval: "" });
-
-        const mapeados = json.map((row) => ({
+        const mapped = json.map((row) => ({
           CODIGO: row["CODIGO"] || "",
           PROPIETARIO: row["PROPIETARIO"] || "",
           CENTRO: row["CENTRO"] || "",
@@ -1745,98 +1585,90 @@
             row["Tpología"] || row["Tipología"] || row["TIPOLOGIA"] || "",
           CENTRO_AAR: row["Centro AAR"] || "",
           VISITA: "",
-          AUDIOLOGO: row["Audiólogo"] || row["AUDIÓLOGO"] || "",
-          HORAS_SERVICIO:
-            row["Horas de servicio"] || row["HORAS DE SERVICIO"] || "",
-          RESP_AUDIO: row["Resp. Audio"] || row["RESP. AUDIO"] || "",
+          AUDIOLOGO: row["Audiólogo"] || "",
+          HORAS_SERVICIO: row["Horas de servicio"] || "",
+          RESP_AUDIO: row["Resp. Audio"] || "",
         }));
-
-        centros = mapeados;
+        centros = mapped;
         aplicarEstadoALosCentros();
         renderTabla(document.getElementById("searchInput").value);
         actualizarResumen();
       };
-
       reader.readAsArrayBuffer(file);
     }
 
-    // ==========================
-    // INFORME DE VISITA
-    // ==========================
+    /* ========= INFORME ========= */
 
     function limpiarImagenesYChecklist() {
       ["imgPreview1", "imgPreview2", "imgPreview3"].forEach((id) => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = "";
       });
-      ["imgInput1", "imgInput2", "imgInput3", "checklistInput"].forEach(
-        (id) => {
-          const el = document.getElementById(id);
-          if (el) el.value = "";
-        }
-      );
-      const resumen = document.getElementById("checklistResumen");
-      if (resumen) resumen.textContent = "Checklist no adjuntado todavía.";
-      if (checklistChart) {
-        checklistChart.destroy();
-        checklistChart = null;
-      }
-      const canvas = document.getElementById("checklistChart");
-      if (canvas) {
-        const ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
+      ["imgInput1", "imgInput2", "imgInput3", "checklistInput"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      document.getElementById("checklistResumen").textContent =
+        "Checklist no adjuntado todavía.";
+
+      if (radarChart) radarChart.destroy();
+      if (mejoraChart) mejoraChart.destroy();
+      if (kpiChart) kpiChart.destroy();
+      radarChart = mejoraChart = kpiChart = null;
+
+      renderChecklistDetalles(null);
     }
 
     function actualizarTipoVisitaUI(tv) {
       const btnA = document.getElementById("btnApertura");
       const btnS = document.getElementById("btnSeguimiento");
-      if (!btnA || !btnS) return;
-      btnA.classList.toggle("active", !!tv.apertura);
-      btnS.classList.toggle("active", !!tv.seguimiento);
+      btnA.classList.toggle("active", !!(tv && tv.apertura));
+      btnS.classList.toggle("active", !!(tv && tv.seguimiento));
     }
 
     function leerTipoVisitaDesdeUI() {
       const btnA = document.getElementById("btnApertura");
       const btnS = document.getElementById("btnSeguimiento");
       return {
-        apertura: btnA ? btnA.classList.contains("active") : false,
-        seguimiento: btnS ? btnS.classList.contains("active") : false,
+        apertura: btnA.classList.contains("active"),
+        seguimiento: btnS.classList.contains("active"),
       };
     }
 
     function setInformeEditable(editable) {
       const ids = [
+        "metaTipoCentro",
+        "metaCentroAAR",
+        "infRespAudioSelect",
         "infAudiologo",
         "infHorasServicio",
-        "infDelegadoFormacion",
-        "infRespAudioSelect",
         "checklistInput",
         "imgInput1",
         "imgInput2",
         "imgInput3",
-        "informeObservaciones",
-        "informeCompromisos",
-        "imgObs1",
-        "imgObs2",
+        "imgObs12",
         "imgObs3",
+        "imgObsGeneral",
+        "informeObservaciones",
+        "informeRecomendaciones",
+        "informeCompromisos",
       ];
       ids.forEach((id) => {
         const el = document.getElementById(id);
         if (el) el.disabled = !editable;
       });
-      const tipoVisitaContainer = document.getElementById("tipoVisitaContainer");
-      if (tipoVisitaContainer) {
-        tipoVisitaContainer.style.pointerEvents = editable ? "auto" : "none";
-        tipoVisitaContainer.style.opacity = editable ? "1" : "0.6";
+      const tvRow = document.querySelector(".tipo-visita-row");
+      if (tvRow) {
+        tvRow.style.pointerEvents = editable ? "auto" : "none";
+        tvRow.style.opacity = editable ? "1" : "0.6";
       }
-      const btnBorr = document.getElementById("btnGuardarBorrador");
-      const btnFin = document.getElementById("btnGuardarFinal");
-      if (btnBorr) btnBorr.style.display = editable ? "inline-flex" : "none";
-      if (btnFin) btnFin.style.display = editable ? "inline-flex" : "none";
+      document.getElementById("btnGuardarBorrador").style.display =
+        editable ? "inline-flex" : "none";
+      document.getElementById("btnGuardarFinal").style.display =
+        editable ? "inline-flex" : "none";
     }
 
-    function cargarCentroEnInforme(codigo, informeId, forzarSoloLectura = false) {
+    function cargarCentroEnInforme(codigo, informeId, soloLecturaForzado = false) {
       const centro = centros.find((c) => c.CODIGO === codigo);
       const badge = document.getElementById("informeEstadoBadge");
       const empty = document.getElementById("informeEmpty");
@@ -1851,10 +1683,8 @@
 
       const e = estado[codigo] || { informes: [] };
       e.informes = e.informes || [];
-      let inf =
-        e.informes.find((i) => i.id === informeId) ||
-        e.informes[e.informes.length - 1];
-
+      let inf = e.informes.find((i) => i.id === informeId);
+      if (!inf) inf = e.informes[e.informes.length - 1];
       if (!inf) {
         badge.textContent = "No hay informe para mostrar";
         empty.style.display = "block";
@@ -1862,94 +1692,66 @@
         return;
       }
 
-      currentInformeId = inf.id;
       centroSeleccionadoCodigo = codigo;
+      currentInformeId = inf.id;
 
       empty.style.display = "none";
       cont.style.display = "block";
 
+      document.getElementById("metaCentro").value = centro.CENTRO || "";
+      document.getElementById("metaDelegado").value = centro.DELEGADOS || "";
+      document.getElementById("metaTipoCentro").value = inf.checklistTipo || "";
+      document.getElementById("metaCentroAAR").value = centro.CENTRO_AAR || "";
+      document.getElementById("metaFechaVisita").value = centro.VISITA || "";
+
+      const respAudio =
+        (estado[codigo] && estado[codigo].respAudio) || centro.RESP_AUDIO || "";
+      document.getElementById("infRespAudioSelect").value = respAudio;
+      document.getElementById("infRespAudioCentro").textContent = respAudio || "—";
+
       document.getElementById("infCodigo").textContent = centro.CODIGO || "";
-      document.getElementById("infCentro").textContent = centro.CENTRO || "";
-      document.getElementById("infProvincia").textContent =
-        centro.PROVINCIA || "";
-      document.getElementById("infTipologia").textContent =
-        centro.TIPOLOGIA || "";
-      document.getElementById("infPropietario").textContent =
-        centro.PROPIETARIO || "";
-      document.getElementById("infDelegado").textContent =
-        centro.DELEGADOS || "";
-      document.getElementById("infCentroAAR").textContent =
-        centro.CENTRO_AAR || "—";
-      document.getElementById("infRespAudioCentro").textContent =
-        centro.RESP_AUDIO || "—";
+      document.getElementById("infProvincia").textContent = centro.PROVINCIA || "";
+      document.getElementById("infPropietario").textContent = centro.PROPIETARIO || "";
 
       document.getElementById("infAudiologo").value = inf.audiologo || "";
       document.getElementById("infHorasServicio").value =
         inf.horasServicio || centro.HORAS_SERVICIO || "";
-      document.getElementById("infDelegadoFormacion").value =
-        inf.delegadoFormacion || "";
-
-      const respAudio =
-        e.respAudio || centro.RESP_AUDIO || document.getElementById("infRespAudioSelect").value;
-      document.getElementById("infRespAudioSelect").value = respAudio || "";
-      document.getElementById("infRespAudioCentro").textContent =
-        respAudio || "—";
-
-      actualizarTipoVisitaUI(inf.tipoVisita || { apertura: false, seguimiento: false });
-
+      document.getElementById("imgObs12").value = inf.imgObs12 || "";
+      document.getElementById("imgObs3").value = inf.imgObs3 || "";
+      document.getElementById("imgObsGeneral").value = inf.imgObsGeneral || "";
       document.getElementById("informeObservaciones").value =
         inf.observaciones || "";
+      document.getElementById("informeRecomendaciones").value =
+        inf.recomendaciones || "";
       document.getElementById("informeCompromisos").value =
         inf.compromisos || "";
       document.getElementById("checklistResumen").textContent =
         inf.checklistResumen || "Checklist no adjuntado todavía.";
 
-      limpiarImagenesYChecklist();
-      if (inf.checklistMetrics) {
-        const ds = [];
-        if (inf.checklistMetrics.aplicProc != null) {
-          ds.push({
-            label: "% Aplicación procesos",
-            value: inf.checklistMetrics.aplicProc,
-          });
-        }
-        if (inf.checklistMetrics.convPrueba != null) {
-          ds.push({
-            label: "Conv. a prueba",
-            value: inf.checklistMetrics.convPrueba,
-          });
-        }
-        if (inf.checklistMetrics.convVenta != null) {
-          ds.push({
-            label: "Conv. a venta",
-            value: inf.checklistMetrics.convVenta,
-          });
-        }
-        renderChecklistChart(ds);
-      } else {
-        renderChecklistChart(null);
+      actualizarTipoVisitaUI(inf.tipoVisita || {});
+
+      limpiarImagenesYChecklist(); // limpia gráficos + detalles
+      if (inf.checklistMetrics && inf.checklistDetalles) {
+        renderChecklistCharts(inf.checklistMetrics, inf.checklistDetalles);
+        document.getElementById("checklistResumen").textContent =
+          inf.checklistResumen || "";
       }
 
-      const soloLectura = forzarSoloLectura || inf.estado === "finalizado";
+      const soloLectura = soloLecturaForzado || inf.estado === "finalizado";
       setInformeEditable(!soloLectura);
-
-      if (inf.estado === "finalizado") {
-        badge.textContent = "Informe finalizado";
-      } else {
-        badge.textContent = "Informe en edición";
-      }
+      badge.textContent =
+        inf.estado === "finalizado" ? "Informe finalizado" : "Informe en edición";
     }
 
     function crearInformeParaCentro(c) {
       if (!c.VISITA) {
-        alert("Debes guardar una fecha de visita para este centro antes de crear el informe.");
+        alert("Primero guarda una fecha de visita para este centro.");
         return;
       }
       const code = c.CODIGO;
       if (!estado[code]) estado[code] = { informes: [] };
       const e = estado[code];
       e.informes = e.informes || [];
-      const ultimo = e.informes[e.informes.length - 1];
 
       const id = "INF-" + Date.now().toString();
       const nuevo = {
@@ -1957,22 +1759,21 @@
         fechaCreacion: new Date().toISOString(),
         fechaVisita: c.VISITA || "",
         estado: "borrador",
-        audiologo: ultimo ? ultimo.audiologo : "",
-        horasServicio: ultimo ? ultimo.horasServicio : "",
-        delegadoFormacion: ultimo ? ultimo.delegadoFormacion : "",
-        tipoVisita: ultimo
-          ? ultimo.tipoVisita || { apertura: false, seguimiento: false }
-          : { apertura: false, seguimiento: false },
+        audiologo: "",
+        horasServicio: "",
+        delegadoFormacion: "",
+        tipoVisita: { apertura: false, seguimiento: false },
         observaciones: "",
+        recomendaciones: "",
         compromisos: "",
         checklistResumen: "",
         checklistTipo: null,
         checklistMetrics: null,
-        imgObs1: "",
-        imgObs2: "",
+        checklistDetalles: null,
+        imgObs12: "",
         imgObs3: "",
+        imgObsGeneral: "",
       };
-
       e.informes.push(nuevo);
       guardarEstado();
       aplicarEstadoALosCentros();
@@ -1980,118 +1781,217 @@
       actualizarResumen();
       cargarCentroEnInforme(code, id, false);
 
-      const card = document.getElementById("cardInformeVisita");
-      if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("infAudiologo").focus();
+      document.getElementById("cardInformeVisita").scrollIntoView({ behavior: "smooth" });
     }
 
-    function renderChecklistChart(dataset) {
-      const canvas = document.getElementById("checklistChart");
-      if (!canvas) return;
-      const ctx = canvas.getContext("2d");
-      if (checklistChart) {
-        checklistChart.destroy();
-      }
-      if (!dataset || !dataset.length) {
-        checklistChart = null;
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        return;
-      }
-      checklistChart = new Chart(ctx, {
-        type: "bar",
+    /* ========= CHECKLIST Y GRÁFICOS ========= */
+
+    function renderChecklistCharts(metrics, detalles) {
+      const radarCtx = document.getElementById("radarChart").getContext("2d");
+      const mejoraCtx = document.getElementById("mejoraChart").getContext("2d");
+      const kpiCtx = document.getElementById("kpiChart").getContext("2d");
+
+      if (radarChart) radarChart.destroy();
+      if (mejoraChart) mejoraChart.destroy();
+      if (kpiChart) kpiChart.destroy();
+
+      const aplic = metrics && metrics.aplicProc != null ? metrics.aplicProc : 0;
+      const convP = metrics && metrics.convPrueba != null ? metrics.convPrueba : 0;
+      const convV = metrics && metrics.convVenta != null ? metrics.convVenta : 0;
+      const formaciones = aplic; // por ahora usamos el mismo dato como proxy
+
+      radarChart = new Chart(radarCtx, {
+        type: "radar",
         data: {
-          labels: dataset.map((d) => d.label),
+          labels: ["Aplicación procesos", "Formaciones", "Conv. prueba", "Conv. venta"],
           datasets: [
             {
-              data: dataset.map((d) => d.value),
+              data: [aplic, formaciones, convP, convV],
+              borderColor: "rgba(248,113,113,1)",
+              backgroundColor: "rgba(248,113,113,0.2)",
+              pointBackgroundColor: "rgba(248,113,113,1)",
             },
           ],
         },
         options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-          },
+          plugins: { legend: { display: false } },
           scales: {
-            y: {
+            r: {
               beginAtZero: true,
+              angleLines: { color: "#1f2937" },
+              grid: { color: "#1f2937" },
+              pointLabels: { color: "#9ca3af", font: { size: 9 } },
+              ticks: { display: false },
             },
           },
         },
       });
+
+      let mejoras = [];
+      if (detalles && detalles.length) {
+        mejoras = detalles.filter((d) => d.aplica === 0 || d.aplica === "0").slice(0, 5);
+      }
+      if (!mejoras.length) {
+        mejoras = [{ criterio: "Sin procesos pendientes", aplica: 0 }];
+      }
+      mejoraChart = new Chart(mejoraCtx, {
+        type: "bar",
+        data: {
+          labels: mejoras.map((d) => d.criterio),
+          datasets: [
+            {
+              data: mejoras.map(() => 100),
+              backgroundColor: "rgba(239,68,68,0.9)", // rojo
+            },
+          ],
+        },
+        options: {
+          indexAxis: "y",
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              beginAtZero: true,
+              max: 100,
+              ticks: { color: "#9ca3af", font: { size: 9 } },
+              grid: { color: "#1f2937" },
+            },
+            y: {
+              ticks: { color: "#9ca3af", font: { size: 9 } },
+              grid: { display: false },
+            },
+          },
+        },
+      });
+
+      const hit = metrics && metrics.aplicaHIT != null ? (metrics.aplicaHIT ? 100 : 0) : 0;
+      kpiChart = new Chart(kpiCtx, {
+        type: "bar",
+        data: {
+          labels: ["HIT", "Aplic. procesos", "Conv. prueba", "Conv. venta"],
+          datasets: [
+            {
+              data: [hit, aplic, convP, convV],
+              backgroundColor: [
+                "rgba(239,68,68,0.9)",   // rojo
+                "rgba(59,130,246,0.9)",  // azul
+                "rgba(34,197,94,0.9)",   // verde
+                "rgba(249,115,22,0.9)",  // naranja
+              ],
+            },
+          ],
+        },
+        options: {
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { color: "#9ca3af", font: { size: 9 } },
+              grid: { color: "#1f2937" },
+            },
+            x: {
+              ticks: { color: "#9ca3af", font: { size: 9 } },
+              grid: { display: false },
+            },
+          },
+        },
+      });
+
+      renderChecklistDetalles(detalles);
+    }
+
+    function renderChecklistDetalles(detalles) {
+      const cont = document.getElementById("checklistDetallesContenido");
+      const tbody = document.querySelector("#checklistDetallesTabla tbody");
+      const vacio = document.getElementById("checklistDetallesVacio");
+      tbody.innerHTML = "";
+
+      if (!detalles || !detalles.length) {
+        cont.style.display = "none";
+        vacio.style.display = "block";
+        return;
+      }
+
+      detalles.forEach((d, idx) => {
+        const tr = document.createElement("tr");
+        const tdIdx = document.createElement("td");
+        tdIdx.textContent = idx + 1;
+        const tdCrit = document.createElement("td");
+        tdCrit.textContent = d.criterio || "";
+        const tdAplica = document.createElement("td");
+        const v = d.aplica === 1 || d.aplica === "1" ? "Sí (1)" : "No aplica (0)";
+        tdAplica.textContent = v;
+        tr.appendChild(tdIdx);
+        tr.appendChild(tdCrit);
+        tr.appendChild(tdAplica);
+        tbody.appendChild(tr);
+      });
+
+      cont.style.display = "block";
+      vacio.style.display = "none";
     }
 
     function manejarChecklist(file) {
       if (!centroSeleccionadoCodigo || !currentInformeId) {
         alert("Selecciona primero un centro e informe (botón 'Crear').");
-        const input = document.getElementById("checklistInput");
-        if (input) input.value = "";
+        const inp = document.getElementById("checklistInput");
+        if (inp) inp.value = "";
         return;
       }
-      const resumenEl = document.getElementById("checklistResumen");
       const reader = new FileReader();
       reader.onload = (e) => {
         const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const firstSheetName = workbook.SheetNames[0];
-        const sheet = workbook.Sheets[firstSheetName];
+        const wb = XLSX.read(data, { type: "array" });
+        const sheet = wb.Sheets[wb.SheetNames[0]];
 
-        // Determinar tipo CORNER / EXCLUSIVO
         const nameUpper = file.name.toUpperCase();
         let tipo = null;
         if (nameUpper.includes("CORNER")) tipo = "CORNER";
         else if (nameUpper.includes("EXCLUSIVO")) tipo = "EXCLUSIVO";
         else {
-          const centro = centros.find(
-            (c) => c.CODIGO === centroSeleccionadoCodigo
-          );
-          const tip = (centro?.TIPOLOGIA || "").toUpperCase();
-          if (tip.includes("CORNER") || tip.includes("CÓRNER")) tipo = "CORNER";
-          else if (tip.includes("EXCLUSIVO")) tipo = "EXCLUSIVO";
+          const centro = centros.find((c) => c.CODIGO === centroSeleccionadoCodigo);
+          const t = (centro?.TIPOLOGIA || "").toUpperCase();
+          if (t.includes("CORNER") || t.includes("CÓRNER")) tipo = "CORNER";
+          else if (t.includes("EXCLUSIVO")) tipo = "EXCLUSIVO";
         }
 
-        if (!tipo) {
-          resumenEl.textContent =
-            "Checklist cargado, pero no se ha podido identificar si es CORNER o EXCLUSIVO.";
-          renderChecklistChart(null);
-          return;
-        }
+        if (!tipo) tipo = "CORNER"; // fallback
 
-        let metrics = null;
+        let metrics = {};
+        let detalles = [];
 
         if (tipo === "CORNER") {
-          let total = 0;
-          let aplica = 0;
           for (let row = 7; row <= 88; row++) {
-            const cell = sheet["F" + row];
-            if (!cell) continue;
-            const v = parseFloat(cell.v);
-            if (v === 0 || v === 1) {
-              total++;
-              if (v === 1) aplica++;
-            }
+            const critCell = sheet["B" + row];
+            const valCell = sheet["F" + row];
+            if (!critCell || !valCell) continue;
+            const v = parseFloat(valCell.v);
+            if (v !== 0 && v !== 1) continue;
+            detalles.push({ criterio: String(critCell.v), aplica: v });
           }
           let aplicProc = leerNumeroCelda(sheet, "F90");
-          if (aplicProc == null && total > 0) {
+          if (aplicProc == null && detalles.length) {
+            const total = detalles.length;
+            const aplica = detalles.filter((d) => d.aplica === 1).length;
             aplicProc = (aplica / total) * 100;
           }
           const aplicaHIT = boolDesdeCelda(sheet["F63"]);
           const convPrueba = leerNumeroCelda(sheet, "B92");
           const convVenta = leerNumeroCelda(sheet, "B93");
           metrics = { aplicProc, aplicaHIT, convPrueba, convVenta };
-        } else if (tipo === "EXCLUSIVO") {
-          let total = 0;
-          let aplica = 0;
+        } else {
           for (let row = 8; row <= 102; row++) {
-            const cell = sheet["F" + row];
-            if (!cell) continue;
-            const v = parseFloat(cell.v);
-            if (v === 0 || v === 1) {
-              total++;
-              if (v === 1) aplica++;
-            }
+            const critCell = sheet["B" + row];
+            const valCell = sheet["F" + row];
+            if (!critCell || !valCell) continue;
+            const v = parseFloat(valCell.v);
+            if (v !== 0 && v !== 1) continue;
+            detalles.push({ criterio: String(critCell.v), aplica: v });
           }
           let aplicProc = leerNumeroCelda(sheet, "F104");
-          if (aplicProc == null && total > 0) {
+          if (aplicProc == null && detalles.length) {
+            const total = detalles.length;
+            const aplica = detalles.filter((d) => d.aplica === 1).length;
             aplicProc = (aplica / total) * 100;
           }
           const aplicaHIT = boolDesdeCelda(sheet["F65"]);
@@ -2102,50 +2002,179 @@
 
         const partes = [];
         partes.push(`Checklist ${tipo} cargado (${file.name}).`);
-        if (metrics.aplicProc != null) {
-          partes.push(`% Aplicación procesos: ${metrics.aplicProc.toFixed(1)}.`);
-        }
-        if (metrics.convPrueba != null) {
+        if (metrics.aplicProc != null)
+          partes.push(`% aplicación procesos: ${metrics.aplicProc.toFixed(1)}.`);
+        if (metrics.convPrueba != null)
           partes.push(`Conv. a prueba: ${metrics.convPrueba}.`);
-        }
-        if (metrics.convVenta != null) {
+        if (metrics.convVenta != null)
           partes.push(`Conv. a venta: ${metrics.convVenta}.`);
-        }
-        if (metrics.aplicaHIT != null) {
+        if (metrics.aplicaHIT != null)
           partes.push(`Aplica HIT: ${metrics.aplicaHIT ? "Sí" : "No"}.`);
-        }
 
-        resumenEl.textContent = partes.join(" ");
+        document.getElementById("checklistResumen").textContent = partes.join(" ");
 
-        const ds = [];
-        if (metrics.aplicProc != null) {
-          ds.push({
-            label: "% Aplicación procesos",
-            value: metrics.aplicProc,
-          });
-        }
-        if (metrics.convPrueba != null) {
-          ds.push({ label: "Conv. a prueba", value: metrics.convPrueba });
-        }
-        if (metrics.convVenta != null) {
-          ds.push({ label: "Conv. a venta", value: metrics.convVenta });
-        }
-        renderChecklistChart(ds);
+        renderChecklistCharts(metrics, detalles);
 
         const eCentro = estado[centroSeleccionadoCodigo];
         if (eCentro) {
-          const inf = (eCentro.informes || []).find(
-            (i) => i.id === currentInformeId
-          );
+          const inf = (eCentro.informes || []).find((i) => i.id === currentInformeId);
           if (inf) {
-            inf.checklistResumen = resumenEl.textContent;
+            inf.checklistResumen = partes.join(" ");
             inf.checklistTipo = tipo;
             inf.checklistMetrics = metrics;
+            inf.checklistDetalles = detalles;
             guardarEstado();
           }
         }
       };
       reader.readAsArrayBuffer(file);
+    }
+
+    /* ========= GUARDAR INFORME ========= */
+
+    function guardarInforme(finalizar) {
+      if (!centroSeleccionadoCodigo || !currentInformeId) {
+        alert("Selecciona primero un centro e informe.");
+        return;
+      }
+      const code = centroSeleccionadoCodigo;
+      const e = estado[code];
+      if (!e) return;
+      const inf = (e.informes || []).find((i) => i.id === currentInformeId);
+      if (!inf) return;
+
+      inf.audiologo = document.getElementById("infAudiologo").value.trim();
+      inf.horasServicio = document.getElementById("infHorasServicio").value.trim();
+      inf.tipoVisita = leerTipoVisitaDesdeUI();
+      inf.observaciones = document.getElementById("informeObservaciones").value.trim();
+      inf.recomendaciones = document
+        .getElementById("informeRecomendaciones")
+        .value.trim();
+      inf.compromisos = document.getElementById("informeCompromisos").value.trim();
+      inf.imgObs12 = document.getElementById("imgObs12").value.trim();
+      inf.imgObs3 = document.getElementById("imgObs3").value.trim();
+      inf.imgObsGeneral = document.getElementById("imgObsGeneral").value.trim();
+
+      const respSel = document.getElementById("infRespAudioSelect").value;
+      if (respSel) {
+        e.respAudio = respSel;
+        const centro = centros.find((c) => c.CODIGO === code);
+        if (centro) centro.RESP_AUDIO = respSel;
+      }
+
+      if (finalizar) {
+        inf.estado = "finalizado";
+        inf.fechaFinalizacion = new Date().toISOString();
+      } else {
+        inf.estado = inf.estado || "borrador";
+      }
+
+      guardarEstado();
+      aplicarEstadoALosCentros();
+      renderTabla(document.getElementById("searchInput").value);
+      actualizarResumen();
+
+      document.getElementById("informeEstadoBadge").textContent = finalizar
+        ? "Informe finalizado"
+        : "Informe guardado";
+
+      if (finalizar) setInformeEditable(false);
+
+      alert(
+        finalizar
+          ? `Informe finalizado para el centro ${code}.`
+          : `Borrador de informe guardado para el centro ${code}.`
+      );
+    }
+
+    /* ========= HISTÓRICO ========= */
+
+    function abrirHistoricoCentro(codigo) {
+      const modal = document.getElementById("historicoModal");
+      const lista = document.getElementById("historicoLista");
+      const titulo = document.getElementById("historicoTitulo");
+      const centro = centros.find((c) => c.CODIGO === codigo);
+      const e = estado[codigo] || { informes: [] };
+      const informes = e.informes || [];
+
+      titulo.textContent = `Histórico de informes · ${codigo} · ${(centro && centro.CENTRO) || ""}`;
+      lista.innerHTML = "";
+
+      if (!informes.length) {
+        const p = document.createElement("p");
+        p.className = "text-muted";
+        p.textContent = "Este centro aún no tiene informes registrados.";
+        lista.appendChild(p);
+      } else {
+        informes.forEach((inf) => {
+          const item = document.createElement("div");
+          item.className = "historico-item";
+
+          const text = document.createElement("div");
+          text.className = "historico-text";
+          const l1 = document.createElement("div");
+          const fechaVisita = inf.fechaVisita
+            ? formatearFechaCorta(inf.fechaVisita)
+            : "sin fecha";
+          l1.textContent = `Visita: ${fechaVisita} · Estado: ${
+            inf.estado === "finalizado" ? "Finalizado" : "Borrador"
+          }`;
+          const l2 = document.createElement("div");
+          l2.className = "historico-tag";
+          l2.textContent = `Creado: ${formatearFechaCorta(inf.fechaCreacion)}`;
+          text.appendChild(l1);
+          text.appendChild(l2);
+
+          const acc = document.createElement("div");
+          acc.style.display = "flex";
+          acc.style.gap = "4px";
+
+          const btnVer = document.createElement("button");
+          btnVer.className = "btn btn-outline btn-sm";
+          btnVer.textContent = "Ver";
+          btnVer.addEventListener("click", () => {
+            modal.style.display = "none";
+            cargarCentroEnInforme(codigo, inf.id, inf.estado === "finalizado");
+            document
+              .getElementById("cardInformeVisita")
+              .scrollIntoView({ behavior: "smooth" });
+          });
+
+          const btnImp = document.createElement("button");
+          btnImp.className = "btn btn-primary btn-sm";
+          btnImp.textContent = "Imprimir";
+          btnImp.addEventListener("click", () => {
+            modal.style.display = "none";
+            cargarCentroEnInforme(codigo, inf.id, true);
+            setTimeout(() => window.print(), 300);
+          });
+
+          acc.appendChild(btnVer);
+          acc.appendChild(btnImp);
+          item.appendChild(text);
+          item.appendChild(acc);
+          lista.appendChild(item);
+        });
+      }
+
+      modal.style.display = "flex";
+    }
+
+    function cerrarHistorico() {
+      document.getElementById("historicoModal").style.display = "none";
+    }
+
+    /* ========= ZOOM IMAGEN ========= */
+
+    function abrirZoomImagen(src) {
+      const overlay = document.getElementById("imgZoomOverlay");
+      const img = document.getElementById("imgZoomImage");
+      img.src = src;
+      overlay.style.display = "flex";
+    }
+
+    function cerrarZoomImagen() {
+      document.getElementById("imgZoomOverlay").style.display = "none";
     }
 
     function setupImagenInput(inputId, previewId, maxImgs) {
@@ -2161,9 +2190,7 @@
             const img = document.createElement("img");
             img.src = ev.target.result;
             img.className = "img-thumb";
-            img.addEventListener("click", () => {
-              abrirZoomImagen(img.src);
-            });
+            img.addEventListener("click", () => abrirZoomImagen(img.src));
             preview.appendChild(img);
           };
           reader.readAsDataURL(file);
@@ -2171,221 +2198,44 @@
       });
     }
 
-    function abrirZoomImagen(src) {
-      const overlay = document.getElementById("imgZoomOverlay");
-      const img = document.getElementById("imgZoomImage");
-      if (!overlay || !img) return;
-      img.src = src;
-      overlay.style.display = "flex";
-    }
-
-    function cerrarZoomImagen() {
-      const overlay = document.getElementById("imgZoomOverlay");
-      if (!overlay) return;
-      overlay.style.display = "none";
-    }
-
-    function guardarInforme(finalizar) {
-      if (!centroSeleccionadoCodigo || !currentInformeId) {
-        alert(
-          "Selecciona primero un centro e informe (botón 'Crear') para poder guardar."
-        );
-        return;
-      }
-      const code = centroSeleccionadoCodigo;
-      const e = estado[code];
-      if (!e) return;
-      const inf = (e.informes || []).find((i) => i.id === currentInformeId);
-      if (!inf) return;
-
-      inf.audiologo = document.getElementById("infAudiologo").value.trim();
-      inf.horasServicio =
-        document.getElementById("infHorasServicio").value.trim();
-      inf.delegadoFormacion =
-        document.getElementById("infDelegadoFormacion").value.trim();
-      inf.tipoVisita = leerTipoVisitaDesdeUI();
-      inf.observaciones =
-        document.getElementById("informeObservaciones").value.trim();
-      inf.compromisos =
-        document.getElementById("informeCompromisos").value.trim();
-      inf.imgObs1 = document.getElementById("imgObs1").value.trim();
-      inf.imgObs2 = document.getElementById("imgObs2").value.trim();
-      inf.imgObs3 = document.getElementById("imgObs3").value.trim();
-      if (finalizar) {
-        inf.estado = "finalizado";
-        inf.fechaFinalizacion = new Date().toISOString();
-      } else {
-        inf.estado = inf.estado || "borrador";
-      }
-
-      const respSel = document.getElementById("infRespAudioSelect").value;
-      if (respSel) {
-        e.respAudio = respSel;
-        const centro = centros.find((c) => c.CODIGO === code);
-        if (centro) centro.RESP_AUDIO = respSel;
-      }
-
-      guardarEstado();
-      aplicarEstadoALosCentros();
-      renderTabla(document.getElementById("searchInput").value);
-      actualizarResumen();
-
-      const badge = document.getElementById("informeEstadoBadge");
-      badge.textContent = finalizar
-        ? "Informe finalizado"
-        : "Informe guardado";
-
-      if (finalizar) {
-        setInformeEditable(false);
-      }
-
-      alert(
-        finalizar
-          ? `Informe guardado y marcado como FINALIZADO para el centro ${code}.`
-          : `Borrador de informe guardado para el centro ${code}.`
-      );
-    }
-
-    // ==========================
-    // HISTÓRICO
-    // ==========================
-
-    function abrirHistoricoCentro(codigo) {
-      const modal = document.getElementById("historicoModal");
-      const lista = document.getElementById("historicoLista");
-      const titulo = document.getElementById("historicoTitulo");
-      const centro = centros.find((c) => c.CODIGO === codigo);
-      const e = estado[codigo] || { informes: [] };
-      const informes = e.informes || [];
-
-      titulo.textContent = `Histórico de informes · ${codigo} · ${
-        centro ? centro.CENTRO : ""
-      }`;
-      lista.innerHTML = "";
-
-      if (!informes.length) {
-        const p = document.createElement("p");
-        p.className = "text-muted";
-        p.textContent = "Este centro aún no tiene informes registrados.";
-        lista.appendChild(p);
-      } else {
-        informes
-          .slice()
-          .sort((a, b) => (a.fechaCreacion || "").localeCompare(b.fechaCreacion))
-          .forEach((inf) => {
-            const item = document.createElement("div");
-            item.className = "historico-item";
-
-            const text = document.createElement("div");
-            text.className = "historico-text";
-            const linea1 = document.createElement("div");
-            const fechaVisita = inf.fechaVisita
-              ? formatearFechaCorta(inf.fechaVisita)
-              : "sin fecha";
-            linea1.textContent = `Visita: ${fechaVisita} · Estado: ${
-              inf.estado === "finalizado" ? "Finalizado" : "Borrador"
-            }`;
-            const linea2 = document.createElement("div");
-            linea2.className = "historico-tag";
-            linea2.textContent = `Creado: ${formatearFechaCorta(
-              inf.fechaCreacion
-            )}`;
-            text.appendChild(linea1);
-            text.appendChild(linea2);
-
-            const acciones = document.createElement("div");
-            acciones.style.display = "flex";
-            acciones.style.gap = "4px";
-
-            const btnVer = document.createElement("button");
-            btnVer.className = "btn btn-sm btn-outline";
-            btnVer.textContent = "Ver";
-            btnVer.addEventListener("click", () => {
-              modal.style.display = "none";
-              cargarCentroEnInforme(
-                codigo,
-                inf.id,
-                inf.estado === "finalizado"
-              );
-              const card = document.getElementById("cardInformeVisita");
-              if (card) {
-                card.scrollIntoView({ behavior: "smooth", block: "start" });
-              }
-            });
-
-            const btnImp = document.createElement("button");
-            btnImp.className = "btn btn-sm btn-primary";
-            btnImp.textContent = "Imprimir";
-            btnImp.addEventListener("click", () => {
-              modal.style.display = "none";
-              cargarCentroEnInforme(codigo, inf.id, true);
-              setTimeout(() => {
-                window.print();
-              }, 300);
-            });
-
-            acciones.appendChild(btnVer);
-            acciones.appendChild(btnImp);
-            item.appendChild(text);
-            item.appendChild(acciones);
-            lista.appendChild(item);
-          });
-      }
-
-      modal.style.display = "flex";
-    }
-
-    function cerrarHistorico() {
-      const modal = document.getElementById("historicoModal");
-      if (modal) modal.style.display = "none";
-    }
-
-    // ==========================
-    // EVENTOS INICIALES
-    // ==========================
+    /* ========= INIT ========= */
 
     document.addEventListener("DOMContentLoaded", () => {
       estado = cargarEstado();
-
       centros = JSON.parse(JSON.stringify(demoData));
       aplicarEstadoALosCentros();
       renderTabla();
       actualizarResumen();
 
-      const searchInput = document.getElementById("searchInput");
-      searchInput.addEventListener("input", () => {
-        renderTabla(searchInput.value);
-      });
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", (e) => renderTabla(e.target.value));
 
-      const excelInput = document.getElementById("excelInput");
-      excelInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        manejarExcel(file);
-      });
+      document
+        .getElementById("excelInput")
+        .addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) manejarExcel(file);
+        });
 
       document.getElementById("btnExport").addEventListener("click", () => {
-        const payload = {
-          fechaExport: new Date().toISOString(),
-          centros,
-          estado,
-        };
+        const payload = { fechaExport: new Date().toISOString(), centros, estado };
         const blob = new Blob([JSON.stringify(payload, null, 2)], {
           type: "application/json",
         });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "informe-gestion-audio-estado.json";
+        a.download = "informe-audio-estado.json";
         a.click();
         URL.revokeObjectURL(url);
       });
 
       document.getElementById("btnReset").addEventListener("click", () => {
-        const ok = confirm(
-          "¿Seguro que quieres borrar todas las visitas e informes guardados en este navegador?"
-        );
-        if (!ok) return;
+        if (
+          !confirm("¿Seguro que quieres borrar todas las visitas e informes guardados?")
+        )
+          return;
         localStorage.removeItem(STORAGE_KEY);
         estado = {};
         aplicarEstadoALosCentros();
@@ -2397,32 +2247,27 @@
         document.getElementById("informeContenido").style.display = "none";
         document.getElementById("informeEstadoBadge").textContent =
           "Sin centro seleccionado";
+        limpiarImagenesYChecklist();
       });
 
-      // Checklist
-      const checklistInput = document.getElementById("checklistInput");
-      checklistInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        manejarChecklist(file);
-      });
+      document
+        .getElementById("checklistInput")
+        .addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (file) manejarChecklist(file);
+        });
 
-      // Imágenes
       setupImagenInput("imgInput1", "imgPreview1", 1);
       setupImagenInput("imgInput2", "imgPreview2", 1);
       setupImagenInput("imgInput3", "imgPreview3", 3);
 
-      // Botones de tipo de visita
-      ["btnApertura", "btnSeguimiento"].forEach((id) => {
-        const btn = document.getElementById(id);
-        if (btn) {
-          btn.addEventListener("click", () => {
-            btn.classList.toggle("active");
-          });
-        }
+      document.getElementById("btnApertura").addEventListener("click", (e) => {
+        e.target.classList.toggle("active");
+      });
+      document.getElementById("btnSeguimiento").addEventListener("click", (e) => {
+        e.target.classList.toggle("active");
       });
 
-      // Botones de guardado
       document
         .getElementById("btnGuardarBorrador")
         .addEventListener("click", () => guardarInforme(false));
@@ -2430,7 +2275,6 @@
         .getElementById("btnGuardarFinal")
         .addEventListener("click", () => guardarInforme(true));
 
-      // Imprimir informe actual
       document
         .getElementById("btnImprimirInforme")
         .addEventListener("click", () => {
@@ -2438,14 +2282,10 @@
             alert("Selecciona primero un informe para imprimir.");
             return;
           }
-          // Nos aseguramos de que esté cargado en modo lectura
           cargarCentroEnInforme(centroSeleccionadoCodigo, currentInformeId, true);
-          setTimeout(() => {
-            window.print();
-          }, 200);
+          setTimeout(() => window.print(), 200);
         });
 
-      // Modal histórico
       document
         .getElementById("historicoCerrar")
         .addEventListener("click", cerrarHistorico);
@@ -2455,7 +2295,6 @@
           if (e.target.id === "historicoModal") cerrarHistorico();
         });
 
-      // Zoom imagen
       document
         .getElementById("imgZoomOverlay")
         .addEventListener("click", cerrarZoomImagen);
