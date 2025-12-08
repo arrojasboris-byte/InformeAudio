@@ -247,7 +247,7 @@
       gap: 6px;
     }
 
-    .mini-chart,
+    .mini-gauges,
     .mini-calendar {
       border-radius: 10px;
       border: 1px solid #020617;
@@ -255,7 +255,35 @@
       padding: 6px 7px;
     }
 
-    .mini-chart canvas { max-height: 140px; }
+    .gauges-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 4px;
+    }
+
+    .gauge-card {
+      border-radius: 8px;
+      padding: 2px 4px 4px;
+      text-align: center;
+    }
+
+    .gauge-title {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: left;
+      margin-bottom: 2px;
+    }
+
+    .gauge-card canvas {
+      max-width: 100%;
+      max-height: 70px;
+    }
+
+    .gauge-value {
+      font-size: 11px;
+      margin-top: 0;
+      font-weight: 600;
+    }
 
     .mini-calendar {
       font-size: 10px;
@@ -287,19 +315,50 @@
     }
 
     .calendar-cell {
-      min-height: 16px;
+      min-height: 22px;
       border-radius: 3px;
       border: 1px solid #1e293b;
-      text-align: right;
-      padding: 1px 3px;
+      padding: 1px 2px;
       font-size: 9px;
       background: #020617;
       color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 
-    .calendar-cell-pendiente { background: #78350f; color: #fbbf24; }
-    .calendar-cell-realizada { background: #064e3b; color: #bbf7d0; }
-    .calendar-cell-anulada { background: #7f1d1d; color: #fecaca; }
+    .calendar-day-number {
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .calendar-visits {
+      margin-top: 1px;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .calendar-visit-row {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      font-size: 8px;
+    }
+
+    .calendar-visit-init {
+      font-weight: 600;
+    }
+
+    .calendar-dot-status {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+    }
+
+    .calendar-dot-pendiente { background: #facc15; }
+    .calendar-dot-realizada { background: #22c55e; }
+    .calendar-dot-anulada { background: #ef4444; }
 
     .calendar-legend {
       display: flex;
@@ -824,7 +883,7 @@
       box-shadow: 0 1px 3px rgba(15,23,42,0.1);
     }
 
-    body.light-mode .mini-chart,
+    body.light-mode .mini-gauges,
     body.light-mode .mini-calendar,
     body.light-mode .chart-card-inner,
     body.light-mode .img-card,
@@ -944,7 +1003,7 @@
       <div class="main-header-left">
         <div class="main-title">Centros y delegados</div>
         <div class="main-subtitle">
-          Visión general, calendario y tabla compacta tipo Excel. Alimenta el informe y el histórico.
+          Visión general, calendario y tabla compacta tipo Excel. Alimenta el módulo de informes y el histórico.
         </div>
       </div>
       <div class="main-header-actions">
@@ -965,16 +1024,35 @@
           <div>
             <div class="card-title">Visión general</div>
             <div class="card-subtitle">
-              Se alimenta automáticamente de las visitas e informes del módulo de centros.
+              Total de centros, visitas pendientes y visitas realizadas (con informe finalizado).
             </div>
           </div>
           <span class="badge">INFORME AUDIO</span>
         </div>
 
         <div class="dashboard-top">
-          <div class="mini-chart">
-            <canvas id="miniSummaryChart"></canvas>
+          <!-- Gauges -->
+          <div class="mini-gauges">
+            <div class="gauges-grid">
+              <div class="gauge-card">
+                <div class="gauge-title">1. Centros</div>
+                <canvas id="gaugeCentros"></canvas>
+                <div class="gauge-value" id="gaugeCentrosVal">0 centros</div>
+              </div>
+              <div class="gauge-card">
+                <div class="gauge-title">2. Visitas pendientes</div>
+                <canvas id="gaugePendientes"></canvas>
+                <div class="gauge-value" id="gaugePendientesVal">0 pendientes</div>
+              </div>
+              <div class="gauge-card">
+                <div class="gauge-title">3. Visitas realizadas</div>
+                <canvas id="gaugeRealizadas"></canvas>
+                <div class="gauge-value" id="gaugeRealizadasVal">0 realizadas</div>
+              </div>
+            </div>
           </div>
+
+          <!-- Calendario -->
           <div class="mini-calendar">
             <div class="calendar-header">
               <span>Calendario visitas (mes actual)</span>
@@ -982,13 +1060,16 @@
             <div class="calendar-grid" id="calendarGrid"></div>
             <div class="calendar-legend">
               <div class="calendar-legend-item">
-                <span class="calendar-dot" style="background:#eab308;"></span><span>Pendiente</span>
+                <span class="calendar-dot" style="background:#facc15;"></span><span>Pendiente (punto ámbar)</span>
               </div>
               <div class="calendar-legend-item">
-                <span class="calendar-dot" style="background:#22c55e;"></span><span>Realizada (con informe)</span>
+                <span class="calendar-dot" style="background:#22c55e;"></span><span>Realizada (punto verde)</span>
               </div>
               <div class="calendar-legend-item">
-                <span class="calendar-dot" style="background:#ef4444;"></span><span>Anulada</span>
+                <span class="calendar-dot" style="background:#ef4444;"></span><span>Anulada (punto rojo)</span>
+              </div>
+              <div class="calendar-legend-item">
+                <span>A / S = inicial Ariannys / Sonia</span>
               </div>
             </div>
           </div>
@@ -1001,14 +1082,14 @@
           <div>
             <div class="card-title">Listado de centros y delegados</div>
             <div class="card-subtitle">
-              Programa la visita, marca el estado y crea el informe. Estilo compacto tipo tabla Excel.
+              Programa la visita, marca el estado y crea el informe. Estilo compacto tipo hoja Excel.
             </div>
           </div>
         </div>
         <div class="filter-row">
           <input id="searchInput" class="input-text" placeholder="Buscar por código, centro, provincia..." />
           <span class="text-muted">
-            Visita pendiente: ámbar · con informe finalizado: verde · anulada: rojo (calendario).
+            El módulo de informe se alimenta únicamente de este listado y sus visitas.
           </span>
         </div>
         <div class="table-wrapper">
@@ -1040,7 +1121,7 @@
           <div>
             <div class="card-title">Informe de visita</div>
             <div class="card-subtitle">
-              Al crear un informe desde una visita pendiente se rellenan automáticamente los datos de cabecera.
+              Se crea a partir de una visita programada en el módulo anterior. Aspecto ejecutivo para impresión.
             </div>
           </div>
           <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -1054,13 +1135,13 @@
           <div class="informe-banner-right">
             <div class="informe-banner-title">Informe de visita</div>
             <div class="informe-banner-subtitle">
-              Evaluación ejecutiva del punto de venta y procesos de audiología.
+              Evaluación ejecutiva del punto de venta y de los procesos de audiología.
             </div>
           </div>
         </div>
 
         <div id="informeEmpty" class="informe-empty">
-          Selecciona un centro con el botón <strong>“Crear”</strong> o abre un informe desde el histórico.
+          Selecciona un centro con el botón <strong>“Crear”</strong> en el listado o abre un informe desde el histórico.
         </div>
 
         <div id="informeContenido" style="display:none;">
@@ -1202,7 +1283,7 @@
               </div>
               <div class="img-card">
                 <div class="img-title">Gabinete 2</div>
-                <div class="img-subtitle">Segundo ángulo gabinete o detalle técnico.</div>
+                <div class="img-subtitle">Segundo ángulo de gabinete o detalle técnico.</div>
                 <label class="btn btn-outline btn-sm" for="imgInput4">🖼️ Seleccionar</label>
                 <input type="file" id="imgInput4" accept="image/*" />
                 <div id="imgPreview4" class="img-preview-row"></div>
@@ -1242,7 +1323,7 @@
           <div>
             <div class="card-title">Detalles checklist</div>
             <div class="card-subtitle">
-              Criterios y estado de aplicación (información de apoyo para lectura detallada).
+              Criterios y estado de aplicación (información de apoyo para la lectura del informe).
             </div>
           </div>
         </div>
@@ -1357,7 +1438,7 @@
       },
     ];
 
-    const STORAGE_KEY = "InformeAudio_v3";
+    const STORAGE_KEY = "InformeAudio_v4";
 
     let centros = [];
     let estado = {}; // {CODIGO: {visita, visitaEstado, centroAAR, respAudio, informes: [...]}}
@@ -1367,7 +1448,10 @@
     let radarChart = null;
     let mejoraChart = null;
     let kpiChart = null;
-    let miniSummaryChart = null;
+
+    let gaugeCentrosChart = null;
+    let gaugePendChart = null;
+    let gaugeRealChart = null;
 
     function cargarEstado() {
       try {
@@ -1664,6 +1748,7 @@
           if (centroSeleccionadoCodigo === code) {
             document.getElementById("infRespAudioCentro").textContent = selResp.value || "—";
           }
+          actualizarResumen(); // para actualizar iniciales A/S en calendario
         });
         tdResp.appendChild(selResp);
         tr.appendChild(tdResp);
@@ -1682,71 +1767,74 @@
       }
     }
 
-    /* ========= RESUMEN / GRAFICA + CALENDARIO ========= */
+    /* ========= RESUMEN (GAUGES) + CALENDARIO ========= */
 
-    function actualizarResumen() {
-      const total = centros.length;
-      let visitas = 0;
-      let informesFinal = 0;
-
-      centros.forEach((c) => {
-        if (c.VISITA) visitas++;
-        if (c.INFORME_ESTADO === "finalizado") informesFinal++;
-      });
-
-      actualizarMiniSummaryChart(total, visitas, informesFinal);
-      actualizarCalendarioVisitas();
-    }
-
-    function actualizarMiniSummaryChart(total, visitas, informesFinal) {
-      const ctx = document.getElementById("miniSummaryChart").getContext("2d");
-      if (miniSummaryChart) miniSummaryChart.destroy();
-      miniSummaryChart = new Chart(ctx, {
-        type: "bar",
+    function crearGauge(ctx, valuePercent, color) {
+      return new Chart(ctx, {
+        type: "doughnut",
         data: {
-          labels: ["Centros", "Visitas", "Informes"],
           datasets: [
             {
-              data: [total, visitas, informesFinal],
-              backgroundColor: [
-                "rgba(59,130,246,0.9)",   // azul
-                "rgba(234,179,8,0.9)",    // ámbar
-                "rgba(34,197,94,0.9)",    // verde
-              ],
+              data: [valuePercent, 100 - valuePercent],
+              backgroundColor: [color, "rgba(15,23,42,0.8)"],
+              borderWidth: 0,
+              hoverOffset: 0,
             },
           ],
         },
         options: {
-          plugins: { legend: { display: false } },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: { color: "#9ca3af", font: { size: 9 } },
-              grid: { color: "#1f2937" },
-            },
-            x: {
-              ticks: { color: "#9ca3af", font: { size: 9 } },
-              grid: { display: false },
-            },
+          rotation: -Math.PI,
+          circumference: Math.PI,
+          cutout: "70%",
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false },
           },
         },
       });
     }
 
-    function obtenerMapaEstadosVisitas() {
-      const map = {};
-      const priority = { anulada: 1, pendiente: 2, realizada: 3 };
+    function actualizarGaugeCharts(totalCentros, visitasPendientes, visitasRealizadas) {
+      const ctxC = document.getElementById("gaugeCentros").getContext("2d");
+      const ctxP = document.getElementById("gaugePendientes").getContext("2d");
+      const ctxR = document.getElementById("gaugeRealizadas").getContext("2d");
 
+      const pctTotal = totalCentros ? 100 : 0;
+      const pctPend = totalCentros ? (visitasPendientes / totalCentros) * 100 : 0;
+      const pctReal = totalCentros ? (visitasRealizadas / totalCentros) * 100 : 0;
+
+      if (gaugeCentrosChart) gaugeCentrosChart.destroy();
+      if (gaugePendChart) gaugePendChart.destroy();
+      if (gaugeRealChart) gaugeRealChart.destroy();
+
+      gaugeCentrosChart = crearGauge(ctxC, pctTotal, "rgba(59,130,246,0.95)");   // azul
+      gaugePendChart = crearGauge(ctxP, pctPend, "rgba(249,115,22,0.95)");       // naranja
+      gaugeRealChart = crearGauge(ctxR, pctReal, "rgba(34,197,94,0.95)");        // verde
+
+      document.getElementById("gaugeCentrosVal").textContent =
+        totalCentros + " centros";
+      document.getElementById("gaugePendientesVal").textContent =
+        visitasPendientes + " pendientes";
+      document.getElementById("gaugeRealizadasVal").textContent =
+        visitasRealizadas + " realizadas";
+    }
+
+    function obtenerMapaVisitasCalendario() {
+      const map = {};
       centros.forEach((c) => {
         if (!c.VISITA) return;
         const code = c.CODIGO;
         const e = estado[code] || {};
-        let st = e.visitaEstado || "pendiente";
-        if (c.INFORME_ESTADO === "finalizado") st = "realizada";
+        let status = e.visitaEstado || "pendiente";
+        if (c.INFORME_ESTADO === "finalizado") status = "realizada";
+
+        const resp =
+          (estado[code] && estado[code].respAudio) || c.RESP_AUDIO || "";
+        const initial = resp ? resp.trim().charAt(0).toUpperCase() : "?";
+
         const dateStr = c.VISITA; // YYYY-MM-DD
-        if (!map[dateStr] || priority[st] > priority[map[dateStr]]) {
-          map[dateStr] = st;
-        }
+        if (!map[dateStr]) map[dateStr] = [];
+        map[dateStr].push({ initial, status });
       });
       return map;
     }
@@ -1756,7 +1844,7 @@
       if (!grid) return;
       grid.innerHTML = "";
 
-      const statusMap = obtenerMapaEstadosVisitas();
+      const visitasMap = obtenerMapaVisitasCalendario();
       const today = new Date();
       const year = today.getFullYear();
       const month = today.getMonth(); // 0-11
@@ -1780,19 +1868,67 @@
       for (let d = 1; d <= daysInMonth; d++) {
         const div = document.createElement("div");
         div.className = "calendar-cell";
-        div.textContent = d;
+
+        const dayNum = document.createElement("div");
+        dayNum.className = "calendar-day-number";
+        dayNum.textContent = d;
+        div.appendChild(dayNum);
+
+        const visitsDiv = document.createElement("div");
+        visitsDiv.className = "calendar-visits";
+
         const dateStr =
           year +
           "-" +
           String(month + 1).padStart(2, "0") +
           "-" +
           String(d).padStart(2, "0");
-        const st = statusMap[dateStr];
-        if (st === "pendiente") div.classList.add("calendar-cell-pendiente");
-        else if (st === "realizada") div.classList.add("calendar-cell-realizada");
-        else if (st === "anulada") div.classList.add("calendar-cell-anulada");
+        const visits = visitasMap[dateStr] || [];
+
+        visits.slice(0, 3).forEach((v) => {
+          const row = document.createElement("div");
+          row.className = "calendar-visit-row";
+
+          const initSpan = document.createElement("span");
+          initSpan.className = "calendar-visit-init";
+          initSpan.textContent = v.initial;
+
+          const dot = document.createElement("span");
+          dot.className = "calendar-dot-status";
+          if (v.status === "pendiente") dot.classList.add("calendar-dot-pendiente");
+          else if (v.status === "realizada")
+            dot.classList.add("calendar-dot-realizada");
+          else if (v.status === "anulada")
+            dot.classList.add("calendar-dot-anulada");
+
+          row.appendChild(initSpan);
+          row.appendChild(dot);
+          visitsDiv.appendChild(row);
+        });
+
+        div.appendChild(visitsDiv);
         grid.appendChild(div);
       }
+    }
+
+    function actualizarResumen() {
+      const total = centros.length;
+      let visitasPendientes = 0;
+      let visitasRealizadas = 0;
+
+      centros.forEach((c) => {
+        if (!c.VISITA) return;
+        const e = estado[c.CODIGO] || {};
+        const visitaEstado = e.visitaEstado || "pendiente";
+        const anulada = visitaEstado === "anulada";
+        const realizada = c.INFORME_ESTADO === "finalizado";
+
+        if (realizada) visitasRealizadas++;
+        else if (!anulada) visitasPendientes++;
+      });
+
+      actualizarGaugeCharts(total, visitasPendientes, visitasRealizadas);
+      actualizarCalendarioVisitas();
     }
 
     /* ========= CARGA EXCEL CENTROS ========= */
@@ -1967,7 +2103,6 @@
       badge.textContent =
         inf.estado === "finalizado" ? "Informe finalizado" : "Informe en edición";
 
-      // Scroll al módulo de informe
       document.getElementById("cardInformeVisita").scrollIntoView({ behavior: "smooth" });
     }
 
@@ -2009,7 +2144,7 @@
       document.getElementById("infAudiologo").focus();
     }
 
-    /* ========= CHECKLIST Y GRÁFICOS (LÓGICA CORNER / EXCLUSIVO) ========= */
+    /* ========= CHECKLIST Y GRÁFICOS ========= */
 
     function renderChecklistCharts(metrics, detalles) {
       const radarCtx = document.getElementById("radarChart").getContext("2d");
